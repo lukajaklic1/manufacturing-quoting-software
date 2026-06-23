@@ -1,39 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import {
-  FileText, BarChart2, Building2, Package,
-  CheckCircle, ArrowRight, Zap,
+  Zap, ArrowRight, Calculator, TrendingUp, Users, FileText, BarChart2,
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import AppLogo from '../components/ui/AppLogo'
 
-// ─── Pricing data ─────────────────────────────────────────────────────────────
-
-// Plans are defined per language inside the component — see getPLans() below
-
 const FEATURE_ICONS = [
-  { icon: FileText, color: 'bg-blue-50 text-blue-600', k: 'feature1' },
-  { icon: BarChart2, color: 'bg-purple-50 text-purple-600', k: 'feature2' },
-  { icon: Building2, color: 'bg-green-50 text-green-600', k: 'feature3' },
-  { icon: Package, color: 'bg-amber-50 text-amber-600', k: 'feature4' },
+  { icon: Calculator, color: 'bg-blue-50 text-blue-600', k: 'feature1' },
+  { icon: Zap, color: 'bg-purple-50 text-purple-600', k: 'feature2' },
+  { icon: TrendingUp, color: 'bg-green-50 text-green-600', k: 'feature3' },
+  { icon: Users, color: 'bg-amber-50 text-amber-600', k: 'feature4' },
+  { icon: FileText, color: 'bg-red-50 text-red-600', k: 'feature5' },
+  { icon: TrendingUp, color: 'bg-indigo-50 text-indigo-600', k: 'feature6' },
 ]
 
-const STEP_NUMS = ['01', '02', '03']
-
-// ─── Components ───────────────────────────────────────────────────────────────
-
-function Check({ included, soon, isSl }: { included: boolean; soon?: boolean; isSl?: boolean }) {
-  if (!included) return <span className="text-gray-300">—</span>
-  return (
-    <span className="flex items-center gap-1.5 text-gray-700">
-      <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-      {soon && <span className="text-xs bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded font-medium">{isSl ? 'kmalu' : 'soon'}</span>}
-    </span>
-  )
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
+const STEP_NUMS = ['01', '02', '03', '04']
 
 export default function LandingPage() {
   const { session, loading } = useAuth()
@@ -41,78 +24,6 @@ export default function LandingPage() {
   const navigate = useNavigate()
   const l = t.landing
   const isSl = lang === 'sl'
-
-  const PLANS = [
-    {
-      name: isSl ? 'Brezplačni' : 'Free',
-      price: 0,
-      yearlyPrice: 0,
-      desc: isSl ? 'Za manjša podjetja, ki želijo urediti nabavo brez začetnih stroškov.' : 'Perfect for getting started. No credit card required, no time limit.',
-      cta: isSl ? 'Začnite brezplačno' : 'Get started free',
-      featured: false,
-      features: [
-        { text: isSl ? 'Do 15 naročil na mesec' : 'Up to 15 POs per month', included: true },
-        { text: isSl ? '1 uporabnik' : '1 user', included: true },
-        { text: isSl ? 'PDF naročilnice' : 'PDF purchase orders', included: true },
-        { text: isSl ? 'Dobavitelji, katalog, kategorije, projekti' : 'Suppliers, catalog, categories, projects', included: true },
-        { text: isSl ? 'Osnovna analitika' : 'Basic spend dashboard', included: true },
-        { text: isSl ? 'Prilaganje ponudb naročilnicam' : 'Attach quotations to POs', included: false },
-        { text: isSl ? 'Polna analitika' : 'Full analytics', included: false },
-      ],
-    },
-    {
-      name: isSl ? 'Začetni' : 'Starter',
-      price: 19,
-      yearlyPrice: 15,
-      desc: isSl ? 'Za podjetja z redno nabavo in večjim številom naročil.' : 'For companies with regular procurement and higher order volumes.',
-      cta: isSl ? 'Začnite preizkus' : 'Start free trial',
-      featured: false,
-      features: [
-        { text: isSl ? 'Neomejeno naročil' : 'Unlimited POs', included: true },
-        { text: isSl ? '1 uporabnik' : '1 user', included: true },
-        { text: isSl ? 'PDF naročilnice' : 'PDF purchase orders', included: true },
-        { text: isSl ? 'Dobavitelji, katalog, kategorije, projekti' : 'Suppliers, catalog, categories, projects', included: true },
-        { text: isSl ? 'Osnovna analitika' : 'Basic spend dashboard', included: true },
-        { text: isSl ? 'Podpora po e-pošti' : 'Email support', included: true },
-        { text: isSl ? 'Prilaganje ponudb naročilnicam' : 'Attach quotations to POs', included: false },
-        { text: isSl ? 'Polna analitika' : 'Full analytics', included: false },
-      ],
-    },
-    {
-      name: isSl ? 'Profesionalni' : 'Professional',
-      price: 39,
-      yearlyPrice: 29,
-      desc: isSl ? 'Za podjetja, ki želijo popoln pregled nad nabavo, stroški in projekti.' : 'For companies that want complete visibility over procurement, spending and projects.',
-      cta: isSl ? 'Začnite preizkus' : 'Start free trial',
-      featured: true,
-      features: [
-        { text: isSl ? 'Neomejeno naročil' : 'Unlimited POs', included: true },
-        { text: isSl ? '1 uporabnik' : '1 user', included: true },
-        { text: isSl ? 'PDF naročilnice' : 'PDF purchase orders', included: true },
-        { text: isSl ? 'Prilaganje ponudb naročilnicam' : 'Attach quotations to POs', included: true },
-        { text: isSl ? 'Napredna analitika stroškov' : 'Advanced spend analytics', included: true },
-        { text: isSl ? 'Vsi moduli referenčnih podatkov' : 'All reference data modules', included: true },
-        { text: isSl ? 'Podpora po e-pošti' : 'Email support', included: true },
-      ],
-    },
-    {
-      name: isSl ? 'Ekipa' : 'Team',
-      price: 69,
-      yearlyPrice: 55,
-      desc: isSl ? 'Za večje ekipe in podjetja z naprednim nabavnim procesom.' : 'For larger teams and companies with an advanced procurement process.',
-      cta: isSl ? 'Začnite preizkus' : 'Start free trial',
-      featured: false,
-      features: [
-        { text: isSl ? 'Neomejeno naročil' : 'Unlimited POs', included: true },
-        { text: isSl ? 'Do 5 uporabnikov' : 'Up to 5 users', included: true, soon: true },
-        { text: isSl ? 'Vse iz Professional plana' : 'Everything in Professional', included: true },
-        { text: isSl ? 'Odobritve naročil' : 'Approval workflows', included: true, soon: true },
-        { text: isSl ? 'Proračunske omejitve po projektih' : 'Budget limits per project', included: true, soon: true },
-        { text: isSl ? 'Izvoz CSV / Excel' : 'CSV / Excel export', included: true, soon: true },
-        { text: isSl ? 'Prednostna podpora' : 'Priority support', included: true },
-      ],
-    },
-  ]
 
   useEffect(() => {
     if (!loading && session) navigate('/dashboard', { replace: true })
@@ -234,9 +145,9 @@ export default function LandingPage() {
       <section className="border-y border-gray-100 py-8 bg-gray-50">
         <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 flex-wrap">
           {[
-            { icon: FileText, text: isSl ? 'Profesionalne PDF naročilnice' : 'Professional PDF purchase orders' },
-            { icon: BarChart2, text: isSl ? 'Pregled stroškov po projektih in dobaviteljih' : 'Spend overview by project and supplier' },
-            { icon: Zap, text: isSl ? 'Nastavitev v manj kot 2 minutah' : 'Setup in less than 2 minutes' },
+            { icon: FileText, text: l.trustEurope },
+            { icon: Zap, text: l.trustPrivacy },
+            { icon: BarChart2, text: l.trustSetup },
           ].map(({ icon: Icon, text }) => (
             <div key={text} className="flex items-center gap-2.5 text-sm text-gray-500">
               <Icon className="w-4 h-4 text-blue-500" />
@@ -253,7 +164,7 @@ export default function LandingPage() {
           <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.featuresHeading}</h2>
           <p className="text-gray-500 mt-4 text-lg max-w-xl mx-auto">{l.featuresSubtitle}</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {FEATURE_ICONS.map(({ icon: Icon, color, k }) => (
             <div key={k} className="bg-white rounded-2xl border border-gray-200 p-7 hover:shadow-sm transition-shadow">
               <div className={`inline-flex p-3 rounded-xl ${color} mb-4`}>
@@ -273,7 +184,7 @@ export default function LandingPage() {
             <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.howTitle}</p>
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.howHeading}</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {STEP_NUMS.map((num, i) => (
               <div key={num} className="text-center">
                 <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white font-bold text-xl flex items-center justify-center mx-auto mb-5">
@@ -285,59 +196,6 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* ── Pricing ── */}
-      <section id="pricing" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-24">
-        <div className="text-center mb-14">
-          <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.pricingTitle}</p>
-          <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.pricingHeading}</h2>
-          <p className="text-gray-500 mt-4 text-lg">{l.pricingSubtitle}</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {PLANS.map(plan => (
-            <div key={plan.name} className={`rounded-2xl border p-5 flex flex-col ${plan.featured ? 'bg-gray-900 border-gray-800 text-white' : 'bg-white border-gray-200'}`}>
-              {plan.featured && (
-                <div className="text-xs font-semibold bg-blue-600 text-white px-3 py-1 rounded-full self-start mb-4">{isSl ? 'Najbolj priljubljen' : 'Most popular'}</div>
-              )}
-              <p className={`text-sm font-semibold uppercase tracking-widest mb-3 ${plan.featured ? 'text-gray-400' : 'text-gray-400'}`}>{plan.name}</p>
-              <div className="flex items-baseline gap-1 mb-1">
-                <>
-                  <span className="text-sm text-gray-400">€</span>
-                  <span className={`text-5xl font-bold ${plan.featured ? 'text-white' : 'text-gray-900'}`}>{plan.price}</span>
-                  <span className="text-sm text-gray-400">{isSl ? '/mes' : '/mo'}</span>
-                </>
-              </div>
-              <p className={`text-xs mb-6 ${plan.featured ? 'text-gray-500' : 'text-gray-400'}`}>
-                {plan.price === 0
-                  ? (isSl ? 'Brez časovne omejitve' : 'No time limit')
-                  : (isSl ? `ali €${plan.yearlyPrice}/mes pri letnem plačilu` : `or €${plan.yearlyPrice}/mo billed yearly`)}
-              </p>
-              <p className={`text-sm mb-6 pb-6 border-b leading-relaxed ${plan.featured ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-100'}`}>
-                {plan.desc}
-              </p>
-              <Link to="/register"
-                className={`text-center py-2.5 rounded-xl font-medium text-sm transition-colors mb-6 ${
-                  plan.featured
-                    ? 'bg-blue-600 text-white hover:bg-blue-500'
-                    : 'bg-gray-900 text-white hover:bg-gray-800'
-                }`}>
-                {plan.cta}
-              </Link>
-              <ul className="flex flex-col gap-3">
-                {plan.features.map(f => (
-                  <li key={f.text} className="flex items-center gap-3 text-sm">
-                    <Check included={f.included} soon={(f as any).soon} isSl={isSl} />
-                    <span className={f.included ? (plan.featured ? 'text-gray-300' : 'text-gray-700') : 'text-gray-400'}>
-                      {f.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <p className="text-center text-sm text-gray-400 mt-6">{l.pricingNote}</p>
       </section>
 
       {/* ── CTA Banner ── */}

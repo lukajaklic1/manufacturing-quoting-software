@@ -1,415 +1,458 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { ChevronLeft, Plus, Trash2, ChevronDown, ChevronRight, Layers } from 'lucide-react'
+import { useNavigate, useParams, Navigate } from 'react-router-dom'
+import { ChevronLeft, Plus, Trash2, Boxes, Pencil, Eye, Download, Send, Check, X } from 'lucide-react'
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer'
+import OfferPdf from '../components/OfferPdf'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
-import NumberInput from '../components/ui/NumberInput'
-import { computeTotals, rawTotal, purchasedTotal, processTotal, packagingTotal } from '../hooks/useCalculator'
-import { currencySymbol } from '../lib/currency'
-import type {
-  Customer, Machine, LaborRate, Quote, QuoteItem, Calculation,
-  RawMaterialRow, PurchasedPartRow, ProcessRow, PackagingRow,
-} from '../types/database'
+import QuoteAttachments from '../components/QuoteAttachments'
+import ConfirmDialog from '../components/ui/ConfirmDialog'
+import { buildSnapshot } from '../lib/offerSnapshot'
+import type { Customer, Quote, QuoteItem, Calculation, QuoteAttachment, QuoteStatus, OfferSnapshot } from '../types/database'
 
-interface Piece {
-  key: string
-  id?: string
-  part_name: string
-  part_number: string
-  quantity: number
-  notes: string
-  raw_materials: RawMaterialRow[]
-  purchased_parts: PurchasedPartRow[]
-  processes: ProcessRow[]
-  packaging: PackagingRow[]
-  oh_material_pct: number
-  oh_mfg_pct: number
-  oh_sga_pct: number
-  oh_logistics_pct: number
-  oh_rd_pct: number
-  profit_pct: number
+interface PieceRow { key: string; id?: string; part_name: string; part_number: string; quantity: number; thumb_path?: string | null }
+
+// Pick a thumbnail source for a piece: first CAD, else first drawing/image/pdf.
+const CAD3D = ['step', 'stp', 'iges', 'igs', 'stl', 'obj', 'ply', '3ds', '3dm', '3mf', 'fbx', 'dae', 'wrl', 'off', 'brep', 'glb', 'gltf', 'fcstd']
+function fext(n: string) { return n.toLowerCase().split('.').pop() ?? '' }
+function isCad3D(n: string) { return CAD3D.includes(fext(n)) }
+
+const STATUS_STYLE: Record<QuoteStatus, string> = {
+  draft: 'bg-gray-100 text-gray-600', issued: 'bg-indigo-100 text-indigo-700', sent: 'bg-blue-100 text-blue-700',
+  accepted: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700', expired: 'bg-amber-100 text-amber-700',
+  won: 'bg-green-100 text-green-700', lost: 'bg-red-100 text-red-700', frozen: 'bg-purple-100 text-purple-700',
 }
 
 let keyc = 0
 const nk = () => `p${++keyc}`
 
-export default function QuoteFormPage() {
+export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean }) {
   const { id } = useParams()
   const editMode = !!id
-  const { company } = useCompany()
+  const { company, hasPerm, isAdmin } = useCompany()
   const { t } = useLanguage()
   const s = t.qp
+  const u = s.units
   const navigate = useNavigate()
   const cur = company?.currency ?? 'EUR'
-  const money = (n: number) => n.toLocaleString('de-DE', { style: 'currency', currency: cur })
+  const money = (n: number) => (n ?? 0).toLocaleString('de-DE', { style: 'currency', currency: cur })
 
   const [customers, setCustomers] = useState<Customer[]>([])
-  const [machines, setMachines] = useState<Machine[]>([])
-  const [laborRates, setLaborRates] = useState<LaborRate[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
+  const [quoteNumber, setQuoteNumber] = useState('')
+  const [alreadySent, setAlreadySent] = useState(false)
+  const [status, setStatusState] = useState<QuoteStatus>('draft')
+  const [confirm, setConfirm] = useState<null | 'accepted' | 'rejected'>(null)
+  const [tab, setTab] = useState<'overview' | 'pdf'>('overview')
+  const [snapshot, setSnapshot] = useState<OfferSnapshot | null>(null)
+  const isSaved = !!quoteNumber
   const [customerId, setCustomerId] = useState('')
-  const [title, setTitle] = useState('')
+  const [contactPerson, setContactPerson] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactPhone, setContactPhone] = useState('')
+  const [paymentTerms, setPaymentTerms] = useState('')
+  const [parity, setParity] = useState('')
   const [validUntil, setValidUntil] = useState('')
-  const [deliveryDate, setDeliveryDate] = useState('')
+  const [leadTime, setLeadTime] = useState('')
   const [notes, setNotes] = useState('')
-  const [pieces, setPieces] = useState<Piece[]>([])
-  const [openPiece, setOpenPiece] = useState<string | null>(null)
-
-  function newPiece(): Piece {
-    return {
-      key: nk(), part_name: '', part_number: '', quantity: 1, notes: '',
-      raw_materials: [], purchased_parts: [], processes: [], packaging: [],
-      oh_material_pct: company?.overhead_material_pct ?? 0,
-      oh_mfg_pct: company?.overhead_mfg_pct ?? 0,
-      oh_sga_pct: company?.overhead_sga_pct ?? 0,
-      oh_logistics_pct: company?.overhead_logistics_pct ?? 0,
-      oh_rd_pct: company?.overhead_rd_pct ?? 0,
-      profit_pct: company?.overhead_profit_pct ?? 15,
-    }
-  }
+  const [pieces, setPieces] = useState<PieceRow[]>([{ key: nk(), part_name: '', part_number: '', quantity: 1 }])
+  const [removedIds, setRemovedIds] = useState<string[]>([])
+  const [prices, setPrices] = useState<Record<string, { sell: number; annual: number }>>({}) // item id → totals
+  const [attachments, setAttachments] = useState<QuoteAttachment[]>([])
+  const [pieceToDelete, setPieceToDelete] = useState<string | null>(null)
+  const [deleteQuoteOpen, setDeleteQuoteOpen] = useState(false)
+  const [pieceThumbs, setPieceThumbs] = useState<Record<string, string>>({})
 
   useEffect(() => { if (company) init() }, [company, id])
+
+  // Refresh snapshot when readOnly is true (after issue completes)
+  useEffect(() => {
+    if (readOnly && id) {
+      supabase.from('quotes').select('snapshot, status').eq('id', id).single().then(({ data: q }) => {
+        if (q) {
+          setStatusState((q as any).status)
+          if ((q as any).snapshot) setSnapshot((q as any).snapshot as OfferSnapshot)
+        }
+      })
+    }
+  }, [readOnly, id])
+
+  // Thumbnail per piece = first uploaded CAD model only. No CAD → no thumbnail
+  // (clears any legacy non-CAD thumbnail). Persisted so the quotes list shows it cheaply.
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      for (const p of pieces) {
+        if (!p.id || pieceThumbs[p.id]) continue
+        const atts = attachments.filter(a => a.quote_item_id === p.id)
+        const cad = atts.find(a => isCad3D(a.file_name))
+        if (!cad) {
+          if (p.thumb_path) clearPieceThumb(p.id) // had a non-CAD thumb → remove it
+          continue
+        }
+        // Has CAD: reuse persisted thumb if present, else render + persist.
+        if (p.thumb_path) {
+          const { data } = await supabase.storage.from('quotations').createSignedUrl(p.thumb_path, 3600)
+          if (data?.signedUrl && !cancelled) setPieceThumbs(prev => ({ ...prev, [p.id!]: data.signedUrl }))
+          continue
+        }
+        const { data } = await supabase.storage.from('quotations').createSignedUrl(cad.storage_path, 3600)
+        const url = data?.signedUrl
+        if (!url) continue
+        const { cadThumb } = await import('../lib/cadThumb')
+        const thumb = await cadThumb(cad.id, url, cad.file_name)
+        if (thumb && !cancelled) {
+          setPieceThumbs(prev => ({ ...prev, [p.id!]: thumb! }))
+          if (company && id) persistPieceThumb(p.id, thumb)
+        }
+      }
+    })()
+    return () => { cancelled = true }
+  }, [attachments, pieces])
+
+  // Remove a stale (non-CAD) thumbnail from a quote item.
+  async function clearPieceThumb(itemId: string) {
+    await supabase.from('quote_items').update({ thumb_path: null }).eq('id', itemId)
+    setPieces(ps => ps.map(p => p.id === itemId ? { ...p, thumb_path: null } : p))
+  }
+
+  // Upload a generated thumbnail PNG to storage and save its path on the quote item.
+  async function persistPieceThumb(itemId: string, thumb: string) {
+    if (!company || !id) return
+    try {
+      const blob = await (await fetch(thumb)).blob()
+      const path = `${company.id}/quotes/${id}/${itemId}/thumb.png`
+      const { error } = await supabase.storage.from('quotations').upload(path, blob, { upsert: true, contentType: 'image/png' })
+      if (error) return
+      await supabase.from('quote_items').update({ thumb_path: path }).eq('id', itemId)
+      setPieces(ps => ps.map(p => p.id === itemId ? { ...p, thumb_path: path } : p))
+    } catch { /* noop */ }
+  }
 
   async function init() {
     if (!company) return
     setLoading(true)
-    const [{ data: cust }, { data: mach }, { data: ws }] = await Promise.all([
-      supabase.from('customers').select('*').eq('company_id', company.id).order('name'),
-      supabase.from('machines').select('*').eq('company_id', company.id).eq('is_active', true).order('name'),
-      supabase.from('labor_rates').select('*').eq('company_id', company.id).eq('is_active', true).order('name'),
-    ])
+    const { data: cust } = await supabase.from('customers').select('*').eq('company_id', company.id).order('name')
     setCustomers((cust as Customer[]) ?? [])
-    setMachines((mach as Machine[]) ?? [])
-    setLaborRates((ws as LaborRate[]) ?? [])
 
     if (editMode && id) {
       const { data: q } = await supabase.from('quotes').select('*').eq('id', id).single()
       if (q) {
         const quote = q as Quote
-        setCustomerId(quote.customer_id); setTitle(quote.title)
-        setValidUntil(quote.valid_until ?? ''); setDeliveryDate(quote.delivery_date ?? ''); setNotes(quote.notes ?? '')
-        const { data: items } = await supabase.from('quote_items').select('*').eq('quote_id', id).order('position')
-        const itemIds = (items as QuoteItem[] ?? []).map(i => i.id)
-        const { data: calcs } = itemIds.length
-          ? await supabase.from('calculations').select('*').in('quote_item_id', itemIds)
-          : { data: [] }
-        const calcMap: Record<string, Calculation> = {}
-        for (const c of (calcs as Calculation[]) ?? []) calcMap[c.quote_item_id] = c
-        const ps: Piece[] = (items as QuoteItem[] ?? []).map(it => {
-          const c = calcMap[it.id]
-          return {
-            key: nk(), id: it.id, part_name: it.part_name, part_number: it.part_number ?? '',
-            quantity: it.quantity, notes: it.notes ?? '',
-            raw_materials: c?.raw_materials ?? [], purchased_parts: c?.purchased_parts ?? [],
-            processes: c?.processes ?? [], packaging: c?.packaging ?? [],
-            oh_material_pct: c?.oh_material_pct ?? company.overhead_material_pct,
-            oh_mfg_pct: c?.oh_mfg_pct ?? company.overhead_mfg_pct,
-            oh_sga_pct: c?.oh_sga_pct ?? company.overhead_sga_pct,
-            oh_logistics_pct: c?.oh_logistics_pct ?? company.overhead_logistics_pct,
-            oh_rd_pct: c?.oh_rd_pct ?? company.overhead_rd_pct,
-            profit_pct: c?.profit_pct ?? company.overhead_profit_pct,
-          }
-        })
-        setPieces(ps.length ? ps : [newPiece()])
-        setOpenPiece(ps[0]?.key ?? null)
+        setStatusState(quote.status)
+        if (readOnly && quote.snapshot) setSnapshot(quote.snapshot as OfferSnapshot)
+        // Edit mode: draft/issued/sent editable; locked ones redirect to read-only review.
+        if (!readOnly && !['draft', 'issued', 'sent', 'frozen'].includes(quote.status)) { navigate(`/quotes/${id}`, { replace: true }); return }
+        setAlreadySent(['sent', 'accepted', 'rejected', 'expired', 'won', 'lost', 'frozen'].includes(quote.status))
+        setQuoteNumber(quote.quote_number ?? '')
+        setCustomerId(quote.customer_id)
+        setContactPerson(quote.contact_person ?? ''); setContactEmail(quote.contact_email ?? ''); setContactPhone(quote.contact_phone ?? '')
+        setPaymentTerms(quote.payment_terms ?? ''); setParity(quote.parity ?? '')
+        setValidUntil(quote.valid_until ?? ''); setLeadTime(quote.lead_time ?? ''); setNotes(quote.notes ?? '')
       }
-    } else {
-      const p = newPiece()
-      setPieces([p]); setOpenPiece(p.key)
+      const { data: items } = await supabase.from('quote_items').select('*').eq('quote_id', id).order('position')
+      const its = (items as QuoteItem[]) ?? []
+      setPieces(its.length ? its.map(it => ({ key: nk(), id: it.id, part_name: it.part_name, part_number: it.part_number ?? '', quantity: it.quantity, thumb_path: it.thumb_path })) : [{ key: nk(), part_name: '', part_number: '', quantity: 1 }])
+      const ids = its.map(i => i.id)
+      if (ids.length) {
+        const { data: calcs } = await supabase.from('calculations').select('quote_item_id, selling_price, annual_value').in('quote_item_id', ids)
+        const m: Record<string, { sell: number; annual: number }> = {}
+        for (const cc of (calcs as Pick<Calculation, 'quote_item_id' | 'selling_price' | 'annual_value'>[]) ?? []) m[cc.quote_item_id] = { sell: cc.selling_price, annual: cc.annual_value }
+        setPrices(m)
+      }
+      const { data: att } = await supabase.from('quote_attachments').select('*').eq('quote_id', id).order('created_at')
+      setAttachments((att as QuoteAttachment[]) ?? [])
     }
     setLoading(false)
   }
 
-  function patchPiece(key: string, patch: Partial<Piece>) {
-    setPieces(ps => ps.map(p => p.key === key ? { ...p, ...patch } : p))
+  function addPiece() { setPieces(ps => [...ps, { key: nk(), part_name: '', part_number: '', quantity: 1 }]) }
+  function removePiece(key: string) {
+    setPieces(ps => {
+      const p = ps.find(x => x.key === key)
+      if (p?.id) setRemovedIds(r => [...r, p.id!])
+      return ps.filter(x => x.key !== key)
+    })
   }
-  function addPiece() { const p = newPiece(); setPieces(ps => [...ps, p]); setOpenPiece(p.key) }
-  function removePiece(key: string) { setPieces(ps => ps.filter(p => p.key !== key)) }
 
-  async function save() {
-    if (!company || !customerId || !title.trim()) return
-    setSaving(true)
+  // Persist quote + pieces; returns quoteId + map key→itemId. Preserves existing calculations.
+  async function persist(): Promise<{ quoteId: string; ids: Record<string, string> } | null> {
+    if (!company || !customerId) { toast.error(s.fillCustomerTitle); return null }
+    const cname = customers.find(c => c.id === customerId)?.name ?? ''
+    const fields = {
+      customer_id: customerId, title: cname,
+      contact_person: contactPerson.trim() || null, contact_email: contactEmail.trim() || null, contact_phone: contactPhone.trim() || null,
+      payment_terms: paymentTerms.trim() || null, parity: parity.trim() || null,
+      valid_until: validUntil || null, lead_time: leadTime.trim() || null, delivery_date: null, notes: notes.trim() || null,
+    }
     let quoteId = id
     if (editMode && id) {
-      const { error } = await supabase.from('quotes').update({
-        customer_id: customerId, title: title.trim(),
-        valid_until: validUntil || null, delivery_date: deliveryDate || null, notes: notes.trim() || null,
-        updated_at: new Date().toISOString(),
-      }).eq('id', id)
-      if (error) { setSaving(false); toast.error(error.message); return }
-      await supabase.from('quote_items').delete().eq('quote_id', id)
+      const { error } = await supabase.from('quotes').update({ ...fields, updated_at: new Date().toISOString() }).eq('id', id)
+      if (error) { toast.error(error.message); return null }
     } else {
       const { data: qnum, error: ne } = await (supabase as any).rpc('generate_quote_number', { p_company_id: company.id })
-      if (ne) { setSaving(false); toast.error(ne.message); return }
+      if (ne) { toast.error(ne.message); return null }
       const { data: created, error } = await supabase.from('quotes').insert({
-        company_id: company.id, customer_id: customerId, quote_number: qnum, title: title.trim(),
-        status: 'draft', valid_until: validUntil || null, delivery_date: deliveryDate || null,
-        notes: notes.trim() || null, created_by: (await supabase.auth.getUser()).data.user!.id,
+        ...fields, company_id: company.id, quote_number: qnum, status: 'draft',
+        created_by: (await supabase.auth.getUser()).data.user!.id,
       }).select('id').single()
-      if (error) { setSaving(false); toast.error(error.message); return }
+      if (error) { toast.error(error.message); return null }
       quoteId = (created as { id: string }).id
     }
 
-    // Insert items + calcs
+    for (const remId of removedIds) await supabase.from('quote_items').delete().eq('id', remId)
+
+    const ids: Record<string, string> = {}
+    const next: PieceRow[] = []
     for (let i = 0; i < pieces.length; i++) {
       const p = pieces[i]
-      const { data: item, error: ie } = await supabase.from('quote_items').insert({
-        quote_id: quoteId, company_id: company.id, position: i + 1,
-        part_name: p.part_name.trim() || `#${i + 1}`, part_number: p.part_number.trim() || null,
-        quantity: p.quantity || 0, notes: p.notes.trim() || null,
-      }).select('id').single()
-      if (ie) { setSaving(false); toast.error(ie.message); return }
-      const totals = computeTotals(p, p.quantity)
-      const { error: ce } = await supabase.from('calculations').insert({
-        quote_item_id: (item as { id: string }).id, company_id: company.id, version: 1,
-        raw_materials: p.raw_materials, purchased_parts: p.purchased_parts, processes: p.processes,
-        tooling: [], investments: [], packaging: p.packaging,
-        oh_material_pct: p.oh_material_pct, oh_mfg_pct: p.oh_mfg_pct, oh_sga_pct: p.oh_sga_pct,
-        oh_logistics_pct: p.oh_logistics_pct, oh_rd_pct: p.oh_rd_pct, profit_pct: p.profit_pct,
-        ...totals,
-      })
-      if (ce) { setSaving(false); toast.error(ce.message); return }
+      const base = { part_name: p.part_name.trim() || `#${i + 1}`, part_number: p.part_number.trim() || null, quantity: p.quantity || 0, position: i + 1 }
+      if (p.id) {
+        await supabase.from('quote_items').update(base).eq('id', p.id)
+        ids[p.key] = p.id; next.push(p)
+      } else {
+        const { data: item, error } = await supabase.from('quote_items').insert({ ...base, quote_id: quoteId, company_id: company.id }).select('id').single()
+        if (error) { toast.error(error.message); return null }
+        const newId = (item as { id: string }).id
+        ids[p.key] = newId; next.push({ ...p, id: newId })
+      }
     }
+    setPieces(next); setRemovedIds([])
+    return { quoteId: quoteId!, ids }
+  }
+
+  async function save() {
+    setSaving(true)
+    const res = await persist()
     setSaving(false)
+    if (!res) return
     toast.success(t.common.saved)
-    navigate(`/quotes/${quoteId}`)
+    if (!editMode) navigate(`/quotes/${res.quoteId}/edit`, { replace: true })
+  }
+
+  // Issue the offer: save, validate, freeze a snapshot, set status → issued, go to read-only review.
+  async function issue() {
+    if (!company) return
+    setSaving(true)
+    const res = await persist()
+    if (!res) { setSaving(false); return }
+    const [{ data: cust }, { data: its }] = await Promise.all([
+      supabase.from('customers').select('*').eq('id', customerId).single(),
+      supabase.from('quote_items').select('*').eq('quote_id', res.quoteId).order('position'),
+    ])
+    const items = (its as QuoteItem[]) ?? []
+    const calcs: Record<string, Calculation> = {}
+    if (items.length) {
+      const { data: cs } = await supabase.from('calculations').select('*').in('quote_item_id', items.map(i => i.id))
+      for (const c of (cs as Calculation[]) ?? []) calcs[c.quote_item_id] = c
+    }
+    if (items.length === 0) { setSaving(false); toast.error(s.validateNoPieces); return }
+    const snap = await buildSnapshot({ ...({} as Quote), quote_number: quoteNumber, valid_until: validUntil || null, lead_time: leadTime || null, payment_terms: paymentTerms || null, parity: parity || null, contact_person: contactPerson || null, contact_email: contactEmail || null, contact_phone: contactPhone || null, notes: notes || null } as Quote, cust as Customer | null, company, items, calcs)
+    if (snap.items.some(it => !(it.quantities[0]?.unit_price > 0))) { setSaving(false); toast.error(s.validateNoPrice); return }
+    const { error } = await supabase.from('quotes').update({ snapshot: snap, status: 'issued', issued_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', res.quoteId)
+    setSaving(false)
+    if (error) { toast.error(error.message); return }
+    toast.success(s.offerIssued)
+    navigate(`/quotes/${res.quoteId}`)
+  }
+
+  async function changeStatus(next: QuoteStatus) {
+    if (!id) return
+    const patch: Partial<Quote> = { status: next, updated_at: new Date().toISOString() }
+    if (next === 'sent') patch.sent_at = new Date().toISOString()
+    const { error } = await supabase.from('quotes').update(patch).eq('id', id)
+    if (error) { toast.error(error.message); return }
+    setStatusState(next); setAlreadySent(['sent', 'accepted', 'rejected', 'expired', 'won', 'lost', 'frozen'].includes(next)); toast.success(t.common.saved)
+  }
+
+  async function deleteQuote() {
+    if (!id) return
+    const { error } = await supabase.from('quotes').delete().eq('id', id)
+    if (error) { toast.error(error.message); return }
+    toast.success(t.common.deleted); navigate('/quotes')
+  }
+
+  async function calculate(key: string) {
+    setSaving(true)
+    const res = await persist()
+    setSaving(false)
+    if (!res) return
+    navigate(`/quotes/${res.quoteId}/items/${res.ids[key]}`)
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+  if (!readOnly && company && !hasPerm('quotes', 'create')) return <Navigate to="/quotes" replace />
+
+  const grand = pieces.reduce((a, p) => {
+    const pr = p.id ? prices[p.id] : undefined
+    return { turnover: a.turnover + (pr?.annual ?? 0), sell: a.sell }
+  }, { turnover: 0, sell: 0 })
 
   return (
-    <div className="p-4 lg:p-6 max-w-5xl mx-auto">
+    <div className="p-4 lg:p-6">
       <button onClick={() => navigate('/quotes')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-4"><ChevronLeft className="w-4 h-4" />{s.quotes}</button>
-      <h1 className="text-2xl font-bold text-gray-900 mb-5">{editMode ? s.editQuote : s.newQuote}</h1>
-
-      {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">{s.customer}</label>
-            <select value={customerId} onChange={e => setCustomerId(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-              <option value="">{t.common.select}</option>
-              {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-          <Input id="q-title" label={s.title} value={title} onChange={e => setTitle(e.target.value)} />
-          <Input id="q-valid" label={s.validUntil} type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} />
-          <Input id="q-deliv" label={s.deliveryDate} type="date" value={deliveryDate} onChange={e => setDeliveryDate(e.target.value)} />
-          <div className="sm:col-span-2 flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">{s.notes}</label>
-            <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
-          </div>
+      <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          {readOnly ? s.reviewTitle : (editMode ? s.editQuote : s.newQuote)}
+          {quoteNumber && <span className="font-mono text-gray-400">{quoteNumber}</span>}
+          {readOnly && <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLE[status]}`}>{s.status[status]}</span>}
+        </h1>
+        <div className="flex gap-2">
+          {!readOnly && <>
+            {isSaved && editMode && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
+            {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.cancel}</Button>}
+            <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>
+            <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
+          </>}
+          {readOnly && <>
+            {(status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
+              <Button variant="secondary" onClick={() => navigate(`/quotes/${id}/edit`)} className="gap-2"><Pencil className="w-4 h-4" />{s.editOffer}</Button>}
+            {status !== 'draft' && snapshot && <PDFDownloadLink document={<OfferPdf snap={snapshot} />} fileName={`Ponudba_${quoteNumber}.pdf`}>
+              <Button variant="secondary" className="gap-2"><Download className="w-4 h-4" />{s.downloadPdf}</Button>
+            </PDFDownloadLink>}
+            {status === 'issued' && <Button onClick={() => changeStatus('sent')} className="gap-2"><Send className="w-4 h-4" />{s.markSentLabel}</Button>}
+            {status === 'sent' && <>
+              <Button onClick={() => setConfirm('accepted')} className="gap-2"><Check className="w-4 h-4" />{s.markAccepted}</Button>
+              <Button variant="secondary" onClick={() => setConfirm('rejected')} className="gap-2"><X className="w-4 h-4" />{s.markRejected}</Button>
+            </>}
+            {(status === 'won' || status === 'lost') && isAdmin &&
+              <Button variant="secondary" onClick={() => changeStatus('sent')} className="gap-2">{s.adminRevert}</Button>}
+          </>}
         </div>
       </div>
 
-      {/* Pieces */}
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-gray-700">{s.pieces} ({pieces.length})</h2>
-        <Button variant="secondary" onClick={addPiece} className="gap-2"><Plus className="w-4 h-4" />{s.addPiece}</Button>
-      </div>
+      {!readOnly && alreadySent && (
+        <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">{s.alreadySent}</div>
+      )}
 
-      <div className="flex flex-col gap-3 mb-6">
-        {pieces.map((p, idx) => (
-          <PieceCard key={p.key} piece={p} index={idx} open={openPiece === p.key}
-            onToggle={() => setOpenPiece(openPiece === p.key ? null : p.key)}
-            onPatch={patch => patchPiece(p.key, patch)} onRemove={() => removePiece(p.key)}
-            canRemove={pieces.length > 1} machines={machines} laborRates={laborRates} money={money} cur={cur} />
-        ))}
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.cancel}</Button>
-        <Button loading={saving} onClick={save} disabled={!customerId || !title.trim()}>{s.saveDraft}</Button>
-      </div>
-    </div>
-  )
-}
-
-// ─────────────── Piece card ───────────────
-function PieceCard({ piece: p, index, open, onToggle, onPatch, onRemove, canRemove, machines, laborRates, money, cur }: {
-  piece: Piece; index: number; open: boolean; onToggle: () => void
-  onPatch: (patch: Partial<Piece>) => void; onRemove: () => void; canRemove: boolean
-  machines: Machine[]; laborRates: LaborRate[]; money: (n: number) => string; cur: string
-}) {
-  const { t } = useLanguage()
-  const s = t.qp
-  const u = s.units
-  const sym = currencySymbol(cur)
-  const totals = computeTotals(p, p.quantity)
-  const totalUnit = `${sym}/${u.piece}`
-  const priceUnit = (unit: string) => unit ? `${sym}/${unit}` : sym
-  const fmt = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 4 })
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 border-b border-gray-100 cursor-pointer" onClick={onToggle}>
-        {open ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-        <span className="text-sm font-semibold text-gray-800">{index + 1}. {p.part_name || s.partName}</span>
-        <span className="ml-auto text-sm text-gray-500">{money(totals.selling_price)}</span>
-        {canRemove && <button onClick={e => { e.stopPropagation(); onRemove() }} className="p-1 text-gray-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}
-      </div>
-
-      {open && (
-        <div className="p-5 flex flex-col gap-6">
-          {/* Part info */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Input id={`pn-${p.key}`} label={s.partName} value={p.part_name} onChange={e => onPatch({ part_name: e.target.value })} />
-            <Input id={`pnum-${p.key}`} label={s.partNumber} value={p.part_number} onChange={e => onPatch({ part_number: e.target.value })} />
-            <NumberInput id={`pq-${p.key}`} label={s.quantity} unit={u.piece} value={p.quantity} onValue={v => onPatch({ quantity: v ?? 0 })} />
-          </div>
-
-          {/* Raw materials */}
-          <Section title={s.rawMaterials} onAdd={() => onPatch({ raw_materials: [...p.raw_materials, { name: '', unit: '', qty_per_piece: 0, price_per_unit: 0, scrap_pct: 0, total: 0 }] })} addLabel={s.addRow}>
-            {p.raw_materials.map((r, i) => (
-              <RowCard key={i} onRemove={() => onPatch({ raw_materials: p.raw_materials.filter((_, j) => j !== i) })}>
-                <Input id={`rm-n-${i}`} label={s.matName} value={r.name} onChange={e => onPatch({ raw_materials: upd(p.raw_materials, i, { name: e.target.value }) })} />
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <NumberInput id={`rm-q-${i}`} label={s.qtyPerPiece} unit={r.unit || u.piece} value={r.qty_per_piece} onValue={v => onPatch({ raw_materials: upd(p.raw_materials, i, { qty_per_piece: v ?? 0 }) })} />
-                  <NumberInput id={`rm-p-${i}`} label={s.pricePerUnit} unit={priceUnit(r.unit)} value={r.price_per_unit} onValue={v => onPatch({ raw_materials: upd(p.raw_materials, i, { price_per_unit: v ?? 0 }) })} />
-                  <NumberInput id={`rm-s-${i}`} label={s.scrapPct} unit={u.pct} value={r.scrap_pct} onValue={v => onPatch({ raw_materials: upd(p.raw_materials, i, { scrap_pct: v ?? 0 }) })} />
-                  <ResultField label={s.total} value={fmt(rawTotal(r))} unit={totalUnit} />
-                </div>
-                <Input id={`rm-u-${i}`} label={s.unit} value={r.unit} onChange={e => onPatch({ raw_materials: upd(p.raw_materials, i, { unit: e.target.value }) })} className="sm:max-w-[160px]" />
-              </RowCard>
-            ))}
-          </Section>
-
-          {/* Purchased parts */}
-          <Section title={s.purchasedParts} onAdd={() => onPatch({ purchased_parts: [...p.purchased_parts, { name: '', supplier: '', unit: '', qty_per_piece: 0, price_per_unit: 0, total: 0 }] })} addLabel={s.addRow}>
-            {p.purchased_parts.map((r, i) => (
-              <RowCard key={i} onRemove={() => onPatch({ purchased_parts: p.purchased_parts.filter((_, j) => j !== i) })}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <Input id={`pp-n-${i}`} label={s.matName} value={r.name} onChange={e => onPatch({ purchased_parts: upd(p.purchased_parts, i, { name: e.target.value }) })} />
-                  <Input id={`pp-sup-${i}`} label={s.supplier} value={r.supplier} onChange={e => onPatch({ purchased_parts: upd(p.purchased_parts, i, { supplier: e.target.value }) })} />
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <NumberInput id={`pp-q-${i}`} label={s.qtyPerPiece} unit={u.piece} value={r.qty_per_piece} onValue={v => onPatch({ purchased_parts: upd(p.purchased_parts, i, { qty_per_piece: v ?? 0 }) })} />
-                  <NumberInput id={`pp-p-${i}`} label={s.pricePerUnit} unit={sym} value={r.price_per_unit} onValue={v => onPatch({ purchased_parts: upd(p.purchased_parts, i, { price_per_unit: v ?? 0 }) })} />
-                  <ResultField label={s.total} value={fmt(purchasedTotal(r))} unit={totalUnit} />
-                </div>
-              </RowCard>
-            ))}
-          </Section>
-
-          {/* Processes */}
-          <Section title={s.processes} onAdd={() => onPatch({ processes: [...p.processes, { ref_type: 'machine', ref_id: null, name: '', hourly_rate: 0, setup_min: 0, cycle_min: 0, total: 0 }] })} addLabel={s.addRow}>
-            {p.processes.map((r, i) => {
-              const machineOpts = [
-                ...machines.map(m => ({ id: m.id, type: 'machine' as const, name: m.name, rate: (m.use_manual_rate ? m.hourly_rate_manual : m.hourly_rate_computed) ?? 0 })),
-                ...laborRates.map(w => ({ id: w.id, type: 'workstation' as const, name: w.name, rate: (w.hourly_rate_computed ?? 0) })),
-              ]
-              return (
-                <RowCard key={i} onRemove={() => onPatch({ processes: p.processes.filter((_, j) => j !== i) })}>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-gray-700">{s.machineOrStation}</label>
-                    <select value={r.ref_id ?? ''} onChange={e => {
-                      const opt = machineOpts.find(o => o.id === e.target.value)
-                      onPatch({ processes: upd(p.processes, i, opt ? { ref_id: opt.id, ref_type: opt.type, name: opt.name, hourly_rate: opt.rate } : { ref_id: null }) })
-                    }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                      <option value="">—</option>
-                      {machineOpts.map(o => <option key={o.id} value={o.id}>{o.name} ({o.rate} {sym}/h)</option>)}
-                    </select>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <NumberInput id={`pr-r-${i}`} label={s.hourlyRate} unit={`${sym} ${u.perHour}`} value={r.hourly_rate} onValue={v => onPatch({ processes: upd(p.processes, i, { hourly_rate: v ?? 0 }) })} />
-                    <NumberInput id={`pr-s-${i}`} label={s.setupMin} unit={u.min} value={r.setup_min} onValue={v => onPatch({ processes: upd(p.processes, i, { setup_min: v ?? 0 }) })} />
-                    <NumberInput id={`pr-c-${i}`} label={s.cycleMin} unit={u.min} value={r.cycle_min} onValue={v => onPatch({ processes: upd(p.processes, i, { cycle_min: v ?? 0 }) })} />
-                    <ResultField label={s.total} value={fmt(processTotal(r, p.quantity))} unit={totalUnit} />
-                  </div>
-                </RowCard>
-              )
-            })}
-          </Section>
-
-          {/* Packaging */}
-          <Section title={s.packaging} onAdd={() => onPatch({ packaging: [...p.packaging, { name: '', qty_per_piece: 0, price_per_unit: 0, total: 0 }] })} addLabel={s.addRow}>
-            {p.packaging.map((r, i) => (
-              <RowCard key={i} onRemove={() => onPatch({ packaging: p.packaging.filter((_, j) => j !== i) })}>
-                <Input id={`pk-n-${i}`} label={s.matName} value={r.name} onChange={e => onPatch({ packaging: upd(p.packaging, i, { name: e.target.value }) })} />
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <NumberInput id={`pk-q-${i}`} label={s.qtyPerPiece} unit={u.piece} value={r.qty_per_piece} onValue={v => onPatch({ packaging: upd(p.packaging, i, { qty_per_piece: v ?? 0 }) })} />
-                  <NumberInput id={`pk-p-${i}`} label={s.pricePerUnit} unit={sym} value={r.price_per_unit} onValue={v => onPatch({ packaging: upd(p.packaging, i, { price_per_unit: v ?? 0 }) })} />
-                  <ResultField label={s.total} value={fmt(packagingTotal(r))} unit={totalUnit} />
-                </div>
-              </RowCard>
-            ))}
-          </Section>
-
-          {/* Overhead */}
-          <div>
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{s.overhead}</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {([['oh_material_pct', s.materialOh], ['oh_mfg_pct', s.mfgOh], ['oh_sga_pct', s.sga], ['oh_logistics_pct', s.logistics], ['oh_rd_pct', s.rd], ['profit_pct', s.profit]] as const).map(([k, label]) => (
-                <NumberInput key={k} id={`${k}-${p.key}`} label={label} unit={u.pct} value={p[k]} onValue={v => onPatch({ [k]: v ?? 0 } as Partial<Piece>)} />
-              ))}
-            </div>
-          </div>
-
-          {/* Summary */}
-          <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            <Stat label={s.totalMaterial} value={money(totals.total_raw_materials + totals.total_purchased_parts)} />
-            <Stat label={s.totalProcesses} value={money(totals.total_processes)} />
-            <Stat label={s.totalOverhead} value={money(totals.total_overhead)} />
-            <Stat label={s.costPerPiece} value={money(totals.cost_per_piece)} />
-            <Stat label={s.sellingPrice} value={money(totals.selling_price)} strong />
-            <Stat label={s.annualValue} value={money(totals.annual_value)} strong />
-          </div>
+      {readOnly && (
+        <div className="flex items-center gap-1 border-b border-gray-200 mb-5">
+          {([['overview', s.tabOverview], ['pdf', s.tabPdf]] as const).map(([k, label]) => (
+            <button key={k} onClick={() => setTab(k)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${tab === k ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>{label}</button>
+          ))}
         </div>
       )}
-    </div>
-  )
-}
 
-function Section({ title, onAdd, addLabel, children }: { title: string; onAdd: () => void; addLabel: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" />{title}</h4>
-        <button onClick={onAdd} className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"><Plus className="w-3.5 h-3.5" />{addLabel}</button>
+      {tab === 'overview' ? (
+      <>{/* Top: quote data (left) + attachments (right) — frozen in read-only review */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+        <fieldset disabled={readOnly} style={{ display: 'contents' }}>
+        {/* Quote header */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">{s.customer}</label>
+              <select value={customerId} onChange={e => {
+                const cid = e.target.value
+                setCustomerId(cid)
+                const c = customers.find(x => x.id === cid)
+                if (c) { setContactPerson(c.contact_person ?? ''); setContactEmail(c.email ?? ''); setContactPhone(c.phone ?? ''); setPaymentTerms(c.payment_terms ?? ''); setParity(c.parity ?? '') }
+              }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                <option value="">{t.common.select}</option>
+                {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+            <Input id="q-contact" label={s.contactPerson} value={contactPerson} onChange={e => setContactPerson(e.target.value)} />
+            <Input id="q-email" label={t.common.email} type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} />
+            <Input id="q-phone" label={t.common.phone} value={contactPhone} onChange={e => setContactPhone(e.target.value)} />
+            <Input id="q-payment" label={s.paymentTerms} value={paymentTerms} onChange={e => setPaymentTerms(e.target.value)} />
+            <Input id="q-parity" label={s.parity} value={parity} onChange={e => setParity(e.target.value)} />
+            <Input id="q-valid" label={s.validUntil} type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} />
+            <Input id="q-lead" label={s.leadTime} placeholder={s.leadTimeHint} value={leadTime} onChange={e => setLeadTime(e.target.value)} />
+            <div className="sm:col-span-2 flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">{s.notes}</label>
+              <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+            </div>
+          </div>
+        </div>
+
+        {/* Attachments */}
+        {company && <QuoteAttachments quoteId={id} companyId={company.id} attachments={attachments} onChange={setAttachments} readonly={readOnly} />}
+        </fieldset>
       </div>
-      <div className="flex flex-col gap-3">{children}</div>
-    </div>
-  )
-}
 
-function RowCard({ onRemove, children }: { onRemove: () => void; children: React.ReactNode }) {
-  return (
-    <div className="relative rounded-lg border border-gray-200 p-4 pr-9 flex flex-col gap-3">
-      <button onClick={onRemove} className="absolute top-3 right-3 text-gray-300 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
-      {children}
-    </div>
-  )
-}
-
-function ResultField({ label, value, unit }: { label: string; value: string; unit: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
-      <div className="flex items-center rounded-lg border border-gray-200 bg-gray-50">
-        <span className="flex-1 min-w-0 px-3 py-2 text-sm font-medium text-gray-800 truncate">{value}</span>
-        <span className="px-3 text-sm text-gray-400 whitespace-nowrap border-l border-gray-200 self-stretch flex items-center">{unit}</span>
+      {/* Pieces table */}
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-semibold text-gray-700">{s.pieces} ({pieces.length})</h2>
+        {!readOnly && <Button variant="secondary" onClick={addPiece} className="gap-2"><Plus className="w-4 h-4" />{s.addPiece}</Button>}
       </div>
+      <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto mb-6">
+        <table className="w-full text-sm min-w-[720px]">
+          <thead className="bg-gray-50 border-b border-gray-100"><tr>
+            {['', s.partName, s.partNumber, s.quantity, s.sellingPrice, ''].map((h, i) => (
+              <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+            ))}
+          </tr></thead>
+          <tbody className="divide-y divide-gray-50">
+            {pieces.map((p, idx) => (
+              <tr key={p.key} className="hover:bg-gray-50 cursor-pointer" onClick={() => readOnly ? (p.id && navigate(`/quotes/${id}/items/${p.id}?ro=1`)) : calculate(p.key)}>
+                <td className="px-4 py-2 w-14">
+                  <div className="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center text-gray-300 overflow-hidden">
+                    {p.id && pieceThumbs[p.id] ? <img src={pieceThumbs[p.id]} alt="" className="w-full h-full object-contain" /> : <Boxes className="w-5 h-5" />}
+                  </div>
+                </td>
+                <td className="px-2 py-2 text-sm font-medium text-gray-900">{p.part_name || `#${idx + 1}`}</td>
+                <td className="px-2 py-2 w-32 text-sm text-gray-600">{p.part_number || '—'}</td>
+                <td className="px-2 py-2 w-28 text-sm text-gray-700">{p.quantity.toLocaleString('de-DE')} {u.piece}</td>
+                <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">{p.id && prices[p.id] ? money(prices[p.id].sell) : '—'}</td>
+                <td className="px-4 py-2" onClick={e => e.stopPropagation()}>
+                  <div className="flex gap-1 justify-end">
+                    {readOnly
+                      ? <button onClick={() => p.id && navigate(`/quotes/${id}/items/${p.id}?ro=1`)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50"><Eye className="w-3.5 h-3.5" />{t.common.view}</button>
+                      : <>
+                        <button onClick={() => calculate(p.key)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50"><Pencil className="w-3.5 h-3.5" />{t.common.edit}</button>
+                        {pieces.length > 1 && <button onClick={() => setPieceToDelete(p.key)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-3.5 h-3.5" /></button>}
+                      </>}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Totals */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5 flex flex-wrap items-center justify-end gap-8">
+        <div className="text-right">
+          <p className="text-xs text-gray-400">{s.totalTurnover}</p>
+          <p className="text-2xl font-bold text-blue-700">{money(grand.turnover)}</p>
+        </div>
+      </div>
+
+      <ConfirmDialog open={!!pieceToDelete} onClose={() => setPieceToDelete(null)}
+        onConfirm={() => { if (pieceToDelete) removePiece(pieceToDelete); setPieceToDelete(null) }}
+        title={s.pieces} message={s.deletePieceConfirm} confirmLabel={t.common.delete} danger />
+
+      </>
+      ) : (
+        snapshot ? (
+          <div className="bg-white rounded-xl border border-gray-200 h-[800px]">
+            <PDFViewer style={{ width: '100%', height: '100%' }}>
+              <OfferPdf snap={snapshot} />
+            </PDFViewer>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-400">{s.saveQuoteFirst}</div>
+        )
+      )}
+
+      <ConfirmDialog open={deleteQuoteOpen} onClose={() => setDeleteQuoteOpen(false)}
+        onConfirm={() => { setDeleteQuoteOpen(false); deleteQuote() }}
+        title={s.quotes} message={s.deleteQuoteConfirm} confirmLabel={t.common.delete} danger />
+
+      <ConfirmDialog open={!!confirm} onClose={() => setConfirm(null)}
+        onConfirm={() => { if (confirm) changeStatus(confirm); setConfirm(null) }}
+        title={confirm === 'rejected' ? s.markRejected : s.markAccepted}
+        message={confirm === 'rejected' ? s.confirmLost : s.confirmWon}
+        confirmLabel={confirm === 'rejected' ? s.markRejected : s.markAccepted} danger={confirm === 'rejected'} />
     </div>
   )
-}
-
-function Stat({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
-  return (
-    <div>
-      <p className="text-xs text-gray-400">{label}</p>
-      <p className={strong ? 'text-base font-bold text-gray-900' : 'text-sm font-medium text-gray-700'}>{value}</p>
-    </div>
-  )
-}
-
-function upd<T>(arr: T[], i: number, patch: Partial<T>): T[] {
-  return arr.map((x, j) => j === i ? { ...x, ...patch } : x)
 }
