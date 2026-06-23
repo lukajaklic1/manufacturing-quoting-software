@@ -8,6 +8,6 @@ interface QuoteAttachmentsProps {
   readonly?: boolean
 }
 
-export default function QuoteAttachments(props: QuoteAttachmentsProps) {
+export default function QuoteAttachments(_props: QuoteAttachmentsProps) {
   return <div className="text-sm text-gray-500">Attachments</div>
 }
