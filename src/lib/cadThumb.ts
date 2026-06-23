@@ -1,3 +1,3 @@
-export async function cadThumb(path: string) {
+export async function cadThumb(id: string, url: string, fileName: string) {
   return null
 }
