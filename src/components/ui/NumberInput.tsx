@@ -12,7 +12,9 @@ interface Props {
 }
 
 function fmt(n: number, decimals?: number): string {
-  return n.toLocaleString('de-DE', { maximumFractionDigits: decimals ?? 4 })
+  return n.toLocaleString('de-DE', decimals != null
+    ? { minimumFractionDigits: decimals, maximumFractionDigits: decimals }
+    : { maximumFractionDigits: 4 })
 }
 
 // Parse de-DE style input: dots = thousands, comma = decimal.

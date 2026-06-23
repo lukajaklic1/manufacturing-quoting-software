@@ -8,16 +8,26 @@ import { toast } from '../components/ui/Toast'
 import Modal from '../components/ui/Modal'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
+import Pagination from '../components/ui/Pagination'
+import { countUsers } from '../utils/pluralize'
 import type { User as AppUser, UserPermission, UserInvitation } from '../types/database'
 
-const MODULES: UserPermission['module'][] = ['requests', 'purchase_orders', 'receipts', 'invoices', 'budgets', 'reports']
-const ACTIONS: ('view' | 'create' | 'approve' | 'pay')[] = ['view', 'create', 'approve']
+const PAGE_SIZE = 20
+const MODULES: UserPermission['module'][] = ['quotes', 'customers', 'materials', 'machine_rates', 'labor_rates', 'overheads']
+const ACTIONS: ('view' | 'create')[] = ['view', 'create']
 
 type PermMap = Record<string, { can_view: boolean; can_create: boolean; can_approve: boolean; can_pay: boolean }>
 
 function emptyPerms(): PermMap {
   const m: PermMap = {}
   for (const mod of MODULES) m[mod] = { can_view: false, can_create: false, can_approve: false, can_pay: false }
+  return m
+}
+
+// Sensible default for a new user: can view everything, edit nothing.
+function defaultPerms(): PermMap {
+  const m: PermMap = {}
+  for (const mod of MODULES) m[mod] = { can_view: true, can_create: false, can_approve: false, can_pay: false }
   return m
 }
 
@@ -61,23 +71,28 @@ function PermMatrix({ perms, onToggle, labels }: { perms: PermMap; onToggle: (m:
 
 export default function UsersPage() {
   const { company, isAdmin, loading } = useCompany()
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const s = t.settings
   const [users, setUsers] = useState<AppUser[]>([])
   const [permsByUser, setPermsByUser] = useState<Record<string, PermMap>>({})
   const [invites, setInvites] = useState<UserInvitation[]>([])
   const [dataLoading, setDataLoading] = useState(true)
+  const [page, setPage] = useState(1)
 
-  // Permission-matrix labels (built once from translations)
+  // Permission-matrix labels — modules = our app sections, actions = view / create-edit
+  const moduleLabel: Record<string, string> = {
+    quotes: t.nav.quotes, customers: t.nav.customers, materials: t.nav.materials, machine_rates: t.nav.machines, labor_rates: t.nav.labor, overheads: t.nav.overheads,
+  }
+  const actionLabel: Record<string, string> = { view: t.qp.permView, create: t.qp.permCreate }
   const permLabels: Record<string, string> = {}
-  for (const a of ACTIONS) permLabels[`action_${a}`] = s[`action${a.charAt(0).toUpperCase() + a.slice(1)}` as keyof typeof s] as string
-  for (const m of MODULES) permLabels[`module_${m}`] = s[`module${m.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}` as keyof typeof s] as string
+  for (const a of ACTIONS) permLabels[`action_${a}`] = actionLabel[a]
+  for (const m of MODULES) permLabels[`module_${m}`] = moduleLabel[m]
 
   // Invite modal
   const [inviteOpen, setInviteOpen] = useState(false)
   const [inv, setInv] = useState({ first_name: '', last_name: '', email: '', job_title: '' })
   const [inviteAsAdmin, setInviteAsAdmin] = useState(false)
-  const [invitePerms, setInvitePerms] = useState<PermMap>(emptyPerms())
+  const [invitePerms, setInvitePerms] = useState<PermMap>(defaultPerms())
   const [sentTo, setSentTo] = useState<string | null>(null)
   const [inviting, setInviting] = useState(false)
 
@@ -115,7 +130,7 @@ export default function UsersPage() {
   // ── Invite ──
   function openInvite() {
     setInv({ first_name: '', last_name: '', email: '', job_title: '' })
-    setInviteAsAdmin(false); setInvitePerms(emptyPerms()); setSentTo(null); setInviteOpen(true)
+    setInviteAsAdmin(false); setInvitePerms(defaultPerms()); setSentTo(null); setInviteOpen(true)
   }
 
   function toggleInvitePerm(module: string, action: typeof ACTIONS[number]) {
@@ -198,6 +213,9 @@ export default function UsersPage() {
     load()
   }
 
+  const allRows = [...users, ...invites]
+  const paginated = allRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
   if (!isAdmin) return <Navigate to="/dashboard" replace />
 
@@ -206,7 +224,7 @@ export default function UsersPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t.nav.users}</h1>
-          <p className="text-gray-500 text-sm mt-1">{users.length + invites.length} {s.usersCount}</p>
+          <p className="text-gray-500 text-sm mt-1">{countUsers(lang, users.length + invites.length)}</p>
         </div>
         <Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>
       </div>
@@ -229,52 +247,57 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {users.map(u => (
-                <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900">{u.first_name} {u.last_name}</td>
-                  <td className="px-4 py-3 text-gray-600">{u.email}</td>
-                  <td className="px-4 py-3 text-gray-600">{u.job_title ?? '—'}</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_admin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {u.is_admin ? s.admin : s.member}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{t.common.active}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1 justify-end">
-                      <button onClick={() => openEdit(u)} title={s.editPermissions}
-                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {invites.map(invite => (
-                <tr key={invite.id} className="hover:bg-gray-50 transition-colors bg-amber-50/30">
-                  <td className="px-4 py-3 text-gray-500 flex items-center gap-2"><Mail className="w-3.5 h-3.5" />{invite.first_name} {invite.last_name}</td>
-                  <td className="px-4 py-3 text-gray-600">{invite.email}</td>
-                  <td className="px-4 py-3 text-gray-600">{invite.job_title ?? '—'}</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${invite.is_admin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {invite.is_admin ? s.admin : s.member}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">{s.invited}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1 justify-end">
-                      <button onClick={() => revokeInvite(invite)} title={s.revoke}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><X className="w-3.5 h-3.5" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {paginated.map(item => {
+                const u = 'is_admin' in item && 'first_name' in item && 'last_name' in item && 'email' in item && 'job_title' in item && !('status' in item) ? (item as AppUser) : null
+                const invite = u ? null : (item as UserInvitation)
+                return u ? (
+                  <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900">{u.first_name} {u.last_name}</td>
+                    <td className="px-4 py-3 text-gray-600">{u.email}</td>
+                    <td className="px-4 py-3 text-gray-600">{u.job_title ?? '—'}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_admin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                        {u.is_admin ? s.admin : s.member}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{t.common.active}</span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1 justify-end">
+                        <button onClick={() => openEdit(u)} title={s.editPermissions}
+                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : invite ? (
+                  <tr key={invite.id} className="hover:bg-gray-50 transition-colors bg-amber-50/30">
+                    <td className="px-4 py-3 text-gray-500 flex items-center gap-2"><Mail className="w-3.5 h-3.5" />{invite.first_name} {invite.last_name}</td>
+                    <td className="px-4 py-3 text-gray-600">{invite.email}</td>
+                    <td className="px-4 py-3 text-gray-600">{invite.job_title ?? '—'}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${invite.is_admin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                        {invite.is_admin ? s.admin : s.member}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">{s.invited}</span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1 justify-end">
+                        <button onClick={() => revokeInvite(invite)} title={s.revoke}
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><X className="w-3.5 h-3.5" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : null
+              })}
             </tbody>
           </table></div>
         )}
       </div>
+
+      <Pagination total={allRows.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
 
       {/* Invite modal */}
       <Modal open={inviteOpen} onClose={() => setInviteOpen(false)} title={s.addUser} size="lg">
@@ -293,7 +316,7 @@ export default function UsersPage() {
               <div className="col-span-1 sm:col-span-2">
                 <Input id="inv-email" label={s.inviteEmail} type="email" value={inv.email} onChange={e => setInv(v => ({ ...v, email: e.target.value }))} />
               </div>
-              <Input id="inv-job" label={s.jobTitle} value={inv.job_title} onChange={e => setInv(v => ({ ...v, job_title: e.target.value }))} />
+              <div className="col-span-1 sm:col-span-2"><Input id="inv-job" label={s.jobTitle} value={inv.job_title} onChange={e => setInv(v => ({ ...v, job_title: e.target.value }))} /></div>
             </div>
 
             <label className="flex items-center gap-2 text-sm text-gray-700">
@@ -331,7 +354,7 @@ export default function UsersPage() {
               <input value={editUser?.email ?? ''} disabled
                 className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" />
             </div>
-            <Input id="edit-job" label={s.jobTitle} value={editForm.job_title} onChange={e => setEditForm(v => ({ ...v, job_title: e.target.value }))} />
+            <div className="col-span-1 sm:col-span-2"><Input id="edit-job" label={s.jobTitle} value={editForm.job_title} onChange={e => setEditForm(v => ({ ...v, job_title: e.target.value }))} /></div>
           </div>
 
           {editUser?.id !== primaryAdminId && (

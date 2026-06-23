@@ -10,11 +10,13 @@ import RegisterPage from './pages/RegisterPage'
 import OnboardingPage from './pages/OnboardingPage'
 import DashboardPage from './pages/DashboardPage'
 import CustomersPage from './pages/CustomersPage'
+import MaterialsPage from './pages/MaterialsPage'
 import QuotesPage from './pages/QuotesPage'
 import QuoteFormPage from './pages/QuoteFormPage'
-import QuoteDetailPage from './pages/QuoteDetailPage'
+import CalculationPage from './pages/CalculationPage'
 import MachinesPage from './pages/MachinesPage'
 import MachineFormPage from './pages/MachineFormPage'
+import OverheadsPage from './pages/OverheadsPage'
 import LaborListPage from './pages/LaborListPage'
 import LaborFormPage from './pages/LaborFormPage'
 import SettingsPage from './pages/SettingsPage'
@@ -54,15 +56,18 @@ export default function Root() {
             <Route path="/dashboard"        element={<App><DashboardPage /></App>} />
             <Route path="/quotes"           element={<App><QuotesPage /></App>} />
             <Route path="/quotes/new"       element={<App><QuoteFormPage /></App>} />
-            <Route path="/quotes/:id"       element={<App><QuoteDetailPage /></App>} />
             <Route path="/quotes/:id/edit"  element={<App><QuoteFormPage /></App>} />
+            <Route path="/quotes/:id"       element={<App><QuoteFormPage readOnly /></App>} />
+            <Route path="/quotes/:quoteId/items/:itemId" element={<App><CalculationPage /></App>} />
             <Route path="/customers"        element={<App><CustomersPage /></App>} />
+            <Route path="/materials"        element={<App><MaterialsPage /></App>} />
             <Route path="/machines"         element={<App><MachinesPage /></App>} />
             <Route path="/machines/new"     element={<App><MachineFormPage /></App>} />
             <Route path="/machines/:id/edit" element={<App><MachineFormPage /></App>} />
             <Route path="/labor"            element={<App><LaborListPage /></App>} />
             <Route path="/labor/new"        element={<App><LaborFormPage /></App>} />
             <Route path="/labor/:id/edit"   element={<App><LaborFormPage /></App>} />
+            <Route path="/overheads"        element={<App><OverheadsPage /></App>} />
             <Route path="/users"            element={<App><UsersPage /></App>} />
             <Route path="/settings"         element={<App><SettingsPage /></App>} />
 

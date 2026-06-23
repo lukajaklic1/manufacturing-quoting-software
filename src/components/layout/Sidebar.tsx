@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, FileText, Users, UserCog, Settings, LogOut, X, Factory, HardHat,
+  LayoutDashboard, FileText, Users, UserCog, Settings, LogOut, X, Factory, HardHat, Layers, Box,
 } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { useCompany } from '../../hooks/useCompany'
@@ -10,10 +10,12 @@ import AppLogo from '../ui/AppLogo'
 
 const NAV_KEYS = [
   { to: '/dashboard', icon: LayoutDashboard, key: 'dashboard' as const },
-  { to: '/quotes',    icon: FileText,        key: 'quotes' as const },
-  { to: '/customers', icon: Users,           key: 'customers' as const },
-  { to: '/machines',  icon: Factory,         key: 'machines' as const },
-  { to: '/labor',     icon: HardHat,         key: 'labor' as const },
+  { to: '/quotes',    icon: FileText,        key: 'quotes' as const, mod: 'quotes' as const },
+  { to: '/customers', icon: Users,           key: 'customers' as const, mod: 'customers' as const },
+  { to: '/materials', icon: Box,             key: 'materials' as const, mod: 'materials' as const },
+  { to: '/machines',  icon: Factory,         key: 'machines' as const, mod: 'machine_rates' as const },
+  { to: '/labor',     icon: HardHat,         key: 'labor' as const, mod: 'labor_rates' as const },
+  { to: '/overheads', icon: Layers,          key: 'overheads' as const, mod: 'overheads' as const },
   { to: '/users',     icon: UserCog,         key: 'users' as const, adminOnly: true },
 ]
 
@@ -23,7 +25,7 @@ interface SidebarProps {
 
 export default function Sidebar({ onClose }: SidebarProps) {
   const { signOut } = useAuth()
-  const { company, profile } = useCompany()
+  const { company, profile, hasPerm } = useCompany()
   const { lang, setLang, t } = useLanguage()
   const navigate = useNavigate()
 
@@ -58,7 +60,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-3 px-2">
-        {NAV_KEYS.filter(item => !item.adminOnly || profile?.is_admin).map(({ to, icon: Icon, key }) => (
+        {NAV_KEYS.filter(item => (!item.adminOnly || profile?.is_admin) && (!('mod' in item) || hasPerm((item as { mod: Parameters<typeof hasPerm>[0] }).mod, 'view'))).map(({ to, icon: Icon, key }) => (
           <NavLink
             key={to}
             to={to}

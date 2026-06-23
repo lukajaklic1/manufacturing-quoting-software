@@ -12,6 +12,21 @@ export function slPlural(n: number, ednina: string, dvojina: string, mnozina: st
   return rodilnik
 }
 
+// Jezikovno odvisen števec: SL uporabi sklanjanje, EN preprosto ednina/množina.
+export function plural(
+  lang: 'en' | 'sl', n: number,
+  sl: [string, string, string, string], en: [string, string],
+): string {
+  if (lang === 'sl') return `${n} ${slPlural(n, sl[0], sl[1], sl[2], sl[3])}`
+  return `${n} ${n === 1 ? en[0] : en[1]}`
+}
+
+export const countUsers = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['uporabnik', 'uporabnika', 'uporabniki', 'uporabnikov'], ['user', 'users'])
+export const countCustomers = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['stranka', 'stranki', 'stranke', 'strank'], ['customer', 'customers'])
+export const countMachines = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['stroj', 'stroja', 'stroji', 'strojev'], ['machine', 'machines'])
+export const countWorkers = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['delavec', 'delavca', 'delavci', 'delavcev'], ['worker', 'workers'])
+export const countQuotes = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['ponudba', 'ponudbi', 'ponudbe', 'ponudb'], ['quote', 'quotes'])
+
 // Predpripravljene funkcije za vsako entiteto
 
 export function stDobaviteljev(n: number) {

@@ -22,6 +22,15 @@ export interface Company {
   overhead_logistics_pct: number
   overhead_rd_pct: number
   overhead_profit_pct: number
+  // Overhead calculation inputs (cost centres + bases, annual)
+  oh_cc_material: number
+  oh_cc_manufacturing: number
+  oh_cc_sga: number
+  oh_cc_logistics: number
+  oh_cc_rd: number
+  oh_base_material: number
+  oh_base_manufacturing: number
+  quote_prefix: string
   quote_counter: number
   created_at: string
   updated_at: string
@@ -41,10 +50,12 @@ export interface User {
   updated_at: string
 }
 
+export type PermModule = 'quotes' | 'customers' | 'materials' | 'machine_rates' | 'labor_rates' | 'overheads'
+
 export interface UserPermission {
   id: string
   user_id: string
-  module: 'requests' | 'purchase_orders' | 'receipts' | 'invoices' | 'budgets' | 'reports'
+  module: PermModule
   can_view: boolean
   can_create: boolean
   can_approve: boolean
@@ -86,8 +97,14 @@ export interface Customer {
   email: string | null
   phone: string | null
   address: string | null
+  address_street: string | null
+  address_city: string | null
+  address_postal_code: string | null
   vat_number: string | null
   country: string | null
+  payment_terms: string | null
+  parity: string | null
+  status: 'active' | 'inactive'
   notes: string | null
   created_at: string
   updated_at: string
@@ -181,7 +198,7 @@ export interface Workstation {
   updated_at: string
 }
 
-export type QuoteStatus = 'draft' | 'sent' | 'won' | 'lost' | 'frozen'
+export type QuoteStatus = 'draft' | 'issued' | 'sent' | 'accepted' | 'rejected' | 'expired' | 'won' | 'lost' | 'frozen'
 export type LostReason = 'price' | 'time' | 'quality' | 'competitor' | 'other'
 
 export interface Quote {
@@ -194,11 +211,38 @@ export interface Quote {
   lost_reason: LostReason | null
   valid_until: string | null
   delivery_date: string | null
+  lead_time: string | null
+  contact_person: string | null
+  contact_email: string | null
+  contact_phone: string | null
+  payment_terms: string | null
+  parity: string | null
   notes: string | null
   created_by: string
   sent_at: string | null
+  snapshot: OfferSnapshot | null
+  issued_at: string | null
+  pdf_path: string | null
   created_at: string
   updated_at: string
+}
+
+// Frozen copy of an issued offer (so it never re-reads live price lists).
+export interface OfferSnapshot {
+  offer: { number: string; issued_at: string; valid_until: string | null; lead_time: string | null; payment_terms: string | null; parity: string | null; notes: string | null; currency: string }
+  customer: { name: string; vat_number: string | null; address: string | null; contact_person: string | null; contact_email: string | null; contact_phone: string | null }
+  company: { name: string; address: string | null; tax_id: string | null; email: string | null; phone: string | null; bank_name: string | null; bank_iban: string | null; logo_url: string | null }
+  items: OfferSnapshotItem[]
+  grand_total: number
+}
+export interface OfferSnapshotItem {
+  name: string
+  number: string | null
+  unit: string
+  thumb?: string | null   // base64 data URL of the CAD thumbnail (frozen into the offer)
+  quantities: { qty: number; unit_price: number; total: number; cost_per_piece: number; margin: number }[]
+  // internal calc summary (not shown in the customer PDF)
+  internal: { total_material: number; total_processes: number; total_packaging: number; total_overhead: number; cost_per_piece: number; selling_price: number }
 }
 
 export interface QuoteItem {
@@ -210,16 +254,45 @@ export interface QuoteItem {
   part_number: string | null
   quantity: number
   notes: string | null
+  drawing_path: string | null
+  thumb_path: string | null
   created_at: string
 }
 
-// JSONB section row shapes (calculations.*)
-export interface RawMaterialRow {
+export type MaterialShape = 'sheet' | 'round_bar' | 'rect_bar' | 'round_tube' | 'square_tube' | 'other'
+
+export interface Material {
+  id: string
+  company_id: string
   name: string
-  unit: string
-  qty_per_piece: number
-  price_per_unit: number
+  category: string | null
+  density: number        // g/cm³
+  price_per_kg: number   // €/kg
+  color: string | null
+  is_active: boolean
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+// JSONB section row shapes (calculations.*)
+// Raw material = pick from DB, choose shape + dimensions (mm) → weight (kg) → cost.
+export interface RawMaterialRow {
+  material_id: string | null
+  name: string
+  density: number
+  price_per_kg: number
+  shape: MaterialShape
+  length: number
+  width: number
+  thickness: number
+  diameter: number
+  wall: number
+  manual_weight: number      // for shape 'other' — enter stock weight (kg) directly
+  pieces_per_stock: number   // how many finished pieces from one stock (cost ÷ this)
+  qty_per_piece?: number     // legacy
   scrap_pct: number
+  weight: number
   total: number
 }
 export interface PurchasedPartRow {
@@ -228,21 +301,38 @@ export interface PurchasedPartRow {
   unit: string
   qty_per_piece: number
   price_per_unit: number
+  scrap_pct?: number
   total: number
 }
 export interface ProcessRow {
-  ref_type: 'machine' | 'workstation'
-  ref_id: string | null
   name: string
-  hourly_rate: number
+  // Machine (occupies the cell during run + setup)
+  machine_id: string | null
+  machine_rate: number
+  // Direct operators during the run
+  operators: number
+  operator_id: string | null
+  operator_rate: number
+  // Setup — done by one or more technologists/setters
+  setup_id: string | null
+  setup_rate: number
+  setup_qty: number
   setup_min: number
+  setup_with_operator: boolean   // operator also present during setup
+  batch_size: number             // max pieces per setup (lot); 0 = one setup for whole order
   cycle_min: number
+  pieces_per_cycle: number       // cavities / nests (default 1)
   total: number
+  // legacy (pre-multi-resource calcs)
+  ref_type?: 'machine' | 'workstation'
+  ref_id?: string | null
+  hourly_rate?: number
 }
 export interface ToolingRow {
   name: string
   tool_cost: number
   lifetime_pcs: number
+  scrap_pct?: number
   cost_per_piece: number
 }
 export interface InvestmentRow {
@@ -261,8 +351,9 @@ export interface InvestmentRow {
 }
 export interface PackagingRow {
   name: string
-  qty_per_piece: number
-  price_per_unit: number
+  price_per_unit: number       // price of one packaging unit (box/crate)
+  pieces_per_unit?: number     // finished pieces that fit in one packaging unit
+  qty_per_piece?: number       // legacy
   total: number
 }
 
@@ -271,6 +362,9 @@ export interface Calculation {
   quote_item_id: string
   company_id: string
   version: number
+  quantities: number[]
+  scrap_pct: number
+  batch_size: number
   raw_materials: RawMaterialRow[]
   purchased_parts: PurchasedPartRow[]
   processes: ProcessRow[]
@@ -297,13 +391,17 @@ export interface Calculation {
   updated_at: string
 }
 
+export type AttachmentKind = 'cad' | 'email' | 'drawing' | 'bom' | 'other'
+
 export interface QuoteAttachment {
   id: string
   company_id: string
   quote_id: string
+  quote_item_id: string | null
   file_name: string
   storage_path: string
   file_size: number | null
+  kind: AttachmentKind
   uploaded_by: string | null
   created_at: string
 }
@@ -319,6 +417,7 @@ export interface Database {
       machines: { Row: Machine; Insert: Omit<Machine, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Machine, 'id'>> }
       workstations: { Row: Workstation; Insert: Omit<Workstation, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Workstation, 'id'>> }
       labor_rates: { Row: LaborRate; Insert: Omit<LaborRate, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<LaborRate, 'id'>> }
+      materials: { Row: Material; Insert: Omit<Material, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Material, 'id'>> }
       quotes: { Row: Quote; Insert: Omit<Quote, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Quote, 'id'>> }
       quote_items: { Row: QuoteItem; Insert: Omit<QuoteItem, 'id' | 'created_at'>; Update: Partial<Omit<QuoteItem, 'id'>> }
       calculations: { Row: Calculation; Insert: Omit<Calculation, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Calculation, 'id'>> }

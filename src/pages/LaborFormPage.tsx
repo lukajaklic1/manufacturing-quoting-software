@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -16,13 +16,13 @@ import type { LaborRate } from '../types/database'
 const defaults: Partial<LaborRate> = {
   name: '', is_active: true, annual_cost: 0,
   working_days_per_year: 240, vacation_days: 30, shifts_per_day: 1,
-  hours_per_shift: 8, break_min_per_shift: 0, utilization_pct: 85,
+  hours_per_shift: 8, break_min_per_shift: 30, utilization_pct: 85,
 }
 
 export default function LaborFormPage() {
   const { id } = useParams()
   const editMode = !!id
-  const { company, profile } = useCompany()
+  const { company, profile, hasPerm } = useCompany()
   const { t } = useLanguage()
   const s = t.qp
   const navigate = useNavigate()
@@ -77,6 +77,7 @@ export default function LaborFormPage() {
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+  if (company && !hasPerm('labor_rates', 'create')) return <Navigate to="/labor" replace />
 
   return (
     <div className="p-4 lg:p-8 max-w-4xl mx-auto">

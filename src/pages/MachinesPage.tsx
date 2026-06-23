@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { Plus, Pencil, Trash2, Factory, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -7,13 +7,19 @@ import { useLanguage } from '../hooks/useLanguage'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
+import Pagination from '../components/ui/Pagination'
 import { effectiveMachineRate } from '../lib/machineRate'
+import { usedMachineIds } from '../lib/usageCheck'
+import { countMachines } from '../utils/pluralize'
 import { format } from 'date-fns'
 import type { Machine } from '../types/database'
 
+const PAGE_SIZE = 20
+
 export default function MachinesPage() {
-  const { company } = useCompany()
-  const { t } = useLanguage()
+  const { company, hasPerm, loading: permLoading } = useCompany()
+  const canEdit = hasPerm('machine_rates', 'create')
+  const { t, lang } = useLanguage()
   const s = t.qp
   const navigate = useNavigate()
   const cur = company?.currency ?? 'EUR'
@@ -21,42 +27,53 @@ export default function MachinesPage() {
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
   const [toDelete, setToDelete] = useState<Machine | null>(null)
+  const [used, setUsed] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [catFilter, setCatFilter] = useState<string>('all')
+  const [page, setPage] = useState(1)
 
   const filtered = rows.filter(m =>
     (catFilter === 'all' || m.category === catFilter) &&
     (!search || m.name.toLowerCase().includes(search.toLowerCase()) || (m.model ?? '').toLowerCase().includes(search.toLowerCase())))
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   useEffect(() => { if (company) load() }, [company])
   async function load() {
     if (!company) return
     setLoading(true)
     const { data } = await supabase.from('machines').select('*, editor:users!updated_by(first_name, last_name)').eq('company_id', company.id).order('name')
-    setRows((data as Row[]) ?? []); setLoading(false)
+    setRows((data as Row[]) ?? [])
+    setUsed(await usedMachineIds())
+    setLoading(false)
   }
   async function doDelete() {
     if (!toDelete) return
+    if (used.has(toDelete.id)) { toast.error(s.cannotDeleteLinked); setToDelete(null); return }
     const { error } = await supabase.from('machines').delete().eq('id', toDelete.id)
     if (error) { toast.error(error.message); return }
     toast.success(t.common.deleted); setToDelete(null); load()
   }
   const rate = (m: Machine) => effectiveMachineRate(m).toLocaleString('de-DE', { style: 'currency', currency: cur })
 
+  if (!permLoading && !hasPerm('machine_rates', 'view')) return <Navigate to="/dashboard" replace />
+
   return (
     <div className="p-4 lg:p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t.nav.machines}</h1>
-        <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{t.nav.machines}</h1>
+          <p className="text-gray-500 text-sm mt-1">{countMachines(lang, rows.length)}</p>
+        </div>
+        {canEdit && <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>}
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative max-w-xs w-full">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder={`${s.machineName} / ${s.machineModel}`}
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={`${s.machineName} / ${s.machineModel}`}
             className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
+        <select value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1) }}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
           <option value="all">{t.common.all} · {s.category}</option>
           {Object.entries(s.cat).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
@@ -76,8 +93,8 @@ export default function MachinesPage() {
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-50">
-              {filtered.map(m => (
-                <tr key={m.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/machines/${m.id}/edit`)}>
+              {paginated.map(m => (
+                <tr key={m.id} className={`hover:bg-gray-50 ${canEdit ? 'cursor-pointer' : ''}`} onClick={() => canEdit && navigate(`/machines/${m.id}/edit`)}>
                   <td className="px-4 py-2.5 font-medium text-gray-900">{m.name}</td>
                   <td className="px-4 py-2.5 text-gray-600">{m.model || '—'}</td>
                   <td className="px-4 py-2.5 text-gray-600">{m.category ? s.cat[m.category] : '—'}</td>
@@ -91,8 +108,8 @@ export default function MachinesPage() {
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>
                     <div className="flex gap-1 justify-end">
-                      <button onClick={() => navigate(`/machines/${m.id}/edit`)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>
-                      <button onClick={() => setToDelete(m)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-3.5 h-3.5" /></button>
+                      {canEdit && <button onClick={() => navigate(`/machines/${m.id}/edit`)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>}
+                      {canEdit && !used.has(m.id) && <button onClick={() => setToDelete(m)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-3.5 h-3.5" /></button>}
                     </div>
                   </td>
                 </tr>
@@ -101,6 +118,9 @@ export default function MachinesPage() {
           </table>
         )}
       </div>
+
+      <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
+
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
         title={t.nav.machines} message={s.deleteCustomerConfirm} confirmLabel={t.common.delete} danger />
     </div>

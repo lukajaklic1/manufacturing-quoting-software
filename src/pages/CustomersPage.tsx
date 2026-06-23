@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { Plus, Pencil, Trash2, Users, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -8,20 +9,32 @@ import Modal from '../components/ui/Modal'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
+import Pagination from '../components/ui/Pagination'
+import { countCustomers } from '../utils/pluralize'
 import type { Customer } from '../types/database'
 
-type Form = { name: string; contact_person: string; email: string; phone: string; address: string; vat_number: string; country: string; notes: string }
+interface Form {
+  name: string; vat_number: string; contact_person: string
+  address_street: string; address_city: string; address_postal_code: string; country: string
+  email: string; phone: string; payment_terms: string; parity: string; status: 'active' | 'inactive'
+}
+const empty: Form = {
+  name: '', vat_number: '', contact_person: '', address_street: '', address_city: '', address_postal_code: '',
+  country: '', email: '', phone: '', payment_terms: '', parity: '', status: 'active',
+}
 
-const empty: Form = { name: '', contact_person: '', email: '', phone: '', address: '', vat_number: '', country: '', notes: '' }
+const PAGE_SIZE = 20
 
 export default function CustomersPage() {
-  const { company } = useCompany()
-  const { t } = useLanguage()
+  const { company, hasPerm, loading: permLoading } = useCompany()
+  const canEdit = hasPerm('customers', 'create')
+  const { t, lang } = useLanguage()
   const s = t.qp
   const [rows, setRows] = useState<Customer[]>([])
   const [counts, setCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
 
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Customer | null>(null)
@@ -29,6 +42,7 @@ export default function CustomersPage() {
   const [saving, setSaving] = useState(false)
   const [toDelete, setToDelete] = useState<Customer | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [page, setPage] = useState(1)
 
   useEffect(() => { if (company) load() }, [company])
 
@@ -50,8 +64,10 @@ export default function CustomersPage() {
   function openEdit(c: Customer) {
     setEditing(c)
     setForm({
-      name: c.name, contact_person: c.contact_person ?? '', email: c.email ?? '', phone: c.phone ?? '',
-      address: c.address ?? '', vat_number: c.vat_number ?? '', country: c.country ?? '', notes: c.notes ?? '',
+      name: c.name, vat_number: c.vat_number ?? '', contact_person: c.contact_person ?? '',
+      address_street: c.address_street ?? '', address_city: c.address_city ?? '', address_postal_code: c.address_postal_code ?? '',
+      country: c.country ?? '', email: c.email ?? '', phone: c.phone ?? '',
+      payment_terms: c.payment_terms ?? '', parity: c.parity ?? '', status: c.status ?? 'active',
     })
     setOpen(true)
   }
@@ -59,15 +75,12 @@ export default function CustomersPage() {
   async function save() {
     if (!company || !form.name.trim()) return
     setSaving(true)
+    const tr = (v: string) => v.trim() || null
     const payload = {
-      name: form.name.trim(),
-      contact_person: form.contact_person.trim() || null,
-      email: form.email.trim() || null,
-      phone: form.phone.trim() || null,
-      address: form.address.trim() || null,
-      vat_number: form.vat_number.trim() || null,
-      country: form.country.trim() || null,
-      notes: form.notes.trim() || null,
+      name: form.name.trim(), vat_number: tr(form.vat_number), contact_person: tr(form.contact_person),
+      address_street: tr(form.address_street), address_city: tr(form.address_city), address_postal_code: tr(form.address_postal_code),
+      country: tr(form.country), email: tr(form.email), phone: tr(form.phone),
+      payment_terms: tr(form.payment_terms), parity: tr(form.parity), status: form.status,
     }
     const { error } = editing
       ? await supabase.from('customers').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editing.id)
@@ -80,6 +93,7 @@ export default function CustomersPage() {
   async function doDelete() {
     if (!toDelete) return
     setDeleting(true)
+    if ((counts[toDelete.id] ?? 0) > 0) { setDeleting(false); toast.error(s.cannotDeleteLinked); setToDelete(null); return }
     const { error } = await supabase.from('customers').delete().eq('id', toDelete.id)
     setDeleting(false)
     if (error) { toast.error(error.message); return }
@@ -87,27 +101,37 @@ export default function CustomersPage() {
   }
 
   const filtered = rows.filter(c =>
-    !search || c.name.toLowerCase().includes(search.toLowerCase()) ||
-    (c.contact_person ?? '').toLowerCase().includes(search.toLowerCase()))
+    (statusFilter === 'all' || (c.status ?? 'active') === statusFilter) &&
+    (!search || c.name.toLowerCase().includes(search.toLowerCase()) ||
+      (c.contact_person ?? '').toLowerCase().includes(search.toLowerCase())))
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  function field(key: keyof Form) {
-    return { value: form[key], onChange: (e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, [key]: e.target.value })) }
-  }
+  const field = (key: keyof Form) => ({ value: form[key] as string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, [key]: e.target.value })) })
+
+  if (!permLoading && !hasPerm('customers', 'view')) return <Navigate to="/dashboard" replace />
 
   return (
     <div className="p-4 lg:p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{s.customers}</h1>
-          <p className="text-gray-500 text-sm mt-1">{rows.length} {s.customers.toLowerCase()}</p>
+          <p className="text-gray-500 text-sm mt-1">{countCustomers(lang, rows.length)}</p>
         </div>
-        <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newCustomer}</Button>
+        {canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newCustomer}</Button>}
       </div>
 
-      <div className="relative mb-4 max-w-sm">
-        <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t.common.search}
-          className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="relative max-w-xs w-full">
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        {(['all', 'active', 'inactive'] as const).map(st => (
+          <button key={st} onClick={() => { setStatusFilter(st); setPage(1) }}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${statusFilter === st ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+            {st === 'all' ? t.common.all : st === 'active' ? t.common.active : t.common.inactive}
+          </button>
+        ))}
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -119,24 +143,30 @@ export default function CustomersPage() {
             <p className="text-sm text-gray-400">{s.noCustomers}</p>
           </div>
         ) : (
-          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[700px]">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[820px]">
             <thead className="bg-gray-50 border-b border-gray-100"><tr>
-              {[s.customerName, s.contactPerson, t.common.email, s.country, s.quotesCount, ''].map((h, i) => (
+              {[s.companyName, s.contact, t.common.email, t.common.phone, s.paymentTerms, s.quotesCount, t.common.status, ''].map((h, i) => (
                 <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-50">
-              {filtered.map(c => (
+              {paginated.map(c => (
                 <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
+                  <td className="px-4 py-3 font-medium text-gray-900">{c.name}{c.vat_number && <span className="ml-2 text-xs text-gray-400 font-normal">{c.vat_number}</span>}</td>
                   <td className="px-4 py-3 text-gray-600">{c.contact_person ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600">{c.email ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{c.country ?? '—'}</td>
+                  <td className="px-4 py-3 text-gray-600">{c.phone ?? '—'}</td>
+                  <td className="px-4 py-3 text-gray-600">{c.payment_terms ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600">{counts[c.id] ?? 0}</td>
                   <td className="px-4 py-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${(c.status ?? 'active') === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                      {(c.status ?? 'active') === 'active' ? t.common.active : t.common.inactive}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-1 justify-end">
-                      <button onClick={() => openEdit(c)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
-                      <button onClick={() => setToDelete(c)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                      {canEdit && <button onClick={() => openEdit(c)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Pencil className="w-3.5 h-3.5" /></button>}
+                      {canEdit && (counts[c.id] ?? 0) === 0 && <button onClick={() => setToDelete(c)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
                     </div>
                   </td>
                 </tr>
@@ -146,24 +176,29 @@ export default function CustomersPage() {
         )}
       </div>
 
+      <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
+
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? s.editCustomer : s.newCustomer} size="lg">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="sm:col-span-2"><Input id="c-name" label={s.customerName} {...field('name')} /></div>
+          <div className="sm:col-span-2"><Input id="c-name" label={s.companyName} {...field('name')} /></div>
+          <Input id="c-vat" label={s.vatNumber} {...field('vat_number')} />
           <Input id="c-contact" label={s.contactPerson} {...field('contact_person')} />
+          <Input id="c-street" label={t.common.streetAddress} {...field('address_street')} />
+          <Input id="c-city" label={t.common.city} {...field('address_city')} />
+          <Input id="c-postal" label={t.common.postalCode} {...field('address_postal_code')} />
+          <Input id="c-country" label={s.country} {...field('country')} />
           <Input id="c-email" label={t.common.email} type="email" {...field('email')} />
           <Input id="c-phone" label={t.common.phone} {...field('phone')} />
-          <Input id="c-country" label={s.country} {...field('country')} />
-          <Input id="c-vat" label={s.vatNumber} {...field('vat_number')} />
-          <div className="sm:col-span-2"><Input id="c-address" label={t.common.streetAddress} {...field('address')} /></div>
-          <div className="sm:col-span-2 flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">{s.notes}</label>
-            <textarea rows={2} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
-          </div>
+          <Input id="c-payterms" label={s.paymentTerms} placeholder={s.paymentTermsHint} {...field('payment_terms')} />
+          <Input id="c-parity" label={s.parity} placeholder={s.parityHint} {...field('parity')} />
         </div>
+        <label className="flex items-center gap-2 text-sm text-gray-700 mt-4">
+          <input type="checkbox" checked={form.status === 'active'} onChange={e => setForm(f => ({ ...f, status: e.target.checked ? 'active' : 'inactive' }))}
+            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />{t.common.active}
+        </label>
         <div className="flex gap-3 justify-end mt-5">
           <Button variant="secondary" onClick={() => setOpen(false)}>{t.common.cancel}</Button>
-          <Button loading={saving} onClick={save} disabled={!form.name.trim()}>{t.common.save}</Button>
+          <Button loading={saving} onClick={save} disabled={!form.name.trim()}>{editing ? t.common.save : s.newCustomer}</Button>
         </div>
       </Modal>
 

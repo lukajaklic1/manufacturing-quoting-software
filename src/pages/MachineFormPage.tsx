@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -31,7 +31,7 @@ const defaults: Partial<Machine> = {
 export default function MachineFormPage() {
   const { id } = useParams()
   const editMode = !!id
-  const { company, profile } = useCompany()
+  const { company, profile, hasPerm } = useCompany()
   const { t } = useLanguage()
   const s = t.qp
   const navigate = useNavigate()
@@ -86,6 +86,7 @@ export default function MachineFormPage() {
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+  if (company && !hasPerm('machine_rates', 'create')) return <Navigate to="/machines" replace />
 
   return (
     <div className="p-4 lg:p-8 max-w-4xl mx-auto">
