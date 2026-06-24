@@ -108,11 +108,16 @@ export default function DashboardPage() {
   const maxLost = Math.max(1, ...stats.lost_reasons.map(r => r.count))
   const sortedCustomers = getSortedCustomers()
 
+  const totalSentValue = trends.reduce((sum, t) => sum + (t.sent_value || 0), 0)
+  const totalRealizedValue = trends.reduce((sum, t) => sum + (t.realized_value || 0), 0)
+  const totalSentCount = trends.reduce((sum, t) => sum + (t.sent_count || 0), 0)
+  const totalRealizedCount = trends.reduce((sum, t) => sum + (t.realized_count || 0), 0)
+
   const cards = [
-    { label: s.pipelineValue, value: money(stats.pipeline_value), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
-    { label: s.winRate, value: `${stats.win_rate}%`, icon: Trophy, color: 'text-green-600 bg-green-50' },
-    { label: s.activeQuotes, value: String(stats.active_quotes), icon: FileText, color: 'text-purple-600 bg-purple-50' },
-    { label: s.realizedThisMonth, value: money(stats.realized_this_month), icon: CheckCircle2, color: 'text-amber-600 bg-amber-50' },
+    { label: 'Skupna ponujena vrednost', value: money(totalSentValue), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
+    { label: 'Skupna vrednost dobljenih ponudb', value: money(totalRealizedValue), icon: CheckCircle2, color: 'text-green-600 bg-green-50' },
+    { label: 'Število poslanih ponudb', value: String(totalSentCount), icon: FileText, color: 'text-purple-600 bg-purple-50' },
+    { label: 'Število dobljenih ponudb', value: String(totalRealizedCount), icon: Trophy, color: 'text-amber-600 bg-amber-50' },
   ]
 
   return (
