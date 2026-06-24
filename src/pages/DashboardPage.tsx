@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Label } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -150,12 +150,12 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Število poslanih ponudb</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends}>
+            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="sent_count" fill="#3b82f6" />
+              <Bar dataKey="sent_count" fill="#3b82f6" label={{ position: 'top', fill: '#1f2937', fontSize: 12 }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -164,12 +164,12 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Število dobljenih ponudb</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends}>
+            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="realized_count" fill="#10b981" />
+              <Bar dataKey="realized_count" fill="#10b981" label={{ position: 'top', fill: '#1f2937', fontSize: 12 }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -178,12 +178,12 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Ponujen znesek</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends}>
+            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" />
               <YAxis />
               <Tooltip formatter={(v) => money(v as number)} />
-              <Bar dataKey="sent_value" fill="#8b5cf6" />
+              <Bar dataKey="sent_value" fill="#8b5cf6" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v) => '€' + (v / 1000).toFixed(1) + 'k' }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -192,12 +192,12 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Znesek dobljenih ponudb</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends}>
+            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" />
               <YAxis />
               <Tooltip formatter={(v) => money(v as number)} />
-              <Bar dataKey="realized_value" fill="#06b6d4" />
+              <Bar dataKey="realized_value" fill="#06b6d4" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v) => '€' + (v / 1000).toFixed(1) + 'k' }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
