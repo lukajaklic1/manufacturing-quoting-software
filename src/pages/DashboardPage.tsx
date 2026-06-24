@@ -105,7 +105,6 @@ export default function DashboardPage() {
 
   if (loading || !stats) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
 
-  const maxLost = Math.max(1, ...stats.lost_reasons.map(r => r.count))
   const sortedCustomers = getSortedCustomers()
 
   const totalSentValue = trends.reduce((sum, t) => sum + (t.sent_value || 0), 0)
@@ -209,49 +208,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        {/* Recent Quotes */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">{s.recentQuotes}</h2></div>
-          {stats.recent_quotes.length === 0 ? (
-            <div className="p-8 text-center text-sm text-gray-400">{s.noQuotes}</div>
-          ) : (
-            <table className="w-full text-sm">
-              <tbody className="divide-y divide-gray-50">
-                {stats.recent_quotes.map(q => (
-                  <tr key={q.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/quotes/${q.id}`)}>
-                    <td className="px-6 py-3 font-mono text-gray-500">{q.quote_number}</td>
-                    <td className="px-6 py-3 text-gray-900">{q.customer_name ?? '—'}</td>
-                    <td className="px-6 py-3 text-gray-600">{q.title}</td>
-                    <td className="px-6 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLE[q.status]}`}>{s.status[q.status]}</span></td>
-                    <td className="px-6 py-3 text-gray-400 text-right">{format(new Date(q.created_at), 'd. M.')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        {/* Lost Reasons */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">{s.lostReasonsTitle}</h2></div>
-          <div className="p-6 flex flex-col gap-3">
-            {stats.lost_reasons.length === 0 ? (
-              <p className="text-sm text-gray-400">—</p>
-            ) : stats.lost_reasons.map(r => (
-              <div key={r.reason}>
-                <div className="flex justify-between text-xs text-gray-600 mb-1">
-                  <span>{s.lostReasons[r.reason]}</span><span>{r.count}</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-red-400 rounded-full" style={{ width: `${(r.count / maxLost) * 100}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Top Customers */}
       {sortedCustomers.length > 0 && (
