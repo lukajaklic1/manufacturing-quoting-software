@@ -49,6 +49,8 @@ export default function DashboardPage() {
   const [period, setPeriod] = useState<1 | 3 | 6 | 12>(1)
   const [sortKey, setSortKey] = useState<SortKey>('sent_value')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
+  const [filterCustomerId, setFilterCustomerId] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => { if (company) load() }, [company, period])
 
@@ -94,6 +96,10 @@ export default function DashboardPage() {
   if (loading || !stats) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
 
   const sortedCustomers = getSortedCustomers()
+  const filteredCustomers = filterCustomerId ? sortedCustomers.filter(c => c.customer_id === filterCustomerId) : sortedCustomers
+  const pageSize = 10
+  const totalPages = Math.ceil(filteredCustomers.length / pageSize)
+  const paginatedCustomers = filteredCustomers.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const totalSentValue = trends.reduce((sum, t) => sum + (t.sent_value || 0), 0)
   const totalRealizedValue = trends.reduce((sum, t) => sum + (t.realized_value || 0), 0)
@@ -109,20 +115,33 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
-        <div className="flex gap-2">
-          {[
-            { value: 1 as const, label: '30 dni' },
-            { value: 3 as const, label: '3 meseci' },
-            { value: 6 as const, label: '6 mesecev' },
-            { value: 12 as const, label: '12 mesecev' },
-          ].map(p => (
-            <button key={p.value} onClick={() => setPeriod(p.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${period === p.value ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-              {p.label}
-            </button>
-          ))}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
+          <div className="flex gap-2">
+            {[
+              { value: 1 as const, label: '30 dni' },
+              { value: 3 as const, label: '3 meseci' },
+              { value: 6 as const, label: '6 mesecev' },
+              { value: 12 as const, label: '12 mesecev' },
+            ].map(p => (
+              <button key={p.value} onClick={() => setPeriod(p.value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${period === p.value ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-3">
+          <select value={filterCustomerId || ''} onChange={(e) => { setFilterCustomerId(e.target.value || null); setCurrentPage(1); }}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500">
+            <option value="">All customers</option>
+            {customers.map(c => (
+              <option key={c.customer_id} value={c.customer_id}>{c.customer_name}</option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -243,7 +262,7 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {sortedCustomers.map(c => (
+              {paginatedCustomers.map(c => (
                 <tr key={c.customer_id} className="hover:bg-gray-50">
                   <td className="px-6 py-3 text-gray-900 font-medium">{c.customer_name}</td>
                   <td className="px-6 py-3 text-right text-gray-600">{money(c.sent_value)}</td>
@@ -255,6 +274,19 @@ export default function DashboardPage() {
               ))}
             </tbody>
           </table>
+          <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div className="text-xs text-gray-500">Page {currentPage} of {totalPages} ({filteredCustomers.length} customers)</div>
+            <div className="flex gap-2">
+              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                className={`px-3 py-1 rounded text-sm ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                ← Previous
+              </button>
+              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded text-sm ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                Next →
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
