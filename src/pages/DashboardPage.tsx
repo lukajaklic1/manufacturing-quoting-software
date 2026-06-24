@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { TrendingUp, Trophy, FileText, CheckCircle2 } from 'lucide-react'
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown } from 'lucide-react'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -21,20 +21,24 @@ interface Stats {
 
 interface TrendData {
   period: string
-  quote_count: number
-  quote_value: number
-  won_count: number
-  won_value: number
+  sent_count: number
+  sent_value: number
+  realized_count: number
+  realized_value: number
 }
 
 interface CustomerStat {
   customer_id: string
   customer_name: string
-  total_value: number
-  quote_count: number
-  won_count: number
+  sent_value: number
+  realized_value: number
+  sent_count: number
+  realized_count: number
   win_rate: number
 }
+
+type SortKey = 'customer_name' | 'sent_value' | 'realized_value' | 'sent_count' | 'realized_count' | 'win_rate'
+type SortDir = 'asc' | 'desc'
 
 const STATUS_STYLE: Record<QuoteStatus, string> = {
   draft: 'bg-gray-100 text-gray-600', issued: 'bg-indigo-100 text-indigo-700', sent: 'bg-blue-100 text-blue-700',
@@ -55,6 +59,8 @@ export default function DashboardPage() {
   const [customers, setCustomers] = useState<CustomerStat[]>([])
   const [loading, setLoading] = useState(true)
   const [period, setPeriod] = useState<3 | 6 | 12>(12)
+  const [sortKey, setSortKey] = useState<SortKey>('sent_value')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
 
   useEffect(() => { if (company) load() }, [company, period])
 
@@ -72,9 +78,34 @@ export default function DashboardPage() {
     setLoading(false)
   }
 
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'desc' ? 'asc' : 'desc')
+    } else {
+      setSortKey(key)
+      setSortDir('desc')
+    }
+  }
+
+  function getSortedCustomers() {
+    const sorted = [...customers]
+    sorted.sort((a, b) => {
+      let aVal = a[sortKey]
+      let bVal = b[sortKey]
+
+      if (sortDir === 'asc') {
+        return typeof aVal === 'string' ? aVal.localeCompare(bVal as string) : (aVal as number) - (bVal as number)
+      } else {
+        return typeof aVal === 'string' ? (bVal as string).localeCompare(aVal) : (bVal as number) - (aVal as number)
+      }
+    })
+    return sorted
+  }
+
   if (loading || !stats) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
 
   const maxLost = Math.max(1, ...stats.lost_reasons.map(r => r.count))
+  const sortedCustomers = getSortedCustomers()
 
   const cards = [
     { label: s.pipelineValue, value: money(stats.pipeline_value), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
@@ -108,70 +139,27 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        {/* Quote Count */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Število ponudb</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="period" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="quote_count" fill="#3b82f6" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Quote Value */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Vrednost ponudb</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="period" />
-              <YAxis />
-              <Tooltip formatter={(v) => money(v as number)} />
-              <Bar dataKey="quote_value" fill="#8b5cf6" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Won Count */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Pridobljene ponudbe</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={trends}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="period" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="won_count" stroke="#10b981" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Won Value */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Vrednost pridobljenih</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={trends}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="period" />
-              <YAxis />
-              <Tooltip formatter={(v) => money(v as number)} />
-              <Area type="monotone" dataKey="won_value" fill="#d1fae5" stroke="#10b981" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Combined Chart */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <h2 className="text-sm font-semibold text-gray-900 mb-4">{s.quotesPerMonth}</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={trends} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
+            <XAxis dataKey="period" />
+            <YAxis />
+            <Tooltip formatter={(v) => money(v as number)} />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+            <Line type="linear" dataKey="sent_value" stroke="#3b82f6" strokeWidth={2} name={s.sentQuotes} />
+            <Line type="linear" dataKey="realized_value" stroke="#10b981" strokeWidth={2} name={s.realizedQuotes} />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* Recent Quotes */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">Zadnje ponudbe</h2></div>
+          <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">{s.recentQuotes}</h2></div>
           {stats.recent_quotes.length === 0 ? (
             <div className="p-8 text-center text-sm text-gray-400">{s.noQuotes}</div>
           ) : (
@@ -212,26 +200,58 @@ export default function DashboardPage() {
       </div>
 
       {/* Top Customers */}
-      {customers.length > 0 && (
-        <div className="mt-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">10 najboljših strank</h2></div>
+      {sortedCustomers.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">{s.topCustomers}</h2></div>
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500">Stranka</th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500">Vrednost</th>
-                <th className="text-center px-6 py-3 text-xs font-medium text-gray-500">Število</th>
-                <th className="text-center px-6 py-3 text-xs font-medium text-gray-500">Pridobljeno</th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500">% uspešnosti</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('customer_name')}>
+                  <div className="flex items-center gap-1">
+                    {s.stranka}
+                    {sortKey === 'customer_name' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                  </div>
+                </th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_value')}>
+                  <div className="flex items-center justify-end gap-1">
+                    {s.poslanaVrednost}
+                    {sortKey === 'sent_value' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                  </div>
+                </th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_value')}>
+                  <div className="flex items-center justify-end gap-1">
+                    {s.realiziranaVrednost}
+                    {sortKey === 'realized_value' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                  </div>
+                </th>
+                <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_count')}>
+                  <div className="flex items-center justify-center gap-1">
+                    {s.sentCount}
+                    {sortKey === 'sent_count' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                  </div>
+                </th>
+                <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_count')}>
+                  <div className="flex items-center justify-center gap-1">
+                    {s.realizedCount}
+                    {sortKey === 'realized_count' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                  </div>
+                </th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('win_rate')}>
+                  <div className="flex items-center justify-end gap-1">
+                    {s.winRate2}
+                    {sortKey === 'win_rate' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {customers.map(c => (
+              {sortedCustomers.map(c => (
                 <tr key={c.customer_id} className="hover:bg-gray-50">
                   <td className="px-6 py-3 text-gray-900 font-medium">{c.customer_name}</td>
-                  <td className="px-6 py-3 text-right text-gray-600">{money(c.total_value)}</td>
-                  <td className="px-6 py-3 text-center text-gray-600">{c.quote_count}</td>
-                  <td className="px-6 py-3 text-center text-green-600 font-medium">{c.won_count}</td>
+                  <td className="px-6 py-3 text-right text-gray-600">{money(c.sent_value)}</td>
+                  <td className="px-6 py-3 text-right text-gray-600">{money(c.realized_value)}</td>
+                  <td className="px-6 py-3 text-center text-gray-600">{c.sent_count}</td>
+                  <td className="px-6 py-3 text-center text-green-600 font-medium">{c.realized_count}</td>
                   <td className="px-6 py-3 text-right text-gray-600">{c.win_rate.toFixed(1)}%</td>
                 </tr>
               ))}
