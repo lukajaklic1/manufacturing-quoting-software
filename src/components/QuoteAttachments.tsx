@@ -9,6 +9,7 @@ interface QuoteAttachmentsProps {
   attachments: any[]
   onChange: (attachments: any[]) => void
   readonly?: boolean
+  inline?: boolean
 }
 
 export default function QuoteAttachments({ quoteId, companyId, attachments, onChange, readonly }: QuoteAttachmentsProps) {
