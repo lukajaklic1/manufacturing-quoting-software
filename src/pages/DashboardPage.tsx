@@ -275,15 +275,15 @@ export default function DashboardPage() {
             </tbody>
           </table>
           <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-            <div className="text-xs text-gray-500">Page {currentPage} of {totalPages} ({filteredCustomers.length} customers)</div>
+            <div className="text-xs text-gray-500">{lang === 'en' ? `Page ${currentPage} of ${totalPages} (${filteredCustomers.length} customers)` : `Stran ${currentPage} od ${totalPages} (${filteredCustomers.length} strank)`}</div>
             <div className="flex gap-2">
               <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
                 className={`px-3 py-1 rounded text-sm ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                ← Previous
+                ← {lang === 'en' ? 'Previous' : 'Prejšnja'}
               </button>
               <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
                 className={`px-3 py-1 rounded text-sm ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                Next →
+                {lang === 'en' ? 'Next' : 'Naslednja'} →
               </button>
             </div>
           </div>
