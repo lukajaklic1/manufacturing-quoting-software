@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown } from 'lucide-react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -144,30 +144,63 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Combined Chart */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <h2 className="text-sm font-semibold text-gray-900 mb-4">Ponudbe po času</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={trends} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-            <XAxis dataKey="period" />
-            <YAxis />
-            <Tooltip content={({ active, payload }) => {
-              if (!active || !payload?.length) return null
-              const data = payload[0].payload as any
-              return (
-                <div className="bg-white p-2 border border-gray-200 rounded shadow-lg text-xs">
-                  <p className="font-semibold">{data.period}</p>
-                  <p className="text-blue-600">{s.sentQuotes}: {data.sent_count} × {money(data.sent_value)}</p>
-                  <p className="text-green-600">{s.realizedQuotes}: {data.realized_count} × {money(data.realized_value)}</p>
-                </div>
-              )
-            }} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }} />
-            <Line type="linear" dataKey="sent_value" stroke="#3b82f6" strokeWidth={2} name={s.sentQuotes} />
-            <Line type="linear" dataKey="realized_value" stroke="#10b981" strokeWidth={2} name={s.realizedQuotes} />
-          </LineChart>
-        </ResponsiveContainer>
+      {/* 4 Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Chart 1: Sent Count */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">Število poslanih ponudb</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={trends}>
+              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
+              <XAxis dataKey="period" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="sent_count" fill="#3b82f6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Chart 2: Realized Count */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">Število dobljenih ponudb</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={trends}>
+              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
+              <XAxis dataKey="period" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="realized_count" fill="#10b981" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Chart 3: Sent Value */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">Ponujen znesek</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={trends}>
+              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
+              <XAxis dataKey="period" />
+              <YAxis />
+              <Tooltip formatter={(v) => money(v as number)} />
+              <Bar dataKey="sent_value" fill="#8b5cf6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Chart 4: Realized Value */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">Znesek dobljenih ponudb</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={trends}>
+              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
+              <XAxis dataKey="period" />
+              <YAxis />
+              <Tooltip formatter={(v) => money(v as number)} />
+              <Bar dataKey="realized_value" fill="#06b6d4" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Main Content */}
