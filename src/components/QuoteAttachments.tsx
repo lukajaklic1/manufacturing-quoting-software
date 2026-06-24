@@ -5,11 +5,13 @@ import { supabase } from '../lib/supabase'
 interface QuoteAttachmentsProps {
   quoteId?: string
   companyId: string
+  quoteItemId?: string
   attachments: any[]
   onChange: (attachments: any[]) => void
+  readonly?: boolean
 }
 
-export default function QuoteAttachments({ quoteId, companyId, attachments, onChange }: QuoteAttachmentsProps) {
+export default function QuoteAttachments({ quoteId, companyId, attachments, onChange, readonly }: QuoteAttachmentsProps) {
   const [uploading, setUploading] = useState(false)
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -50,23 +52,25 @@ export default function QuoteAttachments({ quoteId, companyId, attachments, onCh
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-4">
-      <label className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-gray-700">Files</span>
-        <div className="flex items-center gap-2">
-          <input
-            type="file"
-            multiple
-            onChange={handleFileUpload}
-            disabled={uploading || !quoteId}
-            className="hidden"
-            id="quote-upload"
-          />
-          <label htmlFor="quote-upload" className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
-            <Upload className="w-4 h-4" />
-            {uploading ? 'Uploading...' : 'Upload Files'}
-          </label>
-        </div>
-      </label>
+      {!readonly && (
+        <label className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-gray-700">Files</span>
+          <div className="flex items-center gap-2">
+            <input
+              type="file"
+              multiple
+              onChange={handleFileUpload}
+              disabled={uploading || !quoteId}
+              className="hidden"
+              id="quote-upload"
+            />
+            <label htmlFor="quote-upload" className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              <Upload className="w-4 h-4" />
+              {uploading ? 'Uploading...' : 'Upload Files'}
+            </label>
+          </div>
+        </label>
+      )}
 
       {attachments.length > 0 && (
         <div className="flex flex-col gap-2">
@@ -76,12 +80,14 @@ export default function QuoteAttachments({ quoteId, companyId, attachments, onCh
                 <File className="w-4 h-4 text-gray-500 flex-shrink-0" />
                 <span className="text-sm text-gray-700 truncate">{att.file_name}</span>
               </div>
-              <button
-                onClick={() => deleteFile(att)}
-                className="ml-2 p-1 text-gray-400 hover:text-red-600 flex-shrink-0"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+              {!readonly && (
+                <button
+                  onClick={() => deleteFile(att)}
+                  className="ml-2 p-1 text-gray-400 hover:text-red-600 flex-shrink-0"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
             </div>
           ))}
         </div>
