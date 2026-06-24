@@ -50,7 +50,7 @@ export async function buildSnapshot(quote: Quote, customer: Customer | null, com
     },
     company: {
       name: company?.name ?? 'Company',
-      address: company?.address ?? null,
+      address: null,
       tax_id: company?.tax_id ?? null,
       email: company?.email ?? null,
       phone: company?.phone ?? null,
