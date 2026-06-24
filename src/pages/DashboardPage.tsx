@@ -152,7 +152,17 @@ export default function DashboardPage() {
             <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
             <XAxis dataKey="period" />
             <YAxis />
-            <Tooltip formatter={(v) => money(v as number)} />
+            <Tooltip content={({ active, payload }) => {
+              if (!active || !payload?.length) return null
+              const data = payload[0].payload as any
+              return (
+                <div className="bg-white p-2 border border-gray-200 rounded shadow-lg text-xs">
+                  <p className="font-semibold">{data.period}</p>
+                  <p className="text-blue-600">{s.sentQuotes}: {data.sent_count} × {money(data.sent_value)}</p>
+                  <p className="text-green-600">{s.realizedQuotes}: {data.realized_count} × {money(data.realized_value)}</p>
+                </div>
+              )
+            }} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <Line type="linear" dataKey="sent_value" stroke="#3b82f6" strokeWidth={2} name={s.sentQuotes} />
             <Line type="linear" dataKey="realized_value" stroke="#10b981" strokeWidth={2} name={s.realizedQuotes} />
