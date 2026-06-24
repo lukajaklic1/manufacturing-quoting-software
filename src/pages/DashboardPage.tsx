@@ -52,14 +52,14 @@ export default function DashboardPage() {
   const [filterCustomerId, setFilterCustomerId] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
 
-  useEffect(() => { if (company) load() }, [company, period])
+  useEffect(() => { if (company) load() }, [company, period, filterCustomerId])
 
   async function load() {
     if (!company) return
     setLoading(true)
     const [{ data: stats }, { data: trends }, { data: customers }] = await Promise.all([
-      (supabase as any).rpc('get_quote_dashboard_stats', { p_company_id: company.id }),
-      (supabase as any).rpc('get_quote_trends', { p_company_id: company.id, p_months: period }),
+      (supabase as any).rpc('get_quote_dashboard_stats', { p_company_id: company.id, p_customer_id: filterCustomerId }),
+      (supabase as any).rpc('get_quote_trends', { p_company_id: company.id, p_months: period, p_customer_id: filterCustomerId }),
       (supabase as any).rpc('get_customer_stats', { p_company_id: company.id }),
     ])
     setStats(stats as Stats)
@@ -134,14 +134,20 @@ export default function DashboardPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-3">
-          <select value={filterCustomerId || ''} onChange={(e) => { setFilterCustomerId(e.target.value || null); setCurrentPage(1); }}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500">
-            <option value="">{lang === 'en' ? 'All customers' : 'Vse stranke'}</option>
-            {customers.map(c => (
-              <option key={c.customer_id} value={c.customer_id}>{c.customer_name}</option>
-            ))}
-          </select>
+        <div className="flex gap-3 relative">
+          <input type="text" placeholder={lang === 'en' ? 'Search customers...' : 'Išči stranke...'}
+            value={customers.find(c => c.customer_id === filterCustomerId)?.customer_name || ''}
+            onChange={(e) => {
+              const matching = customers.find(c => c.customer_name.toLowerCase().includes(e.target.value.toLowerCase()));
+              setFilterCustomerId(matching ? matching.customer_id : null);
+              setCurrentPage(1);
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500 w-64"
+          />
+          {filterCustomerId && (
+            <button onClick={() => { setFilterCustomerId(null); setCurrentPage(1); }}
+              className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">✕ Clear</button>
+          )}
         </div>
       </div>
 
