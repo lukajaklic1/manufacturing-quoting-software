@@ -120,14 +120,14 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
           <div className="flex gap-2">
             {[
-              { value: 1 as const, label: '30 dni' },
-              { value: 3 as const, label: '3 meseci' },
-              { value: 6 as const, label: '6 mesecev' },
-              { value: 12 as const, label: '12 mesecev' },
+              { value: 1 as const, labelEn: '30 days', labelSl: '30 dni' },
+              { value: 3 as const, labelEn: '3 months', labelSl: '3 meseci' },
+              { value: 6 as const, labelEn: '6 months', labelSl: '6 mesecev' },
+              { value: 12 as const, labelEn: '12 months', labelSl: '12 mesecev' },
             ].map(p => (
               <button key={p.value} onClick={() => setPeriod(p.value)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium ${period === p.value ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                {p.label}
+                {lang === 'en' ? p.labelEn : p.labelSl}
               </button>
             ))}
           </div>
