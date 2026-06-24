@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { X, RotateCcw } from 'lucide-react'
 
 interface CadViewerModalProps {
@@ -19,7 +19,7 @@ export default function CadViewerModal({ url, fileName, onClose }: CadViewerModa
         // OCCT 3D viewer - loads STEP/IGES models
         if ((window as any).OCCTModule) {
           // const viewer = new (window as any).Viewer(canvasRef.current)
-          const response = await fetch(url)
+          await fetch(url)
           // const arrayBuffer = await response.arrayBuffer()
           // Viewer would load the CAD model
           console.log('Loading CAD:', fileName)
