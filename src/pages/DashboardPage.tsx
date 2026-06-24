@@ -137,7 +137,7 @@ export default function DashboardPage() {
         <div className="flex gap-3">
           <select value={filterCustomerId || ''} onChange={(e) => { setFilterCustomerId(e.target.value || null); setCurrentPage(1); }}
             className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500">
-            <option value="">All customers</option>
+            <option value="">{lang === 'en' ? 'All customers' : 'Vse stranke'}</option>
             {customers.map(c => (
               <option key={c.customer_id} value={c.customer_id}>{c.customer_name}</option>
             ))}
