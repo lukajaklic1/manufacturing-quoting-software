@@ -1,28 +1,24 @@
 import { useState } from 'react'
-import { Upload, X, FileText, Box, Download } from 'lucide-react'
+import { Upload, File, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 interface QuoteAttachmentsProps {
   quoteId?: string
   companyId: string
-  quoteItemId?: string
   attachments: any[]
   onChange: (attachments: any[]) => void
-  inline?: boolean
-  readonly?: boolean
 }
 
-export default function QuoteAttachments({ quoteId, attachments, onChange, readonly }: QuoteAttachmentsProps) {
+export default function QuoteAttachments({ quoteId, companyId, attachments, onChange }: QuoteAttachmentsProps) {
   const [uploading, setUploading] = useState(false)
-  const [selectedFile, setSelectedFile] = useState<any>(null)
 
-  async function handleFileUpload(files: FileList) {
-    if (!files || !quoteId) return
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files || !quoteId) return
     setUploading(true)
-    
-    for (const file of files) {
+
+    for (const file of e.target.files) {
       try {
-        const path = `quotes/${quoteId}/${Date.now()}_${file.name}`
+        const path = `${companyId}/quotes/${quoteId}/${Date.now()}_${file.name}`
         const { error } = await supabase.storage.from('quotations').upload(path, file)
         if (error) throw error
 
@@ -40,6 +36,7 @@ export default function QuoteAttachments({ quoteId, attachments, onChange, reado
       }
     }
     setUploading(false)
+    e.target.value = ''
   }
 
   async function deleteFile(att: any) {
@@ -51,120 +48,42 @@ export default function QuoteAttachments({ quoteId, attachments, onChange, reado
     }
   }
 
-  function getFileType(fileName: string) {
-    const ext = fileName.split('.').pop()?.toLowerCase() || ''
-    const cadExts = ['step', 'stp', 'iges', 'igs', 'stl', 'obj', 'glb', 'gltf']
-    const drawingExts = ['pdf', 'dwg', 'dxf']
-    
-    if (cadExts.includes(ext)) return 'CAD'
-    if (drawingExts.includes(ext)) return 'Risba'
-    if (ext === 'csv') return 'BOM'
-    return 'Drugo'
-  }
-
-  async function downloadFile(att: any) {
-    try {
-      const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
-      if (data?.signedUrl) window.open(data.signedUrl, '_blank')
-    } catch (err) {
-      console.error('Download failed:', err)
-    }
-  }
-
-  const fileGroups = {
-    'Risba': attachments.filter(a => getFileType(a.file_name) === 'Risba'),
-    'CAD': attachments.filter(a => getFileType(a.file_name) === 'CAD'),
-    'BOM': attachments.filter(a => getFileType(a.file_name) === 'BOM'),
-    'Drugo': attachments.filter(a => getFileType(a.file_name) === 'Drugo'),
-  }
-
   return (
-    <div className="space-y-4">
-      {/* Upload Area */}
-      {!readonly && (
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400">
-          <label className="cursor-pointer block">
-            <Upload className="w-6 h-6 mx-auto mb-2 text-gray-400" />
-            <span className="text-sm text-gray-600">
-              {uploading ? 'Nalagam...' : 'Povleci datoteke ali klikni za izbiro'}
-            </span>
-            <input
-              type="file"
-              multiple
-              onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
-              className="hidden"
-              disabled={uploading}
-            />
+    <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-4">
+      <label className="flex flex-col gap-2">
+        <span className="text-sm font-medium text-gray-700">Files</span>
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            multiple
+            onChange={handleFileUpload}
+            disabled={uploading || !quoteId}
+            className="hidden"
+            id="quote-upload"
+          />
+          <label htmlFor="quote-upload" className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            <Upload className="w-4 h-4" />
+            {uploading ? 'Uploading...' : 'Upload Files'}
           </label>
         </div>
-      )}
+      </label>
 
-      {/* File Type Tabs */}
-      <div className="flex gap-2 border-b">
-        {Object.entries(fileGroups).map(([type, files]) => (
-          <button
-            key={type}
-            onClick={() => setSelectedFile(files.length > 0 ? files[0] : null)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition ${
-              files.length === 0
-                ? 'text-gray-400 border-transparent'
-                : selectedFile?.file_name?.includes(files[0]?.file_name)
-                ? 'text-blue-600 border-blue-600'
-                : 'text-gray-600 border-transparent hover:text-gray-900'
-            }`}
-          >
-            {type} ({files.length})
-          </button>
-        ))}
-      </div>
-
-      {/* Gallery */}
-      <div className="grid grid-cols-3 gap-2">
-        {attachments.map((att) => (
-          <div
-            key={att.id}
-            onClick={() => setSelectedFile(att)}
-            className={`relative group p-2 rounded border-2 cursor-pointer transition ${
-              selectedFile?.id === att.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-400'
-            }`}
-          >
-            <div className="aspect-square bg-gray-100 rounded flex items-center justify-center mb-1">
-              {getFileType(att.file_name) === 'CAD' ? (
-                <Box className="w-8 h-8 text-blue-500" />
-              ) : (
-                <FileText className="w-8 h-8 text-gray-500" />
-              )}
-            </div>
-            <p className="text-xs font-medium truncate">{att.file_name}</p>
-            <p className="text-xs text-gray-500">{(att.file_size / 1024).toFixed(0)} kB</p>
-            <span className="absolute top-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded hidden group-hover:inline">
-              {getFileType(att.file_name)}
-            </span>
-            {!readonly && (
+      {attachments.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {attachments.map(att => (
+            <div key={att.id} className="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-200">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <File className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                <span className="text-sm text-gray-700 truncate">{att.file_name}</span>
+              </div>
               <button
-                onClick={(e) => { e.stopPropagation(); deleteFile(att) }}
-                className="absolute top-1 left-1 bg-red-600 text-white p-1 rounded hidden group-hover:inline"
+                onClick={() => deleteFile(att)}
+                className="ml-2 p-1 text-gray-400 hover:text-red-600 flex-shrink-0"
               >
-                <X className="w-3 h-3" />
+                <Trash2 className="w-4 h-4" />
               </button>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* File Actions */}
-      {selectedFile && (
-        <div className="flex gap-2 pt-4 border-t">
-          <button
-            onClick={() => downloadFile(selectedFile)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            <Download className="w-4 h-4" />
-            Prenosit
-          </button>
-          <span className="text-sm text-gray-600 flex-1">
-            {selectedFile.file_name} • {(selectedFile.file_size / 1024).toFixed(0)} kB
-          </span>
+            </div>
+          ))}
         </div>
       )}
     </div>
