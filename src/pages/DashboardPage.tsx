@@ -207,37 +207,37 @@ export default function DashboardPage() {
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('customer_name')}>
                   <div className="flex items-center gap-1">
                     {s.stranka}
-                    {sortKey === 'customer_name' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'customer_name' ? '#1f2937' : '#d1d5db', transform: sortKey === 'customer_name' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
                 <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_value')}>
                   <div className="flex items-center justify-end gap-1">
                     {s.poslanaVrednost}
-                    {sortKey === 'sent_value' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'sent_value' ? '#1f2937' : '#d1d5db', transform: sortKey === 'sent_value' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
                 <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_value')}>
                   <div className="flex items-center justify-end gap-1">
                     {s.realiziranaVrednost}
-                    {sortKey === 'realized_value' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'realized_value' ? '#1f2937' : '#d1d5db', transform: sortKey === 'realized_value' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
                 <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_count')}>
                   <div className="flex items-center justify-center gap-1">
                     {s.sentCount}
-                    {sortKey === 'sent_count' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'sent_count' ? '#1f2937' : '#d1d5db', transform: sortKey === 'sent_count' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
                 <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_count')}>
                   <div className="flex items-center justify-center gap-1">
                     {s.realizedCount}
-                    {sortKey === 'realized_count' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'realized_count' ? '#1f2937' : '#d1d5db', transform: sortKey === 'realized_count' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
                 <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('win_rate')}>
                   <div className="flex items-center justify-end gap-1">
                     {s.winRate2}
-                    {sortKey === 'win_rate' && <ArrowUpDown className="w-3 h-3" style={{ transform: sortDir === 'asc' ? 'scaleY(1)' : 'scaleY(-1)' }} />}
+                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'win_rate' ? '#1f2937' : '#d1d5db', transform: sortKey === 'win_rate' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
               </tr>
