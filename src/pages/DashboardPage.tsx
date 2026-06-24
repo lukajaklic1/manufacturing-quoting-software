@@ -183,7 +183,7 @@ export default function DashboardPage() {
               <XAxis dataKey="period" />
               <YAxis />
               <Tooltip formatter={(v) => money(v as number)} />
-              <Bar dataKey="sent_value" fill="#8b5cf6" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v) => '€' + (v / 1000).toFixed(1) + 'k' }} />
+              <Bar dataKey="sent_value" fill="#8b5cf6" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v: any) => v ? '€' + (v / 1000).toFixed(1) + 'k' : '' }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
               <XAxis dataKey="period" />
               <YAxis />
               <Tooltip formatter={(v) => money(v as number)} />
-              <Bar dataKey="realized_value" fill="#06b6d4" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v) => '€' + (v / 1000).toFixed(1) + 'k' }} />
+              <Bar dataKey="realized_value" fill="#06b6d4" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v: any) => v ? '€' + (v / 1000).toFixed(1) + 'k' : '' }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
