@@ -51,6 +51,8 @@ export default function DashboardPage() {
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [filterCustomerId, setFilterCustomerId] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchText, setSearchText] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
 
   useEffect(() => { if (company) load() }, [company, period, filterCustomerId])
 
@@ -134,19 +136,26 @@ export default function DashboardPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-3 relative">
+        <div className="relative w-80">
           <input type="text" placeholder={lang === 'en' ? 'Search customers...' : 'Išči stranke...'}
-            value={customers.find(c => c.customer_id === filterCustomerId)?.customer_name || ''}
-            onChange={(e) => {
-              const matching = customers.find(c => c.customer_name.toLowerCase().includes(e.target.value.toLowerCase()));
-              setFilterCustomerId(matching ? matching.customer_id : null);
-              setCurrentPage(1);
-            }}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500 w-64"
+            value={searchText}
+            onChange={(e) => { setSearchText(e.target.value); setShowDropdown(true); }}
+            onFocus={() => setShowDropdown(true)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500"
           />
-          {filterCustomerId && (
-            <button onClick={() => { setFilterCustomerId(null); setCurrentPage(1); }}
-              className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">✕ Clear</button>
+          {showDropdown && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-64 overflow-y-auto">
+              <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                onClick={() => { setFilterCustomerId(null); setSearchText(''); setShowDropdown(false); setCurrentPage(1); }}>
+                {lang === 'en' ? '✓ All customers' : '✓ Vse stranke'}
+              </div>
+              {customers.filter(c => c.customer_name.toLowerCase().includes(searchText.toLowerCase())).map(c => (
+                <div key={c.customer_id} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer border-t border-gray-100"
+                  onClick={() => { setFilterCustomerId(c.customer_id); setSearchText(c.customer_name); setShowDropdown(false); setCurrentPage(1); }}>
+                  {filterCustomerId === c.customer_id && '✓ '}{c.customer_name}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
