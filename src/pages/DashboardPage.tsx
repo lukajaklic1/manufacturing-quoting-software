@@ -58,7 +58,7 @@ export default function DashboardPage() {
   const [trends, setTrends] = useState<TrendData[]>([])
   const [customers, setCustomers] = useState<CustomerStat[]>([])
   const [loading, setLoading] = useState(true)
-  const [period, setPeriod] = useState<3 | 6 | 12>(12)
+  const [period, setPeriod] = useState<1 | 3 | 6 | 12>(12)
   const [sortKey, setSortKey] = useState<SortKey>('sent_value')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
 
@@ -119,10 +119,15 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
         <div className="flex gap-2">
-          {[3, 6, 12].map(p => (
-            <button key={p} onClick={() => setPeriod(p as 3 | 6 | 12)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${period === p ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-              {p} {p === 3 ? 'mesece' : 'mesecev'}
+          {[
+            { value: 1 as const, label: '30 dana' },
+            { value: 3 as const, label: '3 mesece' },
+            { value: 6 as const, label: '6 mesecev' },
+            { value: 12 as const, label: '12 mesecev' },
+          ].map(p => (
+            <button key={p.value} onClick={() => setPeriod(p.value)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium ${period === p.value ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+              {p.label}
             </button>
           ))}
         </div>
