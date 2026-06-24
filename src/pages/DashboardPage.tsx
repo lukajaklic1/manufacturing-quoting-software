@@ -164,7 +164,13 @@ export default function DashboardPage() {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" />
+              <XAxis dataKey="period" tickFormatter={(date) => {
+                if (date.includes('-')) {
+                  const [y, m, d] = date.split('-');
+                  return `${d}.${m}.${y.slice(2)}`;
+                }
+                return date;
+              }} />
               <YAxis />
               <Tooltip />
               <Bar dataKey="sent_count" fill="#3b82f6" label={{ position: 'top', fill: '#1f2937', fontSize: 12 }} />
@@ -178,7 +184,13 @@ export default function DashboardPage() {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" />
+              <XAxis dataKey="period" tickFormatter={(date) => {
+                if (date.includes('-')) {
+                  const [y, m, d] = date.split('-');
+                  return `${d}.${m}.${y.slice(2)}`;
+                }
+                return date;
+              }} />
               <YAxis />
               <Tooltip />
               <Bar dataKey="realized_count" fill="#10b981" label={{ position: 'top', fill: '#1f2937', fontSize: 12 }} />
@@ -192,7 +204,13 @@ export default function DashboardPage() {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" />
+              <XAxis dataKey="period" tickFormatter={(date) => {
+                if (date.includes('-')) {
+                  const [y, m, d] = date.split('-');
+                  return `${d}.${m}.${y.slice(2)}`;
+                }
+                return date;
+              }} />
               <YAxis />
               <Tooltip formatter={(v) => money(v as number)} />
               <Bar dataKey="sent_value" fill="#8b5cf6" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v: any) => v ? '€' + (v / 1000).toFixed(1) + 'k' : '' }} />
@@ -206,7 +224,13 @@ export default function DashboardPage() {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" />
+              <XAxis dataKey="period" tickFormatter={(date) => {
+                if (date.includes('-')) {
+                  const [y, m, d] = date.split('-');
+                  return `${d}.${m}.${y.slice(2)}`;
+                }
+                return date;
+              }} />
               <YAxis />
               <Tooltip formatter={(v) => money(v as number)} />
               <Bar dataKey="realized_value" fill="#06b6d4" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v: any) => v ? '€' + (v / 1000).toFixed(1) + 'k' : '' }} />
