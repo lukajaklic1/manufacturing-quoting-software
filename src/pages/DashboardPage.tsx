@@ -58,7 +58,7 @@ export default function DashboardPage() {
   const [trends, setTrends] = useState<TrendData[]>([])
   const [customers, setCustomers] = useState<CustomerStat[]>([])
   const [loading, setLoading] = useState(true)
-  const [period, setPeriod] = useState<1 | 3 | 6 | 12>(12)
+  const [period, setPeriod] = useState<1 | 3 | 6 | 12>(1)
   const [sortKey, setSortKey] = useState<SortKey>('sent_value')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
 
