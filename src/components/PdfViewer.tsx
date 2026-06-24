@@ -20,7 +20,7 @@ export default function PdfViewer({ url, title }: PdfViewerProps) {
           <button onClick={() => setPageNumber(Math.max(1, pageNumber - 1))} className="p-1 hover:bg-gray-700 rounded">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-xs min-w-16 text-center">{pageNumber} / {numPages || '?'}</span>
+          <span className="text-xs min-w-16 text-center">{pageNumber}</span>
           <button onClick={() => setPageNumber(pageNumber + 1)} className="p-1 hover:bg-gray-700 rounded">
             <ChevronRight className="w-4 h-4" />
           </button>
