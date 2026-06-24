@@ -73,7 +73,8 @@ export default function DashboardPage() {
       (supabase as any).rpc('get_customer_stats', { p_company_id: company.id }),
     ])
     setStats(stats as Stats)
-    setTrends((trends as TrendData[]) || [])
+    const sortedTrends = ((trends as TrendData[]) || []).sort((a, b) => a.period.localeCompare(b.period))
+    setTrends(sortedTrends)
     setCustomers((customers as CustomerStat[]) || [])
     setLoading(false)
   }
