@@ -4,7 +4,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
-import type { QuoteStatus } from '../types/database'
 
 interface Stats {
   pipeline_value: number
