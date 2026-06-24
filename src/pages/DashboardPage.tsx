@@ -48,7 +48,6 @@ export default function DashboardPage() {
   const { company } = useCompany()
   const { t } = useLanguage()
   const s = t.qp
-  const navigate = useNavigate()
   const cur = company?.currency ?? 'EUR'
   const money = (n: number) => (n ?? 0).toLocaleString('de-DE', { style: 'currency', currency: cur, maximumFractionDigits: 0 })
 
