@@ -38,12 +38,6 @@ interface CustomerStat {
 type SortKey = 'customer_name' | 'sent_value' | 'realized_value' | 'sent_count' | 'realized_count' | 'win_rate'
 type SortDir = 'asc' | 'desc'
 
-const STATUS_STYLE: Record<QuoteStatus, string> = {
-  draft: 'bg-gray-100 text-gray-600', issued: 'bg-indigo-100 text-indigo-700', sent: 'bg-blue-100 text-blue-700',
-  accepted: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700', expired: 'bg-amber-100 text-amber-700',
-  won: 'bg-green-100 text-green-700', lost: 'bg-red-100 text-red-700', frozen: 'bg-purple-100 text-purple-700',
-}
-
 export default function DashboardPage() {
   const { company } = useCompany()
   const { t } = useLanguage()
