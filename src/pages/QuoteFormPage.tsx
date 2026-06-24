@@ -254,6 +254,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     }
     if (items.length === 0) { setSaving(false); toast.error(s.validateNoPieces); return }
     const snap = await buildSnapshot({ ...({} as Quote), quote_number: quoteNumber, valid_until: validUntil || null, lead_time: leadTime || null, payment_terms: paymentTerms || null, parity: parity || null, contact_person: contactPerson || null, contact_email: contactEmail || null, contact_phone: contactPhone || null, notes: notes || null } as Quote, cust as Customer | null, company, items, calcs)
+    if (snap.items.some(it => !(it.quantities[0]?.unit_price > 0))) { setSaving(false); toast.error(s.validateNoPrice); return }
     const { error } = await supabase.from('quotes').update({ snapshot: snap, status: 'issued', issued_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', res.quoteId)
     setSaving(false)
     if (error) { toast.error(error.message); return }
