@@ -13,8 +13,6 @@ interface Stats {
   lost_90d: number
   active_quotes: number
   realized_this_month: number
-  lost_reasons: { reason: LostReason; count: number }[]
-  recent_quotes: { id: string; quote_number: string; title: string; status: QuoteStatus; created_at: string; customer_name: string | null }[]
 }
 
 interface TrendData {
