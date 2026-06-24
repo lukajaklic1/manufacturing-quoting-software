@@ -107,10 +107,10 @@ export default function DashboardPage() {
   const totalRealizedCount = trends.reduce((sum, t) => sum + (t.realized_count || 0), 0)
 
   const cards = [
-    { label: 'Skupna ponujena vrednost', value: money(totalSentValue), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
-    { label: 'Skupna vrednost dobljenih ponudb', value: money(totalRealizedValue), icon: CheckCircle2, color: 'text-green-600 bg-green-50' },
-    { label: 'Število poslanih ponudb', value: String(totalSentCount), icon: FileText, color: 'text-purple-600 bg-purple-50' },
-    { label: 'Število dobljenih ponudb', value: String(totalRealizedCount), icon: Trophy, color: 'text-amber-600 bg-amber-50' },
+    { label: t.lang === 'en' ? 'Total sent value' : 'Skupna ponujena vrednost', value: money(totalSentValue), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
+    { label: t.lang === 'en' ? 'Total realized value' : 'Skupna vrednost dobljenih ponudb', value: money(totalRealizedValue), icon: CheckCircle2, color: 'text-green-600 bg-green-50' },
+    { label: t.lang === 'en' ? 'Sent quotes count' : 'Število poslanih ponudb', value: String(totalSentCount), icon: FileText, color: 'text-purple-600 bg-purple-50' },
+    { label: t.lang === 'en' ? 'Realized quotes count' : 'Število dobljenih ponudb', value: String(totalRealizedCount), icon: Trophy, color: 'text-amber-600 bg-amber-50' },
   ]
 
   return (
@@ -160,7 +160,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Chart 1: Sent Count */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Število poslanih ponudb</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">{t.lang === 'en' ? 'Sent quotes count' : 'Število poslanih ponudb'}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
@@ -174,7 +174,7 @@ export default function DashboardPage() {
 
         {/* Chart 2: Realized Count */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Število dobljenih ponudb</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">{t.lang === 'en' ? 'Realized quotes count' : 'Število dobljenih ponudb'}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
@@ -188,7 +188,7 @@ export default function DashboardPage() {
 
         {/* Chart 3: Sent Value */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Ponujen znesek</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">{t.lang === 'en' ? 'Sent value' : 'Ponujen znesek'}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
@@ -202,7 +202,7 @@ export default function DashboardPage() {
 
         {/* Chart 4: Realized Value */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Znesek dobljenih ponudb</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">{t.lang === 'en' ? 'Realized value' : 'Znesek dobljenih ponudb'}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
