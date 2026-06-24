@@ -342,41 +342,46 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
 
       {tab === 'overview' ? (
       <>{/* Top: quote data (left) + attachments (right) — frozen in read-only review */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-        <fieldset disabled={readOnly} style={{ display: 'contents' }}>
-        {/* Quote header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">{s.customer}</label>
-              <select value={customerId} onChange={e => {
-                const cid = e.target.value
-                setCustomerId(cid)
-                const c = customers.find(x => x.id === cid)
-                if (c) { setContactPerson(c.contact_person ?? ''); setContactEmail(c.email ?? ''); setContactPhone(c.phone ?? ''); setPaymentTerms(c.payment_terms ?? ''); setParity(c.parity ?? '') }
-              }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                <option value="">{t.common.select}</option>
-                {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-            <Input id="q-contact" label={s.contactPerson} value={contactPerson} onChange={e => setContactPerson(e.target.value)} />
-            <Input id="q-email" label={t.common.email} type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} />
-            <Input id="q-phone" label={t.common.phone} value={contactPhone} onChange={e => setContactPhone(e.target.value)} />
-            <Input id="q-payment" label={s.paymentTerms} value={paymentTerms} onChange={e => setPaymentTerms(e.target.value)} />
-            <Input id="q-parity" label={s.parity} value={parity} onChange={e => setParity(e.target.value)} />
-            <Input id="q-valid" label={s.validUntil} type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} />
-            <Input id="q-lead" label={s.leadTime} placeholder={s.leadTimeHint} value={leadTime} onChange={e => setLeadTime(e.target.value)} />
-            <div className="sm:col-span-2 flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">{s.notes}</label>
-              <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+        {/* LEFT COLUMN - Quote Form */}
+        <div className="lg:col-span-2">
+          <fieldset disabled={readOnly}>
+          {/* Quote header */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">{s.customer}</label>
+                <select value={customerId} onChange={e => {
+                  const cid = e.target.value
+                  setCustomerId(cid)
+                  const c = customers.find(x => x.id === cid)
+                  if (c) { setContactPerson(c.contact_person ?? ''); setContactEmail(c.email ?? ''); setContactPhone(c.phone ?? ''); setPaymentTerms(c.payment_terms ?? ''); setParity(c.parity ?? '') }
+                }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                  <option value="">{t.common.select}</option>
+                  {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              <Input id="q-contact" label={s.contactPerson} value={contactPerson} onChange={e => setContactPerson(e.target.value)} />
+              <Input id="q-email" label={t.common.email} type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} />
+              <Input id="q-phone" label={t.common.phone} value={contactPhone} onChange={e => setContactPhone(e.target.value)} />
+              <Input id="q-payment" label={s.paymentTerms} value={paymentTerms} onChange={e => setPaymentTerms(e.target.value)} />
+              <Input id="q-parity" label={s.parity} value={parity} onChange={e => setParity(e.target.value)} />
+              <Input id="q-valid" label={s.validUntil} type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} />
+              <Input id="q-lead" label={s.leadTime} placeholder={s.leadTimeHint} value={leadTime} onChange={e => setLeadTime(e.target.value)} />
+              <div className="sm:col-span-2 flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">{s.notes}</label>
+                <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+              </div>
             </div>
           </div>
+          </fieldset>
         </div>
 
-        {/* Attachments */}
-        {company && <QuoteAttachments quoteId={id} companyId={company.id} attachments={attachments} onChange={setAttachments} readonly={readOnly} />}
-        </fieldset>
+        {/* RIGHT COLUMN - Attachments */}
+        <div className="lg:col-span-1">
+          {company && <div className="bg-white rounded-xl border border-gray-200 p-6"><QuoteAttachments quoteId={id} companyId={company.id} attachments={attachments} onChange={setAttachments} readonly={readOnly} /></div>}
+        </div>
       </div>
 
       {/* Pieces table */}
