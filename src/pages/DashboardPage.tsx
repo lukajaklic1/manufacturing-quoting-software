@@ -120,8 +120,8 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
         <div className="flex gap-2">
           {[
-            { value: 1 as const, label: '30 dana' },
-            { value: 3 as const, label: '3 mesece' },
+            { value: 1 as const, label: '30 dni' },
+            { value: 3 as const, label: '3 meseci' },
             { value: 6 as const, label: '6 mesecev' },
             { value: 12 as const, label: '12 mesecev' },
           ].map(p => (
@@ -146,7 +146,7 @@ export default function DashboardPage() {
 
       {/* Combined Chart */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <h2 className="text-sm font-semibold text-gray-900 mb-4">{s.quotesPerMonth}</h2>
+        <h2 className="text-sm font-semibold text-gray-900 mb-4">Ponudbe po času</h2>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={trends} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
