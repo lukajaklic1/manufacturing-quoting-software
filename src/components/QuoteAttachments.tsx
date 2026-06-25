@@ -1,6 +1,8 @@
-import { useState } from 'react'
-import { Upload, File, Trash2, Download, FileText, LayoutGrid, List } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Upload, File, Trash2, Download, FileText, LayoutGrid, List, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { pdfFirstPageThumb } from '../lib/pdfThumb'
+import CadViewer from './CadViewer'
 
 interface QuoteAttachmentsProps {
   quoteId?: string
@@ -30,7 +32,40 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   const [uploading, setUploading] = useState(false)
   const [filterType, setFilterType] = useState<FileType | 'all'>('all')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [previewAtt, setPreviewAtt] = useState<any>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [thumbs, setThumbs] = useState<Record<string, string>>({})
+  const [cadUrls, setCadUrls] = useState<Record<string, string>>({})
+  const processingRef = useRef<Set<string>>(new Set())
+
+  useEffect(() => {
+    const toLoad = attachments.filter(a => !processingRef.current.has(a.id))
+    if (toLoad.length === 0) return
+
+    toLoad.forEach(a => processingRef.current.add(a.id))
+
+    let cancelled = false
+    ;(async () => {
+      for (const att of toLoad) {
+        if (cancelled) break
+        try {
+          const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
+          if (!data?.signedUrl || cancelled) continue
+          const ft = getFileType(att.file_name)
+          if (ft === 'pdf') {
+            const thumb = await pdfFirstPageThumb(data.signedUrl)
+            if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
+          } else if (ft === 'cad') {
+            if (!cancelled) setCadUrls(prev => ({ ...prev, [att.id]: data.signedUrl }))
+          }
+        } catch (e) {
+          console.error('preview error', e)
+        }
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [attachments])
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files || !quoteId) return
@@ -38,27 +73,51 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
     for (const file of e.target.files) {
       try {
-        const folder = quoteItemId ? `${companyId}/quotes/${quoteId}/${quoteItemId}` : `${companyId}/quotes/${quoteId}`
-        const path = `${folder}/${Date.now()}_${file.name}`
-        const { error } = await supabase.storage.from('quotations').upload(path, file)
-        if (error) throw error
+        const storagePath = `${companyId}/quotes/${quoteId}/${Date.now()}_${file.name}`
 
-        const att = {
-          id: `att_${Date.now()}_${Math.random()}`,
-          quote_id: quoteId,
-          quote_item_id: quoteItemId || null,
-          file_name: file.name,
-          file_size: file.size,
-          storage_path: path,
-          created_at: new Date().toISOString(),
-        }
-        onChange([...attachments, att])
+        // Upload to storage
+        const { error: uploadError } = await supabase.storage
+          .from('quotations')
+          .upload(storagePath, file)
+        if (uploadError) throw uploadError
+
+        // Insert into database
+        const { data, error: dbError } = await supabase
+          .from('quote_attachments')
+          .insert([{
+            company_id: companyId,
+            quote_id: quoteId,
+            quote_item_id: quoteItemId || null,
+            file_name: file.name,
+            file_size: file.size,
+            storage_path: storagePath,
+          }])
+          .select()
+          .single()
+
+        if (dbError) throw dbError
+
+        // Update state with new attachment
+        onChange([...attachments, data])
       } catch (err) {
-        console.error('Upload failed:', err)
+        console.error('Upload error:', err)
       }
     }
+
     setUploading(false)
     e.target.value = ''
+  }
+
+  async function openPreview(att: any) {
+    setPreviewAtt(att)
+    setPreviewUrl(null)
+    const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
+    if (data?.signedUrl) setPreviewUrl(data.signedUrl)
+  }
+
+  function closePreview() {
+    setPreviewAtt(null)
+    setPreviewUrl(null)
   }
 
   async function deleteFile(att: any) {
@@ -92,76 +151,74 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   if (filterType !== 'all') {
     displayed = filtered.filter(a => getFileType(a.file_name) === filterType)
   }
-  if (searchTerm) {
-    displayed = displayed.filter(a => a.file_name.toLowerCase().includes(searchTerm.toLowerCase()))
-  }
 
   if (preview) {
     return (
+      <>
       <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-4 h-full">
-        {/* Header with counter and upload */}
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-            <span className="inline-block w-5 h-5 rounded bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">{filtered.length}</span>
-            Priloge
-          </h3>
-          {!readonly && (
-            <label className="cursor-pointer">
-              <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" />
-              <span className="text-xs font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                <Upload className="w-4 h-4" />
-              </span>
-            </label>
-          )}
-        </div>
+        {/* Header - ONE ROW: icon + count + filter pills + view toggle */}
+        <div className="flex items-center gap-3">
+          {/* Left: icon + count text */}
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4 text-gray-600" />
+            <span className="text-sm font-semibold text-gray-700">
+              {filtered.length === 1 ? '1 Priloga' : filtered.length <= 4 ? `${filtered.length} Prilogi` : `${filtered.length} Priloge`}
+            </span>
+          </div>
 
-        {/* Filter tabs */}
-        <div className="flex items-center gap-2 flex-wrap text-xs font-medium">
-          <button
-            onClick={() => setFilterType('all')}
-            className={`px-2 py-1 rounded ${filterType === 'all' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            Vse ({filtered.length})
-          </button>
-          <button
-            onClick={() => setFilterType('cad')}
-            className={`px-2 py-1 rounded ${filterType === 'cad' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            CAD ({counts.cad})
-          </button>
-          <button
-            onClick={() => setFilterType('pdf')}
-            className={`px-2 py-1 rounded ${filterType === 'pdf' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            Risba ({counts.pdf})
-          </button>
-          <button
-            onClick={() => setFilterType('bom')}
-            className={`px-2 py-1 rounded ${filterType === 'bom' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            BOM ({counts.bom})
-          </button>
-          <button
-            onClick={() => setFilterType('other')}
-            className={`px-2 py-1 rounded ${filterType === 'other' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            Drugo ({counts.other})
-          </button>
-
-          {/* View toggle */}
-          <div className="ml-auto flex gap-1">
+          {/* Center: filter pills (blue border + light blue background) */}
+          <div className="flex items-center gap-1.5">
             <button
-              onClick={() => setViewMode('grid')}
-              className={`p-1 rounded ${viewMode === 'grid' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+              onClick={() => setFilterType('pdf')}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'pdf' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
             >
-              <LayoutGrid className="w-4 h-4" />
+              Risba ({counts.pdf})
             </button>
             <button
-              onClick={() => setViewMode('list')}
-              className={`p-1 rounded ${viewMode === 'list' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+              onClick={() => setFilterType('cad')}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'cad' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
             >
-              <List className="w-4 h-4" />
+              CAD ({counts.cad})
             </button>
+            <button
+              onClick={() => setFilterType('bom')}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'bom' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
+            >
+              BOM ({counts.bom})
+            </button>
+            <button
+              onClick={() => setFilterType('other')}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'other' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
+            >
+              Drugo ({counts.other})
+            </button>
+          </div>
+
+          {/* Right: view toggle + big upload button */}
+          <div className="ml-auto flex items-center gap-3">
+            <div className="flex gap-1 border border-gray-200 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-1 rounded ${viewMode === 'grid' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-1 rounded ${viewMode === 'list' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+            {!readonly && (
+              <>
+                <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" id="header-upload" />
+                <label htmlFor="header-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-50 text-gray-400'}`}>
+                  <Upload className="w-4 h-4" />
+                  Naloži datoteke
+                </label>
+              </>
+            )}
           </div>
         </div>
 
@@ -177,14 +234,17 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                 const isPdf = fileType === 'pdf'
 
                 return (
-                  <div key={att.id} className="flex flex-col gap-1 group relative">
-                    <div className="w-full h-24 bg-gray-100 rounded border border-gray-200 flex items-center justify-center overflow-hidden relative group-hover:bg-gray-150">
-                      {isCad ? (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
-                          <svg className="w-12 h-12 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z" />
-                          </svg>
+                  <div key={att.id} className="flex flex-col rounded-lg border border-gray-200 overflow-hidden group bg-white cursor-pointer" onClick={() => openPreview(att)}>
+                    {/* Preview */}
+                    <div className="w-full h-32 bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                      {isCad && cadUrls[att.id] ? (
+                        <CadViewer url={cadUrls[att.id]} fileName={att.file_name} />
+                      ) : isCad ? (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                          <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
                         </div>
+                      ) : thumbs[att.id] ? (
+                        <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                       ) : isPdf ? (
                         <div className="w-full h-full bg-red-50 flex items-center justify-center">
                           <FileText className="w-8 h-8 text-red-300" />
@@ -192,19 +252,37 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                       ) : (
                         <File className="w-8 h-8 text-gray-300" />
                       )}
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
-                        <button onClick={() => downloadFile(att)} className="p-1.5 bg-white rounded hover:bg-gray-50" title="Download">
-                          <Download className="w-3 h-3 text-blue-600" />
+                      {/* Delete X top-right */}
+                      {!readonly && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); deleteFile(att) }}
+                          className="absolute top-1 right-1 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
+                        >
+                          <X className="w-3 h-3 text-gray-500 hover:text-red-600" />
                         </button>
-                        {!readonly && (
-                          <button onClick={() => deleteFile(att)} className="p-1.5 bg-white rounded hover:bg-gray-50" title="Delete">
-                            <Trash2 className="w-3 h-3 text-red-600" />
-                          </button>
-                        )}
+                      )}
+                    </div>
+                    {/* Footer */}
+                    <div className="px-2 py-1.5 flex flex-col gap-1">
+                      <p className="text-xs font-medium text-gray-700 truncate">{att.file_name}</p>
+                      <div className="flex items-center justify-between">
+                        <select
+                          className="text-xs text-gray-500 border-none bg-transparent p-0 pr-4 cursor-pointer focus:outline-none"
+                          defaultValue={fileType}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={async (e) => {
+                            e.stopPropagation()
+                            await supabase.from('quote_attachments').update({ kind: e.target.value }).eq('id', att.id)
+                          }}
+                        >
+                          <option value="pdf">Risba</option>
+                          <option value="cad">CAD</option>
+                          <option value="bom">BOM</option>
+                          <option value="other">Drugo</option>
+                        </select>
+                        <span className="text-xs text-gray-400">{(att.file_size / 1024).toFixed(0)} KB</span>
                       </div>
                     </div>
-                    <p className="text-xs font-medium text-gray-700 truncate">{att.file_name}</p>
-                    <p className="text-xs text-gray-400">{(att.file_size / 1024).toFixed(0)} KB</p>
                   </div>
                 )
               })
@@ -238,53 +316,160 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           </div>
         )}
 
-        {/* Search input at bottom */}
-        <input
-          type="text"
-          placeholder="Iskanje..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className="w-full px-2 py-1.5 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
       </div>
+
+      {/* Full-screen preview modal */}
+      {previewAtt && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col" onClick={closePreview}>
+          <div className="flex items-center justify-between px-6 py-3 bg-gray-900 text-white" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3">
+              <button onClick={() => { const idx = displayed.findIndex(a => a.id === previewAtt.id); if (idx > 0) openPreview(displayed[idx - 1]) }} className="p-1 hover:bg-gray-700 rounded"><ChevronLeft className="w-5 h-5" /></button>
+              <span className="text-sm font-medium">{previewAtt.file_name}</span>
+              <button onClick={() => { const idx = displayed.findIndex(a => a.id === previewAtt.id); if (idx < displayed.length - 1) openPreview(displayed[idx + 1]) }} className="p-1 hover:bg-gray-700 rounded"><ChevronRight className="w-5 h-5" /></button>
+            </div>
+            <button onClick={closePreview} className="p-1 hover:bg-gray-700 rounded"><X className="w-5 h-5" /></button>
+          </div>
+          <div className="flex-1 overflow-hidden" onClick={e => e.stopPropagation()}>
+            {!previewUrl ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-gray-500 border-t-white rounded-full animate-spin" />
+              </div>
+            ) : getFileType(previewAtt.file_name) === 'cad' ? (
+              <CadViewer url={previewUrl} fileName={previewAtt.file_name} />
+            ) : getFileType(previewAtt.file_name) === 'pdf' ? (
+              <iframe src={previewUrl} className="w-full h-full border-0" title={previewAtt.file_name} />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <img src={previewUrl} alt={previewAtt.file_name} className="max-w-full max-h-full object-contain" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      </>
     )
   }
 
   if (inline) {
+    const [selectedAtt, setSelectedAtt] = useState<any>(filtered[0] ?? null)
+    const [selectedUrl, setSelectedUrl] = useState<string | null>(null)
+    const [inlineFilterType, setInlineFilterType] = useState<FileType | 'all'>('all')
+
+    const inlineDisplayed = inlineFilterType === 'all' ? filtered : filtered.filter(a => getFileType(a.file_name) === inlineFilterType)
+    const inlineCounts = {
+      pdf: filtered.filter(a => getFileType(a.file_name) === 'pdf').length,
+      cad: filtered.filter(a => getFileType(a.file_name) === 'cad').length,
+      bom: filtered.filter(a => getFileType(a.file_name) === 'bom').length,
+      other: filtered.filter(a => getFileType(a.file_name) === 'other').length,
+    }
+
+    async function selectAtt(att: any) {
+      setSelectedAtt(att)
+      setSelectedUrl(null)
+      const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
+      if (data?.signedUrl) setSelectedUrl(data.signedUrl)
+    }
+
+    // Auto-select first file and load its URL
+    useEffect(() => {
+      if (filtered.length > 0 && !selectedAtt) selectAtt(filtered[0])
+      else if (filtered.length > 0 && selectedAtt && !selectedUrl) selectAtt(selectedAtt)
+    }, [filtered.length])
+
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 h-full overflow-hidden">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-700">Files</h3>
-          {!readonly && (
-            <label className="cursor-pointer">
-              <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" />
-              <span className="text-xs font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                <Upload className="w-3.5 h-3.5" />
-              </span>
-            </label>
+      <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full overflow-hidden">
+        {/* Top: large preview — 68% height */}
+        <div className="min-h-0 bg-gray-50 border-b border-gray-200 relative" style={{flex: '0 0 68%'}}>
+          {!selectedAtt ? (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Ni datotek</div>
+          ) : !selectedUrl ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-7 h-7 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+            </div>
+          ) : getFileType(selectedAtt.file_name) === 'cad' ? (
+            <CadViewer url={selectedUrl} fileName={selectedAtt.file_name} />
+          ) : getFileType(selectedAtt.file_name) === 'pdf' ? (
+            <iframe src={selectedUrl} className="w-full h-full border-0" title={selectedAtt.file_name} />
+          ) : (
+            <img src={selectedUrl} alt={selectedAtt.file_name} className="w-full h-full object-contain" />
+          )}
+          {selectedAtt && (
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs px-3 py-1.5 truncate">
+              {selectedAtt.file_name}
+            </div>
           )}
         </div>
-        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
-          {filtered.length === 0 ? (
-            <p className="text-xs text-gray-400">No files</p>
-          ) : (
-            filtered.map(att => (
-              <div key={att.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200 text-xs">
-                <File className="w-3 h-3 text-gray-500 flex-shrink-0" />
-                <span className="truncate text-gray-700 flex-1 min-w-0">{att.file_name}</span>
-                <div className="flex gap-1 flex-shrink-0">
-                  <button onClick={() => downloadFile(att)} className="text-gray-400 hover:text-blue-600 p-0.5">
-                    <Download className="w-3 h-3" />
+
+        {/* Bottom: header row + thumbnail grid */}
+        <div className="flex flex-col gap-3 p-4 border-t border-gray-200">
+          {/* Header row — matches quote-level panel exactly */}
+          <div className="flex items-center gap-3">
+            <FileText className="w-4 h-4 text-gray-600 flex-shrink-0" />
+            <span className="text-sm font-semibold text-gray-700 flex-shrink-0">
+              {filtered.length === 1 ? '1 Priloga' : filtered.length <= 4 ? `${filtered.length} Prilogi` : `${filtered.length} Priloge`}
+            </span>
+            <div className="flex items-center gap-1.5">
+              {(['pdf','cad','bom','other'] as const).map((type) => {
+                const labels: Record<string,string> = { pdf:'Risba', cad:'CAD', bom:'BOM', other:'Drugo' }
+                return (
+                  <button key={type} onClick={() => setInlineFilterType(inlineFilterType === type ? 'all' : type)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${inlineFilterType === type ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}>
+                    {labels[type]} ({inlineCounts[type]})
                   </button>
-                  {!readonly && (
-                    <button onClick={() => deleteFile(att)} className="text-gray-400 hover:text-red-600 p-0.5">
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
+                )
+              })}
+            </div>
+            {!readonly && (
+              <div className="ml-auto">
+                <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" id="inline-upload" />
+                <label htmlFor="inline-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-40 text-gray-400'}`}>
+                  <Upload className="w-4 h-4" /> Naloži datoteke
+                </label>
               </div>
-            ))
-          )}
+            )}
+          </div>
+
+          {/* Thumbnails */}
+          <div className="grid grid-cols-3 gap-3">
+            {inlineDisplayed.length === 0 ? (
+              <p className="text-xs text-gray-400 col-span-3">Ni datotek</p>
+            ) : inlineDisplayed.map(att => {
+              const ft = getFileType(att.file_name)
+              const isSel = selectedAtt?.id === att.id
+              return (
+                <div key={att.id} onClick={() => selectAtt(att)}
+                  className={`flex flex-col rounded-lg border-2 overflow-hidden cursor-pointer transition-all group ${isSel ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <div className="w-full h-24 bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                    {ft === 'cad' && cadUrls[att.id] ? (
+                      <CadViewer url={cadUrls[att.id]} fileName={att.file_name} />
+                    ) : ft === 'cad' ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                        <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                      </div>
+                    ) : thumbs[att.id] ? (
+                      <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
+                    ) : ft === 'pdf' ? (
+                      <div className="w-full h-full bg-red-50 flex items-center justify-center">
+                        <FileText className="w-8 h-8 text-red-300" />
+                      </div>
+                    ) : (
+                      <File className="w-8 h-8 text-gray-300" />
+                    )}
+                    {!readonly && (
+                      <button onClick={e => { e.stopPropagation(); deleteFile(att) }}
+                        className="absolute top-1 right-1 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <X className="w-3 h-3 text-gray-500 hover:text-red-600" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="px-2 py-1.5">
+                    <p className="text-xs font-medium text-gray-700 truncate">{att.file_name}</p>
+                    <p className="text-xs text-gray-400">{(att.file_size / 1024).toFixed(0)} KB</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     )
