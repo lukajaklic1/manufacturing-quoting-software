@@ -83,6 +83,23 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     }
   }, [readOnly, id])
 
+  // Read-only review: seed piece thumbnails from the frozen snapshot (instant, no CAD re-render).
+  useEffect(() => {
+    if (!readOnly || !snapshot) return
+    setPieceThumbs(prev => {
+      const next = { ...prev }
+      pieces.forEach((p, idx) => {
+        if (!p.id || next[p.id]) return
+        const snapItem =
+          snapshot.items.find(si => p.part_number && si.number === p.part_number && si.name === p.part_name) ||
+          snapshot.items.find(si => si.name === p.part_name && (si.number ?? '') === (p.part_number ?? '')) ||
+          snapshot.items[idx]
+        if (snapItem?.thumb) next[p.id] = snapItem.thumb
+      })
+      return next
+    })
+  }, [readOnly, snapshot, pieces])
+
   // Thumbnail per piece = first uploaded CAD model only. No CAD → no thumbnail
   // (clears any legacy non-CAD thumbnail). Persisted so the quotes list shows it cheaply.
   useEffect(() => {

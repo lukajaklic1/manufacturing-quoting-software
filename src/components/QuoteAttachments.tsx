@@ -139,7 +139,13 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     }
   }
 
-  const filtered = quoteItemId ? attachments.filter(a => a.quote_item_id === quoteItemId) : attachments.filter(a => !a.quote_item_id)
+  // preview (offer review) shows ALL attachments — quote-level + every item-level.
+  // inline (quoteItemId set) shows only that item's. edit mode shows quote-level only.
+  const filtered = preview
+    ? attachments
+    : quoteItemId
+      ? attachments.filter(a => a.quote_item_id === quoteItemId)
+      : attachments.filter(a => !a.quote_item_id)
 
   const counts = {
     cad: filtered.filter(a => getFileType(a.file_name) === 'cad').length,
