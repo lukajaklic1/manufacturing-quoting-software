@@ -3,8 +3,7 @@ import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
 
-// Render the first page of a PDF (by URL) to a PNG data URL for use as a thumbnail.
-export async function pdfFirstPageThumb(url: string, maxW = 320): Promise<string | null> {
+async function renderPdfThumb(url: string, maxW = 320): Promise<string | null> {
   try {
     const pdf = await pdfjsLib.getDocument(url).promise
     const page = await pdf.getPage(1)
@@ -16,9 +15,19 @@ export async function pdfFirstPageThumb(url: string, maxW = 320): Promise<string
     const ctx = canvas.getContext('2d')
     if (!ctx) return null
     await page.render({ canvasContext: ctx, viewport }).promise
-    return canvas.toDataURL('image/png')
+    return canvas.toDataURL('image/jpeg', 0.7)
   } catch (e) {
     console.error('pdf thumb', e)
     return null
   }
+}
+
+// Cached version — generates once per session per attachment id
+export async function pdfFirstPageThumb(url: string, cacheKey: string, maxW = 320): Promise<string | null> {
+  const key = `pdfthumb_${cacheKey}`
+  const cached = sessionStorage.getItem(key)
+  if (cached) return cached
+  const thumb = await renderPdfThumb(url, maxW)
+  if (thumb) sessionStorage.setItem(key, thumb)
+  return thumb
 }

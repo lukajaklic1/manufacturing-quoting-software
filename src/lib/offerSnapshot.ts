@@ -1,33 +1,63 @@
 import type { Quote, Customer, Company, QuoteItem, Calculation, OfferSnapshot, OfferSnapshotItem } from '../types/database'
+import { computeTotals } from '../hooks/useCalculator'
 
 export function createSnapshot(data: any) {
   return data
 }
 
-export async function buildSnapshot(quote: Quote, customer: Customer | null, company: Company | null, items: QuoteItem[], calcs: Record<string, Calculation>): Promise<OfferSnapshot> {
+function composeAddress(c: Company | null): string | null {
+  if (!c) return null
+  const line1 = c.address_street?.trim()
+  const cityLine = [c.address_postal_code, c.address_city].filter(Boolean).join(' ').trim()
+  const parts = [line1, cityLine, c.address_country?.trim()].filter(Boolean)
+  return parts.length ? parts.join(', ') : null
+}
+
+export async function buildSnapshot(quote: Quote, customer: Customer | null, company: Company | null, items: QuoteItem[], calcs: Record<string, Calculation>, itemThumbs: Record<string, string> = {}): Promise<OfferSnapshot> {
   const snapshotItems: OfferSnapshotItem[] = items.map(item => {
     const calc = calcs[item.id]
+
+    // Quantity breaks: each gets its own recomputed price (setup/packaging amortize differently per qty).
+    const qtyBreaks = (Array.isArray(calc?.quantities) && calc!.quantities.length
+      ? calc!.quantities
+      : [item.quantity]
+    ).filter(q => q > 0)
+
+    const quantities = qtyBreaks.map(qty => {
+      const t = calc ? computeTotals(calc, qty) : null
+      const unit_price = t?.selling_price ?? 0
+      return {
+        qty,
+        unit_price,
+        total: Math.round(unit_price * qty * 100) / 100,
+        cost_per_piece: t?.cost_per_piece ?? 0,
+        margin: calc?.profit_pct ?? 0,
+      }
+    })
+
+    const primary = calc ? computeTotals(calc, qtyBreaks[0] ?? 0) : null
+
     return {
       name: item.part_name,
       number: item.part_number,
       unit: 'kom',
-      quantities: [{
-        qty: item.quantity,
-        unit_price: calc?.annual_value ?? 0,
-        total: (calc?.annual_value ?? 0) * item.quantity,
-        cost_per_piece: 0,
-        margin: 0,
-      }],
+      thumb: itemThumbs[item.id] ?? null,
+      quantities: quantities.length ? quantities : [{ qty: item.quantity, unit_price: 0, total: 0, cost_per_piece: 0, margin: 0 }],
       internal: {
-        total_material: 0,
-        total_processes: 0,
-        total_packaging: 0,
-        total_overhead: 0,
-        cost_per_piece: 0,
-        selling_price: calc?.annual_value ?? 0,
+        total_material: primary ? primary.total_raw_materials + primary.total_purchased_parts : 0,
+        total_processes: primary?.total_processes ?? 0,
+        total_packaging: primary?.total_packaging ?? 0,
+        total_overhead: primary?.total_overhead ?? 0,
+        cost_per_piece: primary?.cost_per_piece ?? 0,
+        selling_price: primary?.selling_price ?? 0,
       },
     }
   })
+
+  // Grand total = sum of each item's primary (first) quantity-break total.
+  const grand_total = Math.round(
+    snapshotItems.reduce((sum, it) => sum + (it.quantities[0]?.total ?? 0), 0) * 100
+  ) / 100
 
   return {
     offer: {
@@ -38,27 +68,27 @@ export async function buildSnapshot(quote: Quote, customer: Customer | null, com
       payment_terms: quote.payment_terms,
       parity: quote.parity,
       notes: quote.notes,
-      currency: 'EUR',
+      currency: company?.currency || 'EUR',
     },
     customer: {
       name: customer?.name ?? 'Unknown',
       vat_number: customer?.vat_number ?? null,
-      address: customer?.address ?? null,
+      address: customer?.address ?? composeAddress(null),
       contact_person: quote.contact_person,
       contact_email: quote.contact_email,
       contact_phone: quote.contact_phone,
     },
     company: {
       name: company?.name ?? 'Company',
-      address: null,
+      address: composeAddress(company),
       tax_id: company?.tax_id ?? null,
       email: company?.email ?? null,
       phone: company?.phone ?? null,
-      bank_name: null,
-      bank_iban: null,
-      logo_url: null,
+      bank_name: company?.bank_name ?? null,
+      bank_iban: company?.bank_iban ?? null,
+      logo_url: company?.logo_url ?? null,
     },
     items: snapshotItems,
-    grand_total: Object.values(calcs).reduce((sum, calc) => sum + (calc.annual_value ?? 0), 0),
+    grand_total,
   }
 }

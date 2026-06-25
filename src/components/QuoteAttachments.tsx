@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Upload, File, Trash2, Download, FileText, LayoutGrid, List, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { pdfFirstPageThumb } from '../lib/pdfThumb'
+import { cadThumb } from '../lib/cadThumb'
 import CadViewer from './CadViewer'
 
 interface QuoteAttachmentsProps {
@@ -35,7 +36,6 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   const [previewAtt, setPreviewAtt] = useState<any>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [thumbs, setThumbs] = useState<Record<string, string>>({})
-  const [cadUrls, setCadUrls] = useState<Record<string, string>>({})
   const processingRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
@@ -53,10 +53,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           if (!data?.signedUrl || cancelled) continue
           const ft = getFileType(att.file_name)
           if (ft === 'pdf') {
-            const thumb = await pdfFirstPageThumb(data.signedUrl)
+            const thumb = await pdfFirstPageThumb(data.signedUrl, att.id)
             if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
           } else if (ft === 'cad') {
-            if (!cancelled) setCadUrls(prev => ({ ...prev, [att.id]: data.signedUrl }))
+            const thumb = await cadThumb(att.id, data.signedUrl, att.file_name)
+            if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
           }
         } catch (e) {
           console.error('preview error', e)
@@ -237,14 +238,12 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                   <div key={att.id} className="flex flex-col rounded-lg border border-gray-200 overflow-hidden group bg-white cursor-pointer" onClick={() => openPreview(att)}>
                     {/* Preview */}
                     <div className="w-full h-32 bg-gray-100 flex items-center justify-center overflow-hidden relative">
-                      {isCad && cadUrls[att.id] ? (
-                        <CadViewer url={cadUrls[att.id]} fileName={att.file_name} />
+                      {thumbs[att.id] ? (
+                        <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                       ) : isCad ? (
                         <div className="w-full h-full flex items-center justify-center bg-gray-50">
                           <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
                         </div>
-                      ) : thumbs[att.id] ? (
-                        <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                       ) : isPdf ? (
                         <div className="w-full h-full bg-red-50 flex items-center justify-center">
                           <FileText className="w-8 h-8 text-red-300" />
@@ -440,14 +439,12 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                 <div key={att.id} onClick={() => selectAtt(att)}
                   className={`flex flex-col rounded-lg border-2 overflow-hidden cursor-pointer transition-all group ${isSel ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'}`}>
                   <div className="w-full h-24 bg-gray-100 flex items-center justify-center overflow-hidden relative">
-                    {ft === 'cad' && cadUrls[att.id] ? (
-                      <CadViewer url={cadUrls[att.id]} fileName={att.file_name} />
+                    {thumbs[att.id] ? (
+                      <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                     ) : ft === 'cad' ? (
                       <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                        <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
                       </div>
-                    ) : thumbs[att.id] ? (
-                      <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                     ) : ft === 'pdf' ? (
                       <div className="w-full h-full bg-red-50 flex items-center justify-center">
                         <FileText className="w-8 h-8 text-red-300" />

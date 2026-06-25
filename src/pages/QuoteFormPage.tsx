@@ -253,7 +253,17 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
       for (const c of (cs as Calculation[]) ?? []) calcs[c.quote_item_id] = c
     }
     if (items.length === 0) { setSaving(false); toast.error(s.validateNoPieces); return }
-    const snap = await buildSnapshot({ ...({} as Quote), quote_number: quoteNumber, valid_until: validUntil || null, lead_time: leadTime || null, payment_terms: paymentTerms || null, parity: parity || null, contact_person: contactPerson || null, contact_email: contactEmail || null, contact_phone: contactPhone || null, notes: notes || null } as Quote, cust as Customer | null, company, items, calcs)
+
+    // Build item → CAD thumbnail map from sessionStorage (baked by QuoteAttachments)
+    const itemThumbs: Record<string, string> = {}
+    const { data: atts } = await supabase.from('quote_attachments').select('id,quote_item_id').in('quote_item_id', items.map(i => i.id))
+    for (const att of (atts ?? [])) {
+      if (!att.quote_item_id) continue
+      const thumb = sessionStorage.getItem(`cadthumb_${att.id}`)
+      if (thumb && !itemThumbs[att.quote_item_id]) itemThumbs[att.quote_item_id] = thumb
+    }
+
+    const snap = await buildSnapshot({ ...({} as Quote), quote_number: quoteNumber, valid_until: validUntil || null, lead_time: leadTime || null, payment_terms: paymentTerms || null, parity: parity || null, contact_person: contactPerson || null, contact_email: contactEmail || null, contact_phone: contactPhone || null, notes: notes || null } as Quote, cust as Customer | null, company, items, calcs, itemThumbs)
     if (snap.items.some(it => !(it.quantities[0]?.unit_price > 0))) { setSaving(false); toast.error(s.validateNoPrice); return }
     const { error } = await supabase.from('quotes').update({ snapshot: snap, status: 'issued', issued_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', res.quoteId)
     setSaving(false)
