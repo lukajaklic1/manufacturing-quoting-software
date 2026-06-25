@@ -342,9 +342,9 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
 
       {tab === 'overview' ? (
       <>{/* Top: quote data (left) + attachments (right) — frozen in read-only review */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
         {/* LEFT COLUMN - Quote Form */}
-        <div className="lg:col-span-2">
+        <div>
           <fieldset disabled={readOnly}>
           {/* Quote header */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -379,8 +379,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         </div>
 
         {/* RIGHT COLUMN - Attachments */}
-        <div className="lg:col-span-1">
-          {company && <div className="bg-white rounded-xl border border-gray-200 p-6"><QuoteAttachments quoteId={id} companyId={company.id} attachments={attachments} onChange={setAttachments} readonly={readOnly} /></div>}
+        <div>
+          {company && <QuoteAttachments quoteId={id} companyId={company.id} attachments={attachments} onChange={setAttachments} readonly={readOnly} preview />}
         </div>
       </div>
 
