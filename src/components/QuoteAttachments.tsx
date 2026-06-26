@@ -353,6 +353,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
   if (inline) {
     const [selectedAtt, setSelectedAtt] = useState<any>(filtered[0] ?? null)
+    const [selectedUrl, setSelectedUrl] = useState<string | null>(null)
     const [inlineFilterType, setInlineFilterType] = useState<FileType | 'all'>('all')
 
     const inlineDisplayed = inlineFilterType === 'all' ? filtered : filtered.filter(a => getFileType(a.file_name) === inlineFilterType)
@@ -363,51 +364,58 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
       other: filtered.filter(a => getFileType(a.file_name) === 'other').length,
     }
 
-    // Selecting a file only swaps the baked thumbnail shown in the big area.
-    // The heavy CAD/PDF viewer is loaded ONLY when the user clicks (openPreview → modal).
-    function selectAtt(att: any) {
+    // Select a file. If we already have a baked thumbnail we show that instantly
+    // (no download). Otherwise fetch the signed URL so the live viewer can render
+    // it — and that render bakes the thumbnail for next time.
+    async function selectAtt(att: any) {
       setSelectedAtt(att)
+      setSelectedUrl(null)
+      const ft = getFileType(att.file_name)
+      if (thumbs[att.id]) return
+      if (ft !== 'cad' && ft !== 'pdf') return
+      const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
+      if (data?.signedUrl) setSelectedUrl(data.signedUrl)
     }
 
-    // Auto-select first file (no eager file download — thumbnail is already cached).
+    // Auto-select first file on mount.
     useEffect(() => {
-      if (filtered.length > 0 && !selectedAtt) setSelectedAtt(filtered[0])
+      if (filtered.length > 0 && (!selectedAtt || !filtered.some(a => a.id === selectedAtt.id))) selectAtt(filtered[0])
     }, [filtered.length])
 
     const selFt = selectedAtt ? getFileType(selectedAtt.file_name) : null
+    const bakeSelected = (dataUrl: string) => {
+      if (!selectedAtt) return
+      saveThumb(selectedAtt, dataUrl)
+      setThumbs(prev => prev[selectedAtt.id] ? prev : { ...prev, [selectedAtt.id]: dataUrl })
+    }
 
     return (
       <>
       <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full overflow-hidden">
-        {/* Top: large preview — baked thumbnail; click to open the real viewer */}
-        <div className="min-h-0 bg-gray-50 border-b border-gray-200 relative group" style={{flex: '0 0 68%'}}>
+        {/* Top: large preview. Baked thumbnail → instant. Otherwise the live viewer
+            renders the model (and bakes the thumbnail for next time). */}
+        <div className="min-h-0 bg-gray-50 border-b border-gray-200 relative" style={{flex: '0 0 68%'}}>
           {!selectedAtt ? (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Ni datotek</div>
-          ) : (
-            <button onClick={() => openPreview(selectedAtt)} className="w-full h-full flex items-center justify-center overflow-hidden cursor-zoom-in">
-              {thumbs[selectedAtt.id] ? (
-                <img src={thumbs[selectedAtt.id]} alt="" className="w-full h-full object-contain" />
-              ) : (
-                <div className="flex flex-col items-center gap-3 text-gray-400">
-                  {selFt === 'cad' ? (
-                    <svg className="w-14 h-14 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                  ) : selFt === 'pdf' ? (
-                    <FileText className="w-14 h-14 text-red-300" />
-                  ) : (
-                    <File className="w-14 h-14 text-gray-300" />
-                  )}
-                  <span className="text-xs text-gray-500">
-                    {selFt === 'cad' ? 'Klikni za 3D pregled' : selFt === 'pdf' ? 'Klikni za PDF pregled' : 'Klikni za ogled'}
-                  </span>
-                </div>
-              )}
-              {/* hover hint */}
-              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/0 group-hover:bg-black/10">
+          ) : thumbs[selectedAtt.id] ? (
+            <button onClick={() => openPreview(selectedAtt)} className="w-full h-full flex items-center justify-center overflow-hidden cursor-zoom-in group">
+              <img src={thumbs[selectedAtt.id]} alt="" className="w-full h-full object-contain" />
+              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity group-hover:bg-black/10">
                 <span className="px-3 py-1.5 rounded-full bg-black/70 text-white text-xs font-medium">
                   {selFt === 'cad' ? 'Klikni za 3D pregled' : selFt === 'pdf' ? 'Klikni za PDF pregled' : 'Klikni za ogled'}
                 </span>
               </span>
             </button>
+          ) : !selectedUrl ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-7 h-7 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+            </div>
+          ) : selFt === 'cad' ? (
+            <CadViewer url={selectedUrl} fileName={selectedAtt.file_name} onCapture={bakeSelected} />
+          ) : selFt === 'pdf' ? (
+            <iframe src={selectedUrl} className="w-full h-full border-0" title={selectedAtt.file_name} />
+          ) : (
+            <img src={selectedUrl} alt={selectedAtt.file_name} className="w-full h-full object-contain" />
           )}
           {selectedAtt && (
             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs px-3 py-1.5 truncate pointer-events-none">

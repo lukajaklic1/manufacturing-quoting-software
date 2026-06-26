@@ -11,7 +11,6 @@
 
 import { supabase } from './supabase'
 import { pdfFirstPageThumb } from './pdfThumb'
-import { cadThumb } from './cadThumb'
 
 const BUCKET = 'quotations'
 
@@ -112,13 +111,13 @@ async function persistThumb(companyId: string, id: string, dataUrl: string): Pro
 }
 
 async function renderThumb(att: any): Promise<string | null> {
-  const k = thumbKind(att.file_name)
-  if (k === 'other') return null
+  // Only PDF renders reliably off-screen (pdf.js). CAD (WebGL) is baked from the
+  // live 3D viewer the first time it is shown (CadViewer onCapture → saveThumb),
+  // because off-screen WebGL rendering does not fire reliably across browsers.
+  if (thumbKind(att.file_name) !== 'pdf') return null
   const { data } = await supabase.storage.from(BUCKET).createSignedUrl(att.storage_path, 3600)
   if (!data?.signedUrl) return null
-  // PDF via pdf.js; CAD via an invisible (opacity:0) live render + GetImageAsDataUrl.
-  if (k === 'pdf') return await pdfFirstPageThumb(data.signedUrl, att.id)
-  return await cadThumb(att.id, data.signedUrl, att.file_name)
+  return await pdfFirstPageThumb(data.signedUrl, att.id)
 }
 
 // ── public API ────────────────────────────────────────────────
