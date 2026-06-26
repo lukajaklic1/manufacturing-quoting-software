@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { Plus, Eye, Pencil, FileText, Search, Check, X, Box } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { getThumbByPath } from '../lib/thumbs'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
 import Button from '../components/ui/Button'
@@ -66,18 +67,19 @@ export default function QuotesPage() {
     type It = { id: string; quote_id: string; thumb_path: string | null; position: number }
     const itemList = (items as It[]) ?? []
 
-    // Count parts per quote + show existing thumbnails (no generation on page load)
+    // Count parts per quote + show existing thumbnails from the local cache
+    // (downloaded once, then instant — no signed-URL call per thumbnail per load).
     const counts: Record<string, number> = {}
-    const slotPaths: Record<string, (string | null)[]> = {}
+    const slotItems: Record<string, It[]> = {}
     for (const it of itemList) {
       counts[it.quote_id] = (counts[it.quote_id] ?? 0) + 1
-      const arr = slotPaths[it.quote_id] ?? (slotPaths[it.quote_id] = [])
-      if (arr.length < 4) arr.push(it.thumb_path ?? null)
+      const arr = slotItems[it.quote_id] ?? (slotItems[it.quote_id] = [])
+      if (arr.length < 4) arr.push(it)
     }
     setPartCounts(counts)
     const slots: Record<string, (string | null)[]> = {}
-    for (const [qid, paths] of Object.entries(slotPaths)) {
-      slots[qid] = await Promise.all(paths.map(async p => p ? ((await supabase.storage.from('quotations').createSignedUrl(p, 3600)).data?.signedUrl ?? null) : null))
+    for (const [qid, its] of Object.entries(slotItems)) {
+      slots[qid] = await Promise.all(its.map(it => getThumbByPath(it.id, it.thumb_path)))
     }
     setPartSlots(slots)
     setLoading(false)

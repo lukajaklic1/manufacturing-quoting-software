@@ -400,6 +400,7 @@ export interface QuoteAttachment {
   quote_item_id: string | null
   file_name: string
   storage_path: string
+  thumb_path: string | null
   file_size: number | null
   kind: AttachmentKind
   uploaded_by: string | null

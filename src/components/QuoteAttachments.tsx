@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Upload, File, Trash2, Download, FileText, LayoutGrid, List, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { pdfFirstPageThumb } from '../lib/pdfThumb'
-import { cadThumb } from '../lib/cadThumb'
+import { ensureThumb, saveThumb } from '../lib/thumbs'
 import CadViewer from './CadViewer'
 
 interface QuoteAttachmentsProps {
@@ -49,16 +48,8 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
       for (const att of toLoad) {
         if (cancelled) break
         try {
-          const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
-          if (!data?.signedUrl || cancelled) continue
-          const ft = getFileType(att.file_name)
-          if (ft === 'pdf') {
-            const thumb = await pdfFirstPageThumb(data.signedUrl, att.id)
-            if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
-          } else if (ft === 'cad') {
-            const thumb = await cadThumb(att.id, data.signedUrl, att.file_name)
-            if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
-          }
+          const thumb = await ensureThumb(att)
+          if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
         } catch (e) {
           console.error('preview error', e)
         }
@@ -100,6 +91,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
         // Update state with new attachment
         onChange([...attachments, data])
+
+        // Generate + persist its thumbnail once (so it's instant everywhere afterwards)
+        ensureThumb(data).then(thumb => {
+          if (thumb) setThumbs(prev => ({ ...prev, [data.id]: thumb }))
+        }).catch(() => {})
       } catch (err) {
         console.error('Upload error:', err)
       }
@@ -231,7 +227,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
         {/* File grid/list */}
         {viewMode === 'grid' ? (
-          <div className="grid grid-cols-3 gap-3 flex-1 overflow-y-auto">
+          <div className="grid grid-cols-3 gap-3 flex-1 overflow-y-auto auto-rows-min content-start">
             {displayed.length === 0 ? (
               <p className="text-xs text-gray-400 col-span-3">No files</p>
             ) : (
@@ -248,7 +244,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                         <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                       ) : isCad ? (
                         <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                          <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                          <svg className="w-10 h-10 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                         </div>
                       ) : isPdf ? (
                         <div className="w-full h-full bg-red-50 flex items-center justify-center">
@@ -340,7 +336,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                 <div className="w-8 h-8 border-2 border-gray-500 border-t-white rounded-full animate-spin" />
               </div>
             ) : getFileType(previewAtt.file_name) === 'cad' ? (
-              <CadViewer url={previewUrl} fileName={previewAtt.file_name} />
+              <CadViewer url={previewUrl} fileName={previewAtt.file_name} onCapture={dataUrl => { saveThumb(previewAtt, dataUrl); setThumbs(prev => prev[previewAtt.id] ? prev : { ...prev, [previewAtt.id]: dataUrl }) }} />
             ) : getFileType(previewAtt.file_name) === 'pdf' ? (
               <iframe src={previewUrl} className="w-full h-full border-0" title={previewAtt.file_name} />
             ) : (
@@ -357,7 +353,6 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
   if (inline) {
     const [selectedAtt, setSelectedAtt] = useState<any>(filtered[0] ?? null)
-    const [selectedUrl, setSelectedUrl] = useState<string | null>(null)
     const [inlineFilterType, setInlineFilterType] = useState<FileType | 'all'>('all')
 
     const inlineDisplayed = inlineFilterType === 'all' ? filtered : filtered.filter(a => getFileType(a.file_name) === inlineFilterType)
@@ -368,38 +363,54 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
       other: filtered.filter(a => getFileType(a.file_name) === 'other').length,
     }
 
-    async function selectAtt(att: any) {
+    // Selecting a file only swaps the baked thumbnail shown in the big area.
+    // The heavy CAD/PDF viewer is loaded ONLY when the user clicks (openPreview → modal).
+    function selectAtt(att: any) {
       setSelectedAtt(att)
-      setSelectedUrl(null)
-      const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
-      if (data?.signedUrl) setSelectedUrl(data.signedUrl)
     }
 
-    // Auto-select first file and load its URL
+    // Auto-select first file (no eager file download — thumbnail is already cached).
     useEffect(() => {
-      if (filtered.length > 0 && !selectedAtt) selectAtt(filtered[0])
-      else if (filtered.length > 0 && selectedAtt && !selectedUrl) selectAtt(selectedAtt)
+      if (filtered.length > 0 && !selectedAtt) setSelectedAtt(filtered[0])
     }, [filtered.length])
 
+    const selFt = selectedAtt ? getFileType(selectedAtt.file_name) : null
+
     return (
+      <>
       <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full overflow-hidden">
-        {/* Top: large preview — 68% height */}
-        <div className="min-h-0 bg-gray-50 border-b border-gray-200 relative" style={{flex: '0 0 68%'}}>
+        {/* Top: large preview — baked thumbnail; click to open the real viewer */}
+        <div className="min-h-0 bg-gray-50 border-b border-gray-200 relative group" style={{flex: '0 0 68%'}}>
           {!selectedAtt ? (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Ni datotek</div>
-          ) : !selectedUrl ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-7 h-7 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
-            </div>
-          ) : getFileType(selectedAtt.file_name) === 'cad' ? (
-            <CadViewer url={selectedUrl} fileName={selectedAtt.file_name} />
-          ) : getFileType(selectedAtt.file_name) === 'pdf' ? (
-            <iframe src={selectedUrl} className="w-full h-full border-0" title={selectedAtt.file_name} />
           ) : (
-            <img src={selectedUrl} alt={selectedAtt.file_name} className="w-full h-full object-contain" />
+            <button onClick={() => openPreview(selectedAtt)} className="w-full h-full flex items-center justify-center overflow-hidden cursor-zoom-in">
+              {thumbs[selectedAtt.id] ? (
+                <img src={thumbs[selectedAtt.id]} alt="" className="w-full h-full object-contain" />
+              ) : (
+                <div className="flex flex-col items-center gap-3 text-gray-400">
+                  {selFt === 'cad' ? (
+                    <svg className="w-14 h-14 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  ) : selFt === 'pdf' ? (
+                    <FileText className="w-14 h-14 text-red-300" />
+                  ) : (
+                    <File className="w-14 h-14 text-gray-300" />
+                  )}
+                  <span className="text-xs text-gray-500">
+                    {selFt === 'cad' ? 'Klikni za 3D pregled' : selFt === 'pdf' ? 'Klikni za PDF pregled' : 'Klikni za ogled'}
+                  </span>
+                </div>
+              )}
+              {/* hover hint */}
+              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/0 group-hover:bg-black/10">
+                <span className="px-3 py-1.5 rounded-full bg-black/70 text-white text-xs font-medium">
+                  {selFt === 'cad' ? 'Klikni za 3D pregled' : selFt === 'pdf' ? 'Klikni za PDF pregled' : 'Klikni za ogled'}
+                </span>
+              </span>
+            </button>
           )}
           {selectedAtt && (
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs px-3 py-1.5 truncate">
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs px-3 py-1.5 truncate pointer-events-none">
               {selectedAtt.file_name}
             </div>
           )}
@@ -449,7 +460,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                       <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                     ) : ft === 'cad' ? (
                       <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                        <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                        <svg className="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                       </div>
                     ) : ft === 'pdf' ? (
                       <div className="w-full h-full bg-red-50 flex items-center justify-center">
@@ -475,6 +486,32 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           </div>
         </div>
       </div>
+
+      {/* Full-screen viewer — loads the real CAD/PDF only on click */}
+      {previewAtt && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col" onClick={closePreview}>
+          <div className="flex items-center justify-between px-6 py-3 bg-gray-900 text-white" onClick={e => e.stopPropagation()}>
+            <span className="text-sm font-medium truncate">{previewAtt.file_name}</span>
+            <button onClick={closePreview} className="p-1 hover:bg-gray-700 rounded"><X className="w-5 h-5" /></button>
+          </div>
+          <div className="flex-1 overflow-hidden" onClick={e => e.stopPropagation()}>
+            {!previewUrl ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-gray-500 border-t-white rounded-full animate-spin" />
+              </div>
+            ) : getFileType(previewAtt.file_name) === 'cad' ? (
+              <CadViewer url={previewUrl} fileName={previewAtt.file_name} onCapture={dataUrl => { saveThumb(previewAtt, dataUrl); setThumbs(prev => prev[previewAtt.id] ? prev : { ...prev, [previewAtt.id]: dataUrl }) }} />
+            ) : getFileType(previewAtt.file_name) === 'pdf' ? (
+              <iframe src={previewUrl} className="w-full h-full border-0" title={previewAtt.file_name} />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <img src={previewUrl} alt={previewAtt.file_name} className="max-w-full max-h-full object-contain" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      </>
     )
   }
 

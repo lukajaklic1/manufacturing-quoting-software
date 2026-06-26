@@ -12,6 +12,7 @@ import Input from '../components/ui/Input'
 import QuoteAttachments from '../components/QuoteAttachments'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { buildSnapshot } from '../lib/offerSnapshot'
+import { getThumbByPath } from '../lib/thumbs'
 import type { Customer, Quote, QuoteItem, Calculation, QuoteAttachment, QuoteStatus, OfferSnapshot } from '../types/database'
 
 interface PieceRow { key: string; id?: string; part_name: string; part_number: string; quantity: number; thumb_path?: string | null }
@@ -113,20 +114,20 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           if (p.thumb_path) clearPieceThumb(p.id) // had a non-CAD thumb → remove it
           continue
         }
-        // Has CAD: reuse persisted thumb if present, else render + persist.
+        // Use the piece's own persisted thumb if present (instant from cache)…
         if (p.thumb_path) {
-          const { data } = await supabase.storage.from('quotations').createSignedUrl(p.thumb_path, 3600)
-          if (data?.signedUrl && !cancelled) setPieceThumbs(prev => ({ ...prev, [p.id!]: data.signedUrl }))
+          const cached = await getThumbByPath(p.id, p.thumb_path)
+          if (cached && !cancelled) setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
           continue
         }
-        const { data } = await supabase.storage.from('quotations').createSignedUrl(cad.storage_path, 3600)
-        const url = data?.signedUrl
-        if (!url) continue
-        const { cadThumb } = await import('../lib/cadThumb')
-        const thumb = await cadThumb(cad.id, url, cad.file_name)
-        if (thumb && !cancelled) {
-          setPieceThumbs(prev => ({ ...prev, [p.id!]: thumb! }))
-          if (company && id) persistPieceThumb(p.id, thumb)
+        // …else reuse the CAD attachment's baked thumbnail (baked when its 3D viewer
+        // was first opened). No off-screen WebGL render here (unreliable / can hang).
+        if (cad.thumb_path) {
+          const cached = await getThumbByPath(cad.id, cad.thumb_path)
+          if (cached && !cancelled) {
+            setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
+            if (company && id) persistPieceThumb(p.id, cached)
+          }
         }
       }
     })()
