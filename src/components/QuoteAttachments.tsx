@@ -364,15 +364,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
       other: filtered.filter(a => getFileType(a.file_name) === 'other').length,
     }
 
-    // Select a file. If we already have a baked thumbnail we show that instantly
-    // (no download). Otherwise fetch the signed URL so the live viewer can render
-    // it — and that render bakes the thumbnail for next time.
+    // Select a file → fetch its signed URL so the live viewer renders it directly
+    // (interactive, in-window). The render also bakes the thumbnail for grids/lists.
     async function selectAtt(att: any) {
       setSelectedAtt(att)
       setSelectedUrl(null)
-      const ft = getFileType(att.file_name)
-      if (thumbs[att.id]) return
-      if (ft !== 'cad' && ft !== 'pdf') return
       const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
       if (data?.signedUrl) setSelectedUrl(data.signedUrl)
     }
@@ -383,6 +379,8 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     }, [filtered.length])
 
     const selFt = selectedAtt ? getFileType(selectedAtt.file_name) : null
+    // Bake the thumbnail in the background (for grid/list/table); the big preview
+    // stays the live interactive viewer.
     const bakeSelected = (dataUrl: string) => {
       if (!selectedAtt) return
       saveThumb(selectedAtt, dataUrl)
@@ -392,20 +390,10 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     return (
       <>
       <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full overflow-hidden">
-        {/* Top: large preview. Baked thumbnail → instant. Otherwise the live viewer
-            renders the model (and bakes the thumbnail for next time). */}
+        {/* Top: large interactive preview — rotate the model directly here. */}
         <div className="min-h-0 bg-gray-50 border-b border-gray-200 relative" style={{flex: '0 0 68%'}}>
           {!selectedAtt ? (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Ni datotek</div>
-          ) : thumbs[selectedAtt.id] ? (
-            <button onClick={() => openPreview(selectedAtt)} className="w-full h-full flex items-center justify-center overflow-hidden cursor-zoom-in group">
-              <img src={thumbs[selectedAtt.id]} alt="" className="w-full h-full object-contain" />
-              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity group-hover:bg-black/10">
-                <span className="px-3 py-1.5 rounded-full bg-black/70 text-white text-xs font-medium">
-                  {selFt === 'cad' ? 'Klikni za 3D pregled' : selFt === 'pdf' ? 'Klikni za PDF pregled' : 'Klikni za ogled'}
-                </span>
-              </span>
-            </button>
           ) : !selectedUrl ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-7 h-7 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
