@@ -130,13 +130,11 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           if (p.thumb_path) { clearPieceThumb(p.id); p.thumb_path = null }
         }
 
-        // Load from CAD attachment thumbnail (checks IndexedDB cache first, then storage)
+        // Load from current first CAD's thumbnail only (never fall back to stale p.thumb_path)
         const cached = await getThumbByPath(cad.id, cad.thumb_path)
-          ?? await getThumbByPath(p.id, p.thumb_path)
         if (cached && !cancelled) {
           setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
           pieceThumbSourceRef.current[p.id] = cad.id
-          if (company && id && !p.thumb_path) persistPieceThumb(p.id, cached)
         }
       }
     })()
