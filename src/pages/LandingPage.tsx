@@ -160,23 +160,23 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pain Section ── */}
-      <section className="bg-gray-950 py-24">
+      <section className="bg-gray-50 border-y border-gray-100 py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-sm font-semibold text-blue-400 uppercase tracking-widest mb-3">{l.painTitle}</p>
-            <h2 className="text-4xl font-bold text-white tracking-tight">{l.painHeading}</h2>
-            <p className="text-gray-400 mt-4 text-lg max-w-xl mx-auto">{l.painSubtitle}</p>
+            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.painTitle}</p>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.painHeading}</h2>
+            <p className="text-gray-500 mt-4 text-lg max-w-xl mx-auto">{l.painSubtitle}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {(['pain1', 'pain2', 'pain3'] as const).map((k, i) => {
               const Icon = painIcons[i]
               return (
-                <div key={k} className="bg-gray-900 rounded-2xl border border-gray-800 p-8">
-                  <div className="inline-flex p-3 rounded-xl bg-red-950 text-red-400 mb-5">
+                <div key={k} className="bg-white rounded-2xl border border-gray-200 p-8">
+                  <div className="inline-flex p-3 rounded-xl bg-red-50 text-red-500 mb-5">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-3">{l[`${k}Title` as keyof typeof l] as string}</h3>
-                  <p className="text-gray-400 leading-relaxed">{l[`${k}Desc` as keyof typeof l] as string}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">{l[`${k}Title` as keyof typeof l] as string}</h3>
+                  <p className="text-gray-500 leading-relaxed">{l[`${k}Desc` as keyof typeof l] as string}</p>
                 </div>
               )
             })}
