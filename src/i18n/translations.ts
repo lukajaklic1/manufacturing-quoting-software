@@ -72,7 +72,7 @@ export const translations = {
       status: {
         draft: 'Draft', issued: 'Issued', sent: 'Sent', accepted: 'Accepted', rejected: 'Rejected', expired: 'Expired', won: 'Won', lost: 'Lost', frozen: 'Frozen',
       },
-      reviewOffer: 'Review offer', backToEdit: 'Back to editing', issueOffer: 'Issue offer',
+      reviewOffer: 'Review offer', backToEdit: 'Back to editing', issueOffer: 'Issue offer', saveChanges: 'Save changes',
       newVersion: 'Create new version', markAccepted: 'Mark as won', markRejected: 'Mark as lost', markSentLabel: 'Mark as sent', sendOffer: 'Send offer', downloadPdf: 'Download PDF',
       adminRevert: 'Back to sent (admin)', alreadySent: 'This offer has already been sent to the customer.',
       confirmWon: 'Mark this offer as won? It will be locked.', confirmLost: 'Mark this offer as lost? It will be locked.', editOffer: 'Edit offer',
@@ -1035,7 +1035,7 @@ export const translations = {
       status: {
         draft: 'Osnutek', issued: 'Izdano', sent: 'Poslano', accepted: 'Pridobljeno', rejected: 'Izgubljeno', expired: 'Poteklo', won: 'Pridobljeno', lost: 'Izgubljeno', frozen: 'Zamrznjeno',
       },
-      reviewOffer: 'Pregled ponudbe', backToEdit: 'Nazaj na urejanje', issueOffer: 'Izdaj ponudbo',
+      reviewOffer: 'Pregled ponudbe', backToEdit: 'Nazaj na urejanje', issueOffer: 'Izdaj ponudbo', saveChanges: 'Shrani spremembe',
       newVersion: 'Ustvari novo verzijo', markAccepted: 'Označi kot pridobljeno', markRejected: 'Označi kot izgubljeno', markSentLabel: 'Označi kot poslano', sendOffer: 'Pošlji ponudbo', downloadPdf: 'Prenesi PDF',
       adminRevert: 'Nazaj na poslano (admin)', alreadySent: 'Ta ponudba je že bila poslana stranki.',
       confirmWon: 'Označi ponudbo kot pridobljeno? Ponudba se bo zaklenila.', confirmLost: 'Označi ponudbo kot izgubljeno? Ponudba se bo zaklenila.', editOffer: 'Uredi ponudbo',

@@ -268,7 +268,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     setSaving(false)
     if (!res) return
     toast.success(t.common.saved)
-    if (!editMode) navigate(`/quotes/${res.quoteId}/edit`, { replace: true })
+    if (editMode) navigate(`/quotes/${res.quoteId}`)
+    else navigate(`/quotes/${res.quoteId}/edit`, { replace: true })
   }
 
   // Issue the offer: save, validate, freeze a snapshot, set status → issued, go to read-only review.
@@ -350,10 +351,15 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         </h1>
         <div className="flex gap-2">
           {!readOnly && <>
-            {isSaved && editMode && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
-            {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.cancel}</Button>}
-            <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>
-            <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
+            {editMode ? <>
+              <Button variant="secondary" onClick={() => navigate(`/quotes/${id}`)} disabled={saving}>{t.common.cancel}</Button>
+              <Button loading={saving} onClick={save} disabled={!customerId}>{s.saveChanges ?? t.common.save}</Button>
+            </> : <>
+              {isSaved && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
+              {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.cancel}</Button>}
+              <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>
+              <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
+            </>}
           </>}
           {readOnly && <>
             {(status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
