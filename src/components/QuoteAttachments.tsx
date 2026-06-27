@@ -288,6 +288,8 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                             onCapture={dataUrl => {
                               saveThumb(att, dataUrl)
                               setThumbs(prev => ({ ...prev, [att.id]: dataUrl }))
+                              // Notify parent so pieceThumbs effect re-runs with updated att
+                              if (att.quote_item_id) onChange([...attachments.map(a => a.id === att.id ? { ...a, thumb_path: att.thumb_path } : a)])
                             }}
                           />
                         </div>
@@ -521,6 +523,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                           onCapture={dataUrl => {
                             saveThumb(att, dataUrl)
                             setThumbs(prev => ({ ...prev, [att.id]: dataUrl }))
+                            if (att.quote_item_id) onChange([...attachments.map(a => a.id === att.id ? { ...a, thumb_path: att.thumb_path } : a)])
                           }}
                         />
                       </div>
