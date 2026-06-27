@@ -126,12 +126,12 @@ export default function CustomersPage() {
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
             className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        {(['all', 'active', 'inactive'] as const).map(st => (
-          <button key={st} onClick={() => { setStatusFilter(st); setPage(1) }}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${statusFilter === st ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-            {st === 'all' ? t.common.all : st === 'active' ? t.common.active : t.common.inactive}
-          </button>
-        ))}
+        <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as typeof statusFilter); setPage(1) }}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="all">{t.filters.allStatuses}</option>
+          <option value="active">{t.common.activeFPl}</option>
+          <option value="inactive">{t.common.inactiveFPl}</option>
+        </select>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -160,7 +160,7 @@ export default function CustomersPage() {
                   <td className="px-4 py-3 text-gray-600">{counts[c.id] ?? 0}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${(c.status ?? 'active') === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                      {(c.status ?? 'active') === 'active' ? t.common.active : t.common.inactive}
+                      {(c.status ?? 'active') === 'active' ? t.common.activeF : t.common.inactiveF}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -194,7 +194,7 @@ export default function CustomersPage() {
         </div>
         <label className="flex items-center gap-2 text-sm text-gray-700 mt-4">
           <input type="checkbox" checked={form.status === 'active'} onChange={e => setForm(f => ({ ...f, status: e.target.checked ? 'active' : 'inactive' }))}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />{t.common.active}
+            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />{t.common.activeF}
         </label>
         <div className="flex gap-3 justify-end mt-5">
           <Button variant="secondary" onClick={() => setOpen(false)}>{t.common.cancel}</Button>

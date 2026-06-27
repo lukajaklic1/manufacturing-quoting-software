@@ -12,7 +12,7 @@ import type { Company } from '../types/database'
 const CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HRK']
 
 export default function SettingsPage() {
-  const { company, loading, refetch } = useCompany()
+  const { company, loading, refetch, isAdmin } = useCompany()
   const { t } = useLanguage()
   const s = t.qp
   const [form, setForm] = useState<Partial<Company>>({})
@@ -48,7 +48,7 @@ export default function SettingsPage() {
     <div className="p-4 lg:p-6 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.nav.settings}</h1>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6"><fieldset disabled={!isAdmin} className="contents">
         {/* Company profile */}
         <Section icon={Building2} title={s.companyProfile}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -61,7 +61,7 @@ export default function SettingsPage() {
             <Input id="address_postal_code" label={t.common.postalCode} {...field('address_postal_code')} />
             <Input id="address_country" label={t.common.country} {...field('address_country')} />
           </div>
-          <SaveRow loading={saving === 'profile'} onClick={() => save('profile', ['name', 'email', 'phone', 'tax_id', 'address_street', 'address_city', 'address_postal_code', 'address_country'])} label={t.common.save} />
+          {isAdmin && <SaveRow loading={saving === 'profile'} onClick={() => save('profile', ['name', 'email', 'phone', 'tax_id', 'address_street', 'address_city', 'address_postal_code', 'address_country'])} label={t.common.save} />}
         </Section>
 
         {/* Quote settings */}
@@ -79,7 +79,7 @@ export default function SettingsPage() {
               onChange={e => setForm(f => ({ ...f, quote_counter: Math.max(0, (parseInt(e.target.value) || 1) - 1) }))} />
           </div>
           <p className="text-xs text-gray-400 mt-2">{s.nextQuoteWillBe}: <span className="font-mono text-gray-600">{preview}</span></p>
-          <SaveRow loading={saving === 'quote'} onClick={() => save('quote', ['currency', 'quote_prefix', 'quote_counter'])} label={t.common.save} />
+          {isAdmin && <SaveRow loading={saving === 'quote'} onClick={() => save('quote', ['currency', 'quote_prefix', 'quote_counter'])} label={t.common.save} />}
         </Section>
 
         {/* Bank details */}
@@ -89,9 +89,35 @@ export default function SettingsPage() {
             <Input id="bank_name" label={s.bankName} {...field('bank_name')} />
             <Input id="bank_iban" label="IBAN" {...field('bank_iban')} />
           </div>
-          <SaveRow loading={saving === 'bank'} onClick={() => save('bank', ['bank_name', 'bank_iban'])} label={t.common.save} />
+          {isAdmin && <SaveRow loading={saving === 'bank'} onClick={() => save('bank', ['bank_name', 'bank_iban'])} label={t.common.save} />}
         </Section>
-      </div>
+
+        {/* General terms */}
+        <Section icon={Receipt} title={s.quoteTerms}>
+          <p className="text-xs text-gray-400 mb-4">{s.quoteTermsHint}</p>
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">{s.quoteTermsSl}</label>
+              <textarea
+                rows={6}
+                value={form.quote_terms ?? ''}
+                onChange={e => setForm(f => ({ ...f, quote_terms: e.target.value }))}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">{s.quoteTermsEn}</label>
+              <textarea
+                rows={6}
+                value={form.quote_terms_en ?? ''}
+                onChange={e => setForm(f => ({ ...f, quote_terms_en: e.target.value }))}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+              />
+            </div>
+          </div>
+          {isAdmin && <SaveRow loading={saving === 'terms'} onClick={() => save('terms', ['quote_terms', 'quote_terms_en'])} label={t.common.save} />}
+        </Section>
+      </fieldset></div>
     </div>
   )
 }

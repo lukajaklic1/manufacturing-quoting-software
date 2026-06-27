@@ -305,7 +305,7 @@ export default function UsersPage() {
           <div>
             <p className="text-sm text-gray-600">{s.inviteSent} <span className="font-medium text-gray-900">{sentTo}</span>.</p>
             <div className="flex justify-end mt-5">
-              <Button onClick={() => setInviteOpen(false)}>{t.common.cancel}</Button>
+              <Button onClick={() => setInviteOpen(false)}>{t.common.close}</Button>
             </div>
           </div>
         ) : (

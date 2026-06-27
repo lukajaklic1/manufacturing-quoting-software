@@ -87,6 +87,8 @@ export async function buildSnapshot(quote: Quote, customer: Customer | null, com
       bank_name: company?.bank_name ?? null,
       bank_iban: company?.bank_iban ?? null,
       logo_url: company?.logo_url ?? null,
+      quote_terms: company?.quote_terms ?? null,
+      quote_terms_en: company?.quote_terms_en ?? null,
     },
     items: snapshotItems,
     grand_total,

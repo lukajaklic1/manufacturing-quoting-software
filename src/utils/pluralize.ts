@@ -26,6 +26,7 @@ export const countCustomers = (lang: 'en' | 'sl', n: number) => plural(lang, n, 
 export const countMachines = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['stroj', 'stroja', 'stroji', 'strojev'], ['machine', 'machines'])
 export const countWorkers = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['delavec', 'delavca', 'delavci', 'delavcev'], ['worker', 'workers'])
 export const countQuotes = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['ponudba', 'ponudbi', 'ponudbe', 'ponudb'], ['quote', 'quotes'])
+export const countMaterials = (lang: 'en' | 'sl', n: number) => plural(lang, n, ['material', 'materiala', 'materiali', 'materialov'], ['material', 'materials'])
 
 // Predpripravljene funkcije za vsako entiteto
 

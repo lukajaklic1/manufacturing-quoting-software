@@ -35,7 +35,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
   const { id } = useParams()
   const editMode = !!id
   const { company, hasPerm, isAdmin } = useCompany()
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const s = t.qp
   const u = s.units
   const navigate = useNavigate()
@@ -331,15 +331,15 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
             <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
           </>}
           {readOnly && <>
-            {(status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
+            {hasPerm('quotes', 'create') && (status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
               <Button variant="secondary" onClick={() => { window.location.href = `/quotes/${id}/edit` }} className="gap-2"><Pencil className="w-4 h-4" />{s.editOffer}</Button>}
-            {status === 'draft' &&
+            {hasPerm('quotes', 'create') && status === 'draft' &&
               <Button loading={saving} onClick={issue} disabled={!customerId} className="gap-2">{s.issueOffer}</Button>}
-            {status !== 'draft' && snapshot && <PDFDownloadLink document={<OfferPdf snap={snapshot} />} fileName={`Ponudba_${quoteNumber}.pdf`}>
+            {status !== 'draft' && snapshot && <PDFDownloadLink document={<OfferPdf snap={snapshot} lang={lang} />} fileName={`Ponudba_${quoteNumber}.pdf`}>
               <Button variant="secondary" className="gap-2"><Download className="w-4 h-4" />{s.downloadPdf}</Button>
             </PDFDownloadLink>}
-            {status === 'issued' && <Button onClick={() => changeStatus('sent')} className="gap-2"><Send className="w-4 h-4" />{s.markSentLabel}</Button>}
-            {status === 'sent' && <>
+            {hasPerm('quotes', 'create') && status === 'issued' && <Button onClick={() => changeStatus('sent')} className="gap-2"><Send className="w-4 h-4" />{s.markSentLabel}</Button>}
+            {hasPerm('quotes', 'create') && status === 'sent' && <>
               <Button onClick={() => setConfirm('accepted')} className="gap-2"><Check className="w-4 h-4" />{s.markAccepted}</Button>
               <Button variant="secondary" onClick={() => setConfirm('rejected')} className="gap-2"><X className="w-4 h-4" />{s.markRejected}</Button>
             </>}
@@ -462,8 +462,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
       ) : (
         snapshot ? (
           <div className="bg-white rounded-xl border border-gray-200 h-[800px]">
-            <PDFViewer style={{ width: '100%', height: '100%' }}>
-              <OfferPdf snap={snapshot} />
+            <PDFViewer key={lang} style={{ width: '100%', height: '100%' }}>
+              <OfferPdf snap={snapshot} lang={lang} />
             </PDFViewer>
           </div>
         ) : (

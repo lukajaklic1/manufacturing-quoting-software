@@ -12,6 +12,7 @@ import Input from '../components/ui/Input'
 import NumberInput from '../components/ui/NumberInput'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Pagination from '../components/ui/Pagination'
+import { countMaterials } from '../utils/pluralize'
 import type { Material } from '../types/database'
 
 const PAGE_SIZE = 20
@@ -23,7 +24,7 @@ const empty: Form = { name: '', category: '', density: null, price_per_kg: null,
 export default function MaterialsPage() {
   const { company, hasPerm, loading: permLoading } = useCompany()
   const canEdit = hasPerm('materials', 'create')
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const s = t.qp
   const [rows, setRows] = useState<Material[]>([])
   const [loading, setLoading] = useState(true)
@@ -35,6 +36,8 @@ export default function MaterialsPage() {
   const [toDelete, setToDelete] = useState<Material | null>(null)
   const [used, setUsed] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(1)
+  const [catFilter, setCatFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
 
   useEffect(() => { if (company) load() }, [company])
   async function load() {
@@ -76,7 +79,11 @@ export default function MaterialsPage() {
 
   const cur = company?.currency ?? 'EUR'
   const money = (n: number) => n.toLocaleString('de-DE', { style: 'currency', currency: cur, maximumFractionDigits: 4 })
-  const filtered = rows.filter(m => !search || m.name.toLowerCase().includes(search.toLowerCase()))
+  const filtered = rows.filter(m =>
+    (!search || m.name.toLowerCase().includes(search.toLowerCase())) &&
+    (!catFilter || m.category === catFilter) &&
+    (statusFilter === 'all' || (statusFilter === 'active' ? m.is_active : !m.is_active))
+  )
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   if (!permLoading && !hasPerm('materials', 'view')) return <Navigate to="/dashboard" replace />
@@ -84,14 +91,30 @@ export default function MaterialsPage() {
   return (
     <div className="p-4 lg:p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{s.materials}</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{s.materials}</h1>
+          <p className="text-gray-500 text-sm mt-1">{countMaterials(lang, rows.length)}</p>
+        </div>
         {canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newMaterial}</Button>}
       </div>
 
-      <div className="relative mb-4 max-w-xs">
-        <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
-          className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <div className="flex flex-wrap gap-3 mb-4">
+        <div className="relative">
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
+            className="pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
+        </div>
+        <select value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1) }}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="">{t.filters.allCategories}</option>
+          {CATEGORIES.map(c => <option key={c} value={c}>{s.matCat[c]}</option>)}
+        </select>
+        <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as typeof statusFilter); setPage(1) }}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="all">{t.filters.allStatuses}</option>
+          <option value="active">{t.common.activeM}</option>
+          <option value="inactive">{t.common.inactiveM}</option>
+        </select>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -154,7 +177,7 @@ export default function MaterialsPage() {
       </Modal>
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
-        title={s.deleteMaterial} message={s.deleteCustomerConfirm} confirmLabel={t.common.delete} danger />
+        title={s.deleteMaterial} message={s.deleteMaterialConfirm} confirmLabel={t.common.delete} danger />
     </div>
   )
 }

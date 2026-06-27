@@ -4,7 +4,7 @@ import * as OV from 'online-3d-viewer'
 // occt-import-js / draco / rhino wasm libs are fetched automatically from jsDelivr by the library at load time.
 // onCapture (optional): fires once with a still-image data-url after the model is rendered,
 // so callers can bake/persist a thumbnail from the real (visible) render — guaranteed non-blank.
-export default function CadViewer({ url, fileName, onCapture }: { url: string; fileName: string; onCapture?: (dataUrl: string) => void }) {
+export default function CadViewer({ url, fileName, onCapture, onError }: { url: string; fileName: string; onCapture?: (dataUrl: string) => void; onError?: () => void }) {
   const ref = useRef<HTMLDivElement>(null)
   const [error, setError] = useState(false)
 
@@ -31,11 +31,12 @@ export default function CadViewer({ url, fileName, onCapture }: { url: string; f
               } catch { /* noop */ }
             })
           },
+          onModelLoadFailed: () => { if (!cancelled) { setError(true); onError?.() } },
         } as any)
         viewer.LoadModelFromFileList([file])
       } catch (e) {
         console.error('cad viewer', e)
-        if (!cancelled) setError(true)
+        if (!cancelled) { setError(true); onError?.() }
       }
     })()
     return () => { cancelled = true; try { viewer?.Destroy?.() } catch { /* noop */ } }

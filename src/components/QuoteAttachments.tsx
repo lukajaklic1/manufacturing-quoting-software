@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useLanguage } from '../hooks/useLanguage'
 import { Upload, File, Trash2, Download, FileText, LayoutGrid, List, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { ensureThumb, saveThumb } from '../lib/thumbs'
@@ -30,7 +31,19 @@ function getFileType(filename: string): FileType {
   return 'other'
 }
 
+function fmtAttachmentCount(n: number, lang: string) {
+  if (lang === 'sl') {
+    if (n === 1) return '1 Priloga'
+    if (n === 2) return '2 Prilogi'
+    if (n === 3 || n === 4) return `${n} Priloge`
+    return `${n} Prilog`
+  }
+  return n === 1 ? '1 Attachment' : `${n} Attachments`
+}
+
 export default function QuoteAttachments({ quoteId, companyId, quoteItemId, attachments, onChange, readonly, inline, preview }: QuoteAttachmentsProps) {
+  const { lang, t } = useLanguage()
+  const kindLabels = { pdf: t.qp.attKind.drawing, cad: t.qp.attKind.cad, bom: t.qp.attKind.bom, other: t.qp.attKind.other }
   const [uploading, setUploading] = useState(false)
   const [filterType, setFilterType] = useState<FileType | 'all'>('all')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
@@ -207,7 +220,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           <div className="flex items-center gap-2">
             <FileText className="w-4 h-4 text-gray-600" />
             <span className="text-sm font-semibold text-gray-700">
-              {filtered.length === 1 ? '1 Priloga' : filtered.length <= 4 ? `${filtered.length} Prilogi` : `${filtered.length} Priloge`}
+              {fmtAttachmentCount(filtered.length, lang)}
             </span>
           </div>
 
@@ -217,25 +230,25 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
               onClick={() => setFilterType('pdf')}
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'pdf' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
             >
-              Risba ({counts.pdf})
+              {kindLabels.pdf} ({counts.pdf})
             </button>
             <button
               onClick={() => setFilterType('cad')}
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'cad' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
             >
-              CAD ({counts.cad})
+              {kindLabels.cad} ({counts.cad})
             </button>
             <button
               onClick={() => setFilterType('bom')}
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'bom' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
             >
-              BOM ({counts.bom})
+              {kindLabels.bom} ({counts.bom})
             </button>
             <button
               onClick={() => setFilterType('other')}
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'other' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
             >
-              Drugo ({counts.other})
+              {kindLabels.other} ({counts.other})
             </button>
           </div>
 
@@ -271,7 +284,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-3 gap-3 flex-1 overflow-y-auto auto-rows-min content-start">
             {displayed.length === 0 ? (
-              <p className="text-xs text-gray-400 col-span-3">No files</p>
+              <p className="text-xs text-gray-400 col-span-3">{lang === 'sl' ? 'Ni datotek' : 'No files'}</p>
             ) : (
               displayed.map(att => {
                 const fileType = getFileType(att.file_name)
@@ -334,10 +347,10 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                             await supabase.from('quote_attachments').update({ kind: e.target.value }).eq('id', att.id)
                           }}
                         >
-                          <option value="pdf">Risba</option>
-                          <option value="cad">CAD</option>
-                          <option value="bom">BOM</option>
-                          <option value="other">Drugo</option>
+                          <option value="pdf">{kindLabels.pdf}</option>
+                          <option value="cad">{kindLabels.cad}</option>
+                          <option value="bom">{kindLabels.bom}</option>
+                          <option value="other">{kindLabels.other}</option>
                         </select>
                         <span className="text-xs text-gray-400">{(att.file_size / 1024).toFixed(0)} KB</span>
                       </div>
@@ -350,7 +363,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         ) : (
           <div className="flex-1 overflow-y-auto space-y-2">
             {displayed.length === 0 ? (
-              <p className="text-xs text-gray-400">No files</p>
+              <p className="text-xs text-gray-400">{lang === 'sl' ? 'Ni datotek' : 'No files'}</p>
             ) : (
               displayed.map(att => (
                 <div key={att.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200 text-xs group">
@@ -482,11 +495,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           <div className="flex items-center gap-3">
             <FileText className="w-4 h-4 text-gray-600 flex-shrink-0" />
             <span className="text-sm font-semibold text-gray-700 flex-shrink-0">
-              {filtered.length === 1 ? '1 Priloga' : filtered.length <= 4 ? `${filtered.length} Prilogi` : `${filtered.length} Priloge`}
+              {fmtAttachmentCount(filtered.length, lang)}
             </span>
             <div className="flex items-center gap-1.5">
               {(['pdf','cad','bom','other'] as const).map((type) => {
-                const labels: Record<string,string> = { pdf:'Risba', cad:'CAD', bom:'BOM', other:'Drugo' }
+                const labels = kindLabels
                 return (
                   <button key={type} onClick={() => setInlineFilterType(inlineFilterType === type ? 'all' : type)}
                     className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${inlineFilterType === type ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}>

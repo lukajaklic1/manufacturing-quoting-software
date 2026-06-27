@@ -32,6 +32,8 @@ export interface Company {
   oh_base_manufacturing: number
   quote_prefix: string
   quote_counter: number
+  quote_terms: string | null
+  quote_terms_en: string | null
   created_at: string
   updated_at: string
 }
@@ -231,7 +233,7 @@ export interface Quote {
 export interface OfferSnapshot {
   offer: { number: string; issued_at: string; valid_until: string | null; lead_time: string | null; payment_terms: string | null; parity: string | null; notes: string | null; currency: string }
   customer: { name: string; vat_number: string | null; address: string | null; contact_person: string | null; contact_email: string | null; contact_phone: string | null }
-  company: { name: string; address: string | null; tax_id: string | null; email: string | null; phone: string | null; bank_name: string | null; bank_iban: string | null; logo_url: string | null }
+  company: { name: string; address: string | null; tax_id: string | null; email: string | null; phone: string | null; bank_name: string | null; bank_iban: string | null; logo_url: string | null; quote_terms: string | null; quote_terms_en: string | null }
   items: OfferSnapshotItem[]
   grand_total: number
 }

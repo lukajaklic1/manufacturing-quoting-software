@@ -79,6 +79,11 @@ const s = StyleSheet.create({
   notesLabel: { fontSize: 7, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
   notesText: { fontSize: 8.5, lineHeight: 1.6 },
 
+  // ── Terms ──────────────────────────────────────────────────────
+  termsBox: { marginTop: 16, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 10 },
+  termsLabel: { fontSize: 7, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
+  termsText: { fontSize: 7.5, color: c.muted, lineHeight: 1.5 },
+
   // ── Footer (every page) ────────────────────────────────────────
   footer: { position: 'absolute', bottom: 16, left: 40, right: 40, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 6 },
   footerTop: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 },
@@ -106,10 +111,56 @@ function fmtDate(d: string | null | undefined) {
   try { return new Date(d).toLocaleDateString('sl-SI') } catch { return String(d) }
 }
 
-export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
-  if (!snap) return <Document><Page><Text>Ni podatkov</Text></Page></Document>
+const PDF_LABELS = {
+  sl: {
+    title: 'PONUDBA',
+    date: 'Datum',
+    customer: 'Kupec',
+    vatId: 'ID DDV',
+    vatIdComp: 'ID za DDV',
+    validity: 'Veljavnost',
+    leadTime: 'Rok dobave',
+    paymentTerms: 'Plačilni pogoji',
+    parity: 'Paritetni pogoji',
+    currency: 'Valuta',
+    partName: 'Naziv kosa',
+    qty: 'Kol.',
+    unit: 'Enota',
+    pricePerPc: 'Cena/kos',
+    total: 'Skupaj',
+    grandTotal: 'SKUPAJ BREZ DDV',
+    notes: 'Opombe',
+    terms: 'Splošni pogoji poslovanja',
+    page: (n: number, t: number) => `Stran ${n} / ${t}`,
+  },
+  en: {
+    title: 'QUOTATION',
+    date: 'Date',
+    customer: 'Customer',
+    vatId: 'VAT ID',
+    vatIdComp: 'VAT ID',
+    validity: 'Valid until',
+    leadTime: 'Lead time',
+    paymentTerms: 'Payment terms',
+    parity: 'Parity (Incoterm)',
+    currency: 'Currency',
+    partName: 'Part name',
+    qty: 'Qty',
+    unit: 'Unit',
+    pricePerPc: 'Price/pc',
+    total: 'Total',
+    grandTotal: 'TOTAL EX. VAT',
+    notes: 'Notes',
+    terms: 'General terms and conditions',
+    page: (n: number, t: number) => `Page ${n} / ${t}`,
+  },
+}
+
+export default function OfferPdf({ snap, lang = 'sl' }: { snap: OfferSnapshot; lang?: 'sl' | 'en' }) {
+  if (!snap) return <Document><Page><Text>No data</Text></Page></Document>
 
   const { offer, company, customer, items, grand_total } = snap
+  const L = PDF_LABELS[lang]
 
   const bankLine = [
     company.bank_iban && `IBAN: ${company.bank_iban}`,
@@ -118,7 +169,7 @@ export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
 
   const footerLeft = [
     company.name,
-    company.tax_id && `ID DDV: ${company.tax_id}`,
+    company.tax_id && `${L.vatId}: ${company.tax_id}`,
   ].filter(Boolean).join(' · ')
 
   return (
@@ -132,21 +183,21 @@ export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
             {company.address && <Text style={s.companyDetail}>{company.address}</Text>}
             {company.phone && <Text style={s.companyDetail}>{company.phone}</Text>}
             {company.email && <Text style={s.companyDetail}>{company.email}</Text>}
-            {company.tax_id && <Text style={s.companyDetail}>ID za DDV: {company.tax_id}</Text>}
+            {company.tax_id && <Text style={s.companyDetail}>{L.vatIdComp}: {company.tax_id}</Text>}
           </View>
           <View style={s.titleBlock}>
-            <Text style={s.titleLabel}>PONUDBA</Text>
+            <Text style={s.titleLabel}>{L.title}</Text>
             <Text style={s.titleNumber}>{offer.number}</Text>
-            <Text style={s.titleDate}>Datum: {fmtDate(offer.issued_at)}</Text>
+            <Text style={s.titleDate}>{L.date}: {fmtDate(offer.issued_at)}</Text>
           </View>
         </View>
 
-        {/* Customer — single box, no "Naše podjetje" duplicate */}
+        {/* Customer */}
         <View style={s.customerRow}>
-          <Text style={s.customerLabel}>Kupec</Text>
+          <Text style={s.customerLabel}>{L.customer}</Text>
           <Text style={s.customerName}>{customer.name}</Text>
           {customer.address && <Text style={s.customerDetail}>{customer.address}</Text>}
-          {customer.vat_number && <Text style={s.customerDetail}>ID DDV: {customer.vat_number}</Text>}
+          {customer.vat_number && <Text style={s.customerDetail}>{L.vatId}: {customer.vat_number}</Text>}
           {customer.contact_person && <Text style={s.customerDetail}>{customer.contact_person}</Text>}
           {customer.contact_email && <Text style={s.customerDetail}>{customer.contact_email}</Text>}
           {customer.contact_phone && <Text style={s.customerDetail}>{customer.contact_phone}</Text>}
@@ -155,40 +206,40 @@ export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
         {/* Terms strip */}
         <View style={s.termsRow}>
           <View style={s.termItem}>
-            <Text style={s.termLabel}>Veljavnost</Text>
+            <Text style={s.termLabel}>{L.validity}</Text>
             <Text style={s.termValue}>{fmtDate(offer.valid_until)}</Text>
           </View>
           <View style={s.termDivider} />
           <View style={s.termItem}>
-            <Text style={s.termLabel}>Rok dobave</Text>
+            <Text style={s.termLabel}>{L.leadTime}</Text>
             <Text style={s.termValue}>{offer.lead_time || '—'}</Text>
           </View>
           <View style={s.termDivider} />
           <View style={s.termItem}>
-            <Text style={s.termLabel}>Plačilni pogoji</Text>
+            <Text style={s.termLabel}>{L.paymentTerms}</Text>
             <Text style={s.termValue}>{offer.payment_terms || '—'}</Text>
           </View>
           <View style={s.termDivider} />
           <View style={s.termItem}>
-            <Text style={s.termLabel}>Paritetni pogoji</Text>
+            <Text style={s.termLabel}>{L.parity}</Text>
             <Text style={s.termValue}>{offer.parity || '—'}</Text>
           </View>
           <View style={s.termDivider} />
           <View style={s.termItem}>
-            <Text style={s.termLabel}>Valuta</Text>
+            <Text style={s.termLabel}>{L.currency}</Text>
             <Text style={s.termValue}>{offer.currency}</Text>
           </View>
         </View>
 
         {/* Table */}
         <View style={s.tableHeader}>
-          <View style={s.colPos}><Text style={s.thText}>Pos.</Text></View>
+          <View style={s.colPos}><Text style={s.thText}>{lang === 'sl' ? 'Poz.' : 'Pos.'}</Text></View>
           <View style={s.colThumb} />
-          <View style={s.colName}><Text style={s.thText}>Naziv kosa</Text></View>
-          <View style={s.colQty}><Text style={[s.thText, { textAlign: 'right' }]}>Kol.</Text></View>
-          <View style={s.colUnit}><Text style={[s.thText, { textAlign: 'center' }]}>Enota</Text></View>
-          <View style={s.colPrice}><Text style={[s.thText, { textAlign: 'right' }]}>Cena/kos</Text></View>
-          <View style={s.colTotal}><Text style={[s.thText, { textAlign: 'right' }]}>Skupaj</Text></View>
+          <View style={s.colName}><Text style={s.thText}>{L.partName}</Text></View>
+          <View style={s.colQty}><Text style={[s.thText, { textAlign: 'right' }]}>{L.qty}</Text></View>
+          <View style={s.colUnit}><Text style={[s.thText, { textAlign: 'center' }]}>{L.unit}</Text></View>
+          <View style={s.colPrice}><Text style={[s.thText, { textAlign: 'right' }]}>{L.pricePerPc}</Text></View>
+          <View style={s.colTotal}><Text style={[s.thText, { textAlign: 'right' }]}>{L.total}</Text></View>
         </View>
 
         {items.map((item, idx) => (
@@ -217,7 +268,7 @@ export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
         {/* Grand total */}
         <View style={s.totalSection}>
           <View style={s.grandTotalBox}>
-            <Text style={s.grandTotalLabel}>SKUPAJ BREZ DDV</Text>
+            <Text style={s.grandTotalLabel}>{L.grandTotal}</Text>
             <Text style={s.grandTotalValue}>{eur(grand_total)}</Text>
           </View>
         </View>
@@ -225,8 +276,16 @@ export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
         {/* Notes */}
         {offer.notes && (
           <View style={s.notesBox}>
-            <Text style={s.notesLabel}>Opombe</Text>
+            <Text style={s.notesLabel}>{L.notes}</Text>
             <Text style={s.notesText}>{offer.notes}</Text>
+          </View>
+        )}
+
+        {/* General terms */}
+        {(lang === 'en' ? company.quote_terms_en : company.quote_terms) && (
+          <View style={s.termsBox}>
+            <Text style={s.termsLabel}>{L.terms}</Text>
+            <Text style={s.termsText}>{lang === 'en' ? company.quote_terms_en : company.quote_terms}</Text>
           </View>
         )}
 
@@ -234,7 +293,7 @@ export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
         <View style={s.footer} fixed>
           <View style={s.footerTop}>
             <Text style={s.footerMain}>{footerLeft}</Text>
-            <Text style={s.footerPage} render={({ pageNumber, totalPages }) => `Stran ${pageNumber} / ${totalPages}`} />
+            <Text style={s.footerPage} render={({ pageNumber, totalPages }) => L.page(pageNumber, totalPages)} />
           </View>
           {bankLine ? <Text style={s.footerBank}>{bankLine}</Text> : null}
         </View>

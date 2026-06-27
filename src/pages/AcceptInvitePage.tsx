@@ -42,8 +42,9 @@ export default function AcceptInvitePage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="flex justify-center mb-8">
-          <AppLogo size="lg" showName={false} />
+        <div className="flex flex-col items-center gap-2 mb-8">
+          <AppLogo size="lg" showName={true} />
+          <p className="text-sm text-gray-500">{lang === 'sl' ? 'Povabljeni ste bili v Costflow' : 'You have been invited to Costflow'}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
@@ -60,7 +61,7 @@ export default function AcceptInvitePage() {
                 <div className="bg-blue-100 p-2 rounded-lg"><UserPlus className="w-5 h-5 text-blue-600" /></div>
                 <div>
                   <h1 className="text-xl font-semibold text-gray-900">{a.title}</h1>
-                  <p className="text-sm text-gray-500">{a.subtitle}</p>
+                  {a.subtitle && <p className="text-sm text-gray-500">{a.subtitle}</p>}
                 </div>
               </div>
 

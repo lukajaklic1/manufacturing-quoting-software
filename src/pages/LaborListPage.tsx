@@ -111,7 +111,7 @@ export default function LaborListPage() {
       <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
-        title={t.nav.labor} message={s.deleteCustomerConfirm} confirmLabel={t.common.delete} danger />
+        title={t.nav.labor} message={s.deleteLaborConfirm} confirmLabel={t.common.delete} danger />
     </div>
   )
 }

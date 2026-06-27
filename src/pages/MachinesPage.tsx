@@ -122,7 +122,7 @@ export default function MachinesPage() {
       <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
-        title={t.nav.machines} message={s.deleteCustomerConfirm} confirmLabel={t.common.delete} danger />
+        title={s.deleteMachine} message={s.deleteMachineConfirm} confirmLabel={t.common.delete} danger />
     </div>
   )
 }

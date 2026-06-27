@@ -74,7 +74,7 @@ export default function OverheadsPage() {
         {canEdit && <Button loading={saving} onClick={save}>{t.common.save}</Button>}
       </div>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6"><fieldset disabled={!canEdit} className="contents">
         {/* Bases first */}
         <Section title={s.bases}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
@@ -125,7 +125,7 @@ export default function OverheadsPage() {
           </div>
           <div className="mt-4"><ResultBar label={s.totalAnnualRevenue} value={money(annualRevenue)} highlight /></div>
         </Section>
-      </div>
+      </fieldset></div>
     </div>
   )
 }
