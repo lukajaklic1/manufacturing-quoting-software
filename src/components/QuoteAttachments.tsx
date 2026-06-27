@@ -154,7 +154,10 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
   async function deleteFile(att: any) {
     try {
-      await supabase.storage.from('quotations').remove([att.storage_path])
+      await Promise.all([
+        supabase.storage.from('quotations').remove([att.storage_path]),
+        supabase.from('quote_attachments').delete().eq('id', att.id),
+      ])
       onChange(attachments.filter(a => a.id !== att.id))
     } catch (err) {
       console.error('Delete failed:', err)
