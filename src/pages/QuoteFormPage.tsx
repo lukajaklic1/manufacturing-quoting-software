@@ -324,15 +324,12 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         </h1>
         <div className="flex gap-2">
           {!readOnly && <>
-            {editMode && status !== 'draft' ? <>
-              <Button variant="secondary" onClick={() => navigate(`/quotes/${id}`)} disabled={saving}>{t.common.cancel}</Button>
-              <Button loading={saving} onClick={save} disabled={!customerId}>{s.saveChanges ?? t.common.save}</Button>
-            </> : <>
-              {isSaved && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
-              {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.cancel}</Button>}
-              <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>
-              <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
-            </>}
+            {isSaved && status === 'draft' && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
+            {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.cancel}</Button>}
+            {isSaved && status !== 'draft' && <Button variant="secondary" onClick={() => navigate(`/quotes/${id}`)} disabled={saving}>{t.common.cancel}</Button>}
+            {status === 'draft' && <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>}
+            <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
+          </>}
           </>}
           {readOnly && <>
             {(status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
