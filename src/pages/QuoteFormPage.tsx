@@ -148,17 +148,6 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
   }
 
   // Upload a generated thumbnail PNG to storage and save its path on the quote item.
-  async function persistPieceThumb(itemId: string, thumb: string) {
-    if (!company || !id) return
-    try {
-      const blob = await (await fetch(thumb)).blob()
-      const path = `${company.id}/quotes/${id}/${itemId}/thumb.png`
-      const { error } = await supabase.storage.from('quotations').upload(path, blob, { upsert: true, contentType: 'image/png' })
-      if (error) return
-      await supabase.from('quote_items').update({ thumb_path: path }).eq('id', itemId)
-      setPieces(ps => ps.map(p => p.id === itemId ? { ...p, thumb_path: path } : p))
-    } catch { /* noop */ }
-  }
 
   async function init() {
     if (!company) return
