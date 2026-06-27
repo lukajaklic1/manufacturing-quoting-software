@@ -269,17 +269,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     }
     if (items.length === 0) { setSaving(false); toast.error(s.validateNoPieces); return }
 
-    // Build item → first CAD thumbnail from IndexedDB/storage
-    const itemThumbs: Record<string, string> = {}
-    const cadExts = ['step','stp','iges','igs','stl','obj','ply','fbx']
-    const { data: atts } = await supabase.from('quote_attachments').select('id,quote_item_id,thumb_path,file_name').in('quote_item_id', items.map(i => i.id)).order('created_at')
-    for (const att of (atts ?? [])) {
-      if (!att.quote_item_id || itemThumbs[att.quote_item_id]) continue
-      const ext = (att.file_name ?? '').toLowerCase().split('.').pop() ?? ''
-      if (!cadExts.includes(ext)) continue
-      const thumb = await getThumbByPath(att.id, att.thumb_path)
-      if (thumb) itemThumbs[att.quote_item_id] = thumb
-    }
+    // pieceThumbs state is already populated (keyed by quote_item id)
+    const itemThumbs: Record<string, string> = { ...pieceThumbs }
 
     const snap = await buildSnapshot({ ...({} as Quote), quote_number: quoteNumber, valid_until: validUntil || null, lead_time: leadTime || null, payment_terms: paymentTerms || null, parity: parity || null, contact_person: contactPerson || null, contact_email: contactEmail || null, contact_phone: contactPhone || null, notes: notes || null } as Quote, cust as Customer | null, company, items, calcs, itemThumbs)
     if (snap.items.some(it => !(it.quantities[0]?.unit_price > 0))) { setSaving(false); toast.error(s.validateNoPrice); return }
