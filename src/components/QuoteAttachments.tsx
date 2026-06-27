@@ -52,7 +52,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         if (cancelled) break
         try {
           const thumb = await ensureThumb(att)
-          if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
+          if (thumb && !cancelled) {
+            setThumbs(prev => ({ ...prev, [att.id]: thumb }))
+            // Notify parent so pieceThumbs re-runs (covers fresh-session load from storage)
+            if (att.quote_item_id) onChange([...attachments.map(a => a.id === att.id ? { ...a, thumb_path: att.thumb_path } : a)])
+          }
         } catch { /* noop */ }
       }
     })()
