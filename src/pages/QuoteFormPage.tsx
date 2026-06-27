@@ -130,21 +130,13 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           if (p.thumb_path) { clearPieceThumb(p.id); p.thumb_path = null }
         }
 
-        // Load from the current CAD's baked thumbnail
-        if (cad.thumb_path) {
-          const cached = await getThumbByPath(cad.id, cad.thumb_path)
-          if (cached && !cancelled) {
-            setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
-            pieceThumbSourceRef.current[p.id] = cad.id
-            if (company && id) persistPieceThumb(p.id, cached)
-          }
-        } else if (p.thumb_path) {
-          // Fallback to piece's own cached thumb (only if source hasn't changed)
-          const cached = await getThumbByPath(p.id, p.thumb_path)
-          if (cached && !cancelled) {
-            setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
-            pieceThumbSourceRef.current[p.id] = cad.id
-          }
+        // Load from CAD attachment thumbnail (checks IndexedDB cache first, then storage)
+        const cached = await getThumbByPath(cad.id, cad.thumb_path)
+          ?? await getThumbByPath(p.id, p.thumb_path)
+        if (cached && !cancelled) {
+          setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
+          pieceThumbSourceRef.current[p.id] = cad.id
+          if (company && id && !p.thumb_path) persistPieceThumb(p.id, cached)
         }
       }
     })()

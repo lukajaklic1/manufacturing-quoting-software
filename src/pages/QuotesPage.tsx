@@ -54,7 +54,7 @@ export default function QuotesPage() {
       supabase.from('quotes').select('*, customers(name)').eq('company_id', company.id).order('created_at', { ascending: false }),
       supabase.from('calculations').select('annual_value, quote_items!inner(quote_id)').eq('company_id', company.id),
       supabase.from('quote_items').select('id, quote_id, thumb_path, position').eq('company_id', company.id).order('position'),
-      supabase.from('quote_attachments').select('id, quote_item_id, thumb_path, file_name').eq('company_id', company.id).not('quote_item_id', 'is', null),
+      supabase.from('quote_attachments').select('id, quote_item_id, thumb_path, file_name').eq('company_id', company.id).not('quote_item_id', 'is', null).order('created_at'),
     ])
     setRows((q as Row[]) ?? [])
     const map: Record<string, number> = {}
@@ -74,11 +74,15 @@ export default function QuotesPage() {
     const cadExts = ['step','stp','iges','igs','stl','obj','ply','fbx']
     const isCad = (name: string) => cadExts.includes(name.toLowerCase().split('.').pop() ?? '')
 
-    // Best thumbnail per item_id: first CAD attachment with thumb_path
-    const attThumb: Record<string, { id: string; thumb_path: string }> = {}
+    // Best thumbnail per item_id: prefer CAD attachment with thumb_path set, else first CAD
+    const attThumb: Record<string, { id: string; thumb_path: string | null }> = {}
     for (const a of attList) {
-      if (!a.quote_item_id || !a.thumb_path || !isCad(a.file_name)) continue
-      if (!attThumb[a.quote_item_id]) attThumb[a.quote_item_id] = { id: a.id, thumb_path: a.thumb_path }
+      if (!a.quote_item_id || !isCad(a.file_name)) continue
+      const existing = attThumb[a.quote_item_id]
+      // Prefer an attachment that already has a persisted thumb_path
+      if (!existing || (!existing.thumb_path && a.thumb_path)) {
+        attThumb[a.quote_item_id] = { id: a.id, thumb_path: a.thumb_path }
+      }
     }
 
     const counts: Record<string, number> = {}
