@@ -3,6 +3,7 @@ import { Upload, File, Trash2, Download, FileText, LayoutGrid, List, X, ChevronL
 import { supabase } from '../lib/supabase'
 import { ensureThumb, saveThumb } from '../lib/thumbs'
 import CadViewer from './CadViewer'
+import PdfViewer from './PdfViewer'
 
 interface QuoteAttachmentsProps {
   quoteId?: string
@@ -372,7 +373,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
             ) : getFileType(previewAtt.file_name) === 'cad' ? (
               <CadViewer url={previewUrl} fileName={previewAtt.file_name} onCapture={dataUrl => { saveThumb(previewAtt, dataUrl); setThumbs(prev => prev[previewAtt.id] ? prev : { ...prev, [previewAtt.id]: dataUrl }) }} />
             ) : getFileType(previewAtt.file_name) === 'pdf' ? (
-              <iframe src={previewUrl} className="w-full h-full border-0" title={previewAtt.file_name} />
+              <PdfViewer url={previewUrl} />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <img src={previewUrl} alt={previewAtt.file_name} className="max-w-full max-h-full object-contain" />
@@ -413,6 +414,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
       if (filtered.length > 0 && (!selectedAtt || !filtered.some(a => a.id === selectedAtt.id))) selectAtt(filtered[0])
     }, [filtered.length])
 
+    // Race fix: once the preloaded URL arrives for the selected file, set it immediately.
+    useEffect(() => {
+      if (selectedAtt && !selectedUrl && cadUrls[selectedAtt.id]) setSelectedUrl(cadUrls[selectedAtt.id])
+    }, [cadUrls, selectedAtt?.id])
+
     const selFt = selectedAtt ? getFileType(selectedAtt.file_name) : null
     // Bake the thumbnail in the background (for grid/list/table); the big preview
     // stays the live interactive viewer.
@@ -436,7 +442,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           ) : selFt === 'cad' ? (
             <CadViewer url={selectedUrl} fileName={selectedAtt.file_name} onCapture={bakeSelected} />
           ) : selFt === 'pdf' ? (
-            <iframe src={selectedUrl} className="w-full h-full border-0" title={selectedAtt.file_name} />
+            <PdfViewer url={selectedUrl} />
           ) : (
             <img src={selectedUrl} alt={selectedAtt.file_name} className="w-full h-full object-contain" />
           )}
@@ -548,7 +554,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
             ) : getFileType(previewAtt.file_name) === 'cad' ? (
               <CadViewer url={previewUrl} fileName={previewAtt.file_name} onCapture={dataUrl => { saveThumb(previewAtt, dataUrl); setThumbs(prev => prev[previewAtt.id] ? prev : { ...prev, [previewAtt.id]: dataUrl }) }} />
             ) : getFileType(previewAtt.file_name) === 'pdf' ? (
-              <iframe src={previewUrl} className="w-full h-full border-0" title={previewAtt.file_name} />
+              <PdfViewer url={previewUrl} />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <img src={previewUrl} alt={previewAtt.file_name} className="max-w-full max-h-full object-contain" />
