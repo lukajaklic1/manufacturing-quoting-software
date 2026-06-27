@@ -269,13 +269,16 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     }
     if (items.length === 0) { setSaving(false); toast.error(s.validateNoPieces); return }
 
-    // Build item → CAD thumbnail map from sessionStorage (baked by QuoteAttachments)
+    // Build item → first CAD thumbnail from IndexedDB/storage
     const itemThumbs: Record<string, string> = {}
-    const { data: atts } = await supabase.from('quote_attachments').select('id,quote_item_id').in('quote_item_id', items.map(i => i.id))
+    const cadExts = ['step','stp','iges','igs','stl','obj','ply','fbx']
+    const { data: atts } = await supabase.from('quote_attachments').select('id,quote_item_id,thumb_path,file_name').in('quote_item_id', items.map(i => i.id)).order('created_at')
     for (const att of (atts ?? [])) {
-      if (!att.quote_item_id) continue
-      const thumb = sessionStorage.getItem(`cadthumb_${att.id}`)
-      if (thumb && !itemThumbs[att.quote_item_id]) itemThumbs[att.quote_item_id] = thumb
+      if (!att.quote_item_id || itemThumbs[att.quote_item_id]) continue
+      const ext = (att.file_name ?? '').toLowerCase().split('.').pop() ?? ''
+      if (!cadExts.includes(ext)) continue
+      const thumb = await getThumbByPath(att.id, att.thumb_path)
+      if (thumb) itemThumbs[att.quote_item_id] = thumb
     }
 
     const snap = await buildSnapshot({ ...({} as Quote), quote_number: quoteNumber, valid_until: validUntil || null, lead_time: leadTime || null, payment_terms: paymentTerms || null, parity: parity || null, contact_person: contactPerson || null, contact_email: contactEmail || null, contact_phone: contactPhone || null, notes: notes || null } as Quote, cust as Customer | null, company, items, calcs, itemThumbs)

@@ -12,7 +12,7 @@ Font.register({
 })
 
 const c = {
-  primary: '#1d4ed8',
+  primary: '#2563eb',
   text: '#111827',
   muted: '#6b7280',
   border: '#e5e7eb',
