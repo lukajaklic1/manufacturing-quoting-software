@@ -36,21 +36,28 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [thumbs, setThumbs] = useState<Record<string, string>>({})
   const [cadUrls, setCadUrls] = useState<Record<string, string>>({})
+  const [loadingThumbs, setLoadingThumbs] = useState<Set<string>>(new Set())
   const processingRef = useRef<Set<string>>(new Set())
 
-  // Load cached thumbnails (IndexedDB / storage) for all attachments.
+  // Load cached/rendered thumbnails for all attachments (PDFs render off-screen via pdf.js).
   useEffect(() => {
     const toLoad = attachments.filter(a => !processingRef.current.has(a.id))
     if (toLoad.length === 0) return
     toLoad.forEach(a => processingRef.current.add(a.id))
+    // Mark PDFs as loading so cards show a spinner instead of the static icon
+    const pdfs = toLoad.filter(a => getFileType(a.file_name) === 'pdf')
+    if (pdfs.length > 0) setLoadingThumbs(prev => { const s = new Set(prev); pdfs.forEach(a => s.add(a.id)); return s })
     let cancelled = false
     ;(async () => {
       for (const att of toLoad) {
         if (cancelled) break
         try {
           const thumb = await ensureThumb(att)
-          if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
-        } catch { /* noop */ }
+          if (!cancelled) {
+            if (thumb) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
+            setLoadingThumbs(prev => { const s = new Set(prev); s.delete(att.id); return s })
+          }
+        } catch { setLoadingThumbs(prev => { const s = new Set(prev); s.delete(att.id); return s }) }
       }
     })()
     return () => { cancelled = true }
@@ -267,6 +274,10 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                       ) : isCad ? (
                         <div className="w-full h-full flex items-center justify-center bg-gray-50">
                           <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                        </div>
+                      ) : isPdf && loadingThumbs.has(att.id) ? (
+                        <div className="w-full h-full bg-red-50 flex items-center justify-center">
+                          <div className="w-5 h-5 border-2 border-red-200 border-t-red-400 rounded-full animate-spin" />
                         </div>
                       ) : isPdf ? (
                         <div className="w-full h-full bg-red-50 flex items-center justify-center">
@@ -490,6 +501,10 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                     ) : ft === 'cad' ? (
                       <div className="w-full h-full flex items-center justify-center bg-gray-50">
                         <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                      </div>
+                    ) : ft === 'pdf' && loadingThumbs.has(att.id) ? (
+                      <div className="w-full h-full bg-red-50 flex items-center justify-center">
+                        <div className="w-4 h-4 border-2 border-red-200 border-t-red-400 rounded-full animate-spin" />
                       </div>
                     ) : ft === 'pdf' ? (
                       <div className="w-full h-full bg-red-50 flex items-center justify-center">
