@@ -50,10 +50,11 @@ export default function QuotesPage() {
   async function load() {
     if (!company) return
     setLoading(true)
-    const [{ data: q }, { data: calc }, { data: items }] = await Promise.all([
+    const [{ data: q }, { data: calc }, { data: items }, { data: atts }] = await Promise.all([
       supabase.from('quotes').select('*, customers(name)').eq('company_id', company.id).order('created_at', { ascending: false }),
       supabase.from('calculations').select('annual_value, quote_items!inner(quote_id)').eq('company_id', company.id),
       supabase.from('quote_items').select('id, quote_id, thumb_path, position').eq('company_id', company.id).order('position'),
+      supabase.from('quote_attachments').select('id, quote_item_id, thumb_path, file_name').eq('company_id', company.id).not('quote_item_id', 'is', null),
     ])
     setRows((q as Row[]) ?? [])
     const map: Record<string, number> = {}
@@ -65,10 +66,21 @@ export default function QuotesPage() {
     setAnnual(map)
 
     type It = { id: string; quote_id: string; thumb_path: string | null; position: number }
+    type Att = { id: string; quote_item_id: string; thumb_path: string | null; file_name: string }
     const itemList = (items as It[]) ?? []
+    const attList = (atts as Att[]) ?? []
 
-    // Count parts per quote + show existing thumbnails from the local cache
-    // (downloaded once, then instant — no signed-URL call per thumbnail per load).
+    // CAD ext check
+    const cadExts = ['step','stp','iges','igs','stl','obj','ply','fbx']
+    const isCad = (name: string) => cadExts.includes(name.toLowerCase().split('.').pop() ?? '')
+
+    // Best thumbnail per item_id: first CAD attachment with thumb_path
+    const attThumb: Record<string, { id: string; thumb_path: string }> = {}
+    for (const a of attList) {
+      if (!a.quote_item_id || !a.thumb_path || !isCad(a.file_name)) continue
+      if (!attThumb[a.quote_item_id]) attThumb[a.quote_item_id] = { id: a.id, thumb_path: a.thumb_path }
+    }
+
     const counts: Record<string, number> = {}
     const slotItems: Record<string, It[]> = {}
     for (const it of itemList) {
@@ -79,7 +91,13 @@ export default function QuotesPage() {
     setPartCounts(counts)
     const slots: Record<string, (string | null)[]> = {}
     for (const [qid, its] of Object.entries(slotItems)) {
-      slots[qid] = await Promise.all(its.map(it => getThumbByPath(it.id, it.thumb_path)))
+      slots[qid] = await Promise.all(its.map(it => {
+        // Prefer item's own thumb_path, fall back to CAD attachment thumb
+        if (it.thumb_path) return getThumbByPath(it.id, it.thumb_path)
+        const fb = attThumb[it.id]
+        if (fb) return getThumbByPath(fb.id, fb.thumb_path)
+        return Promise.resolve(null)
+      }))
     }
     setPartSlots(slots)
     setLoading(false)
@@ -154,11 +172,11 @@ export default function QuotesPage() {
                         <span className="min-w-[1.25rem] h-5 px-1 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium flex items-center justify-center shrink-0">{partCounts[q.id]}</span>
                       )}
                       {(partSlots[q.id] ?? []).map((url, idx) => (
-                        <div key={idx} className="w-8 h-8 rounded-md border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center text-gray-300 shrink-0">
-                          {url ? <img src={url} alt="" className="w-full h-full object-contain" /> : <Box className="w-4 h-4" />}
+                        <div key={idx} className="w-11 h-11 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
+                          {url ? <img src={url} alt="" className="w-full h-full object-contain" /> : <Box className="w-5 h-5 text-gray-300" />}
                         </div>
                       ))}
-                      {(partCounts[q.id] ?? 0) > 4 && <span className="text-xs text-gray-400">+{(partCounts[q.id] ?? 0) - 4}</span>}
+                      {(partCounts[q.id] ?? 0) > 4 && <span className="text-xs text-gray-400 ml-0.5">+{(partCounts[q.id] ?? 0) - 4}</span>}
                     </div>
                   </td>
                   <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLE[q.status]}`}>{s.status[q.status]}</span></td>
