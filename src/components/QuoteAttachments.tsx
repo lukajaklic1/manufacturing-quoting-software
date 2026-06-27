@@ -36,6 +36,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [thumbs, setThumbs] = useState<Record<string, string>>({})
   const processingRef = useRef<Set<string>>(new Set())
+  // Sequential CAD baker: renders one unbaked CAD at a time in a small live viewer
+  // (reliable on a GPU browser) and bakes its thumbnail, then advances.
+  const [bakeAtt, setBakeAtt] = useState<any>(null)
+  const [bakeUrl, setBakeUrl] = useState<string | null>(null)
+  const bakeAttempted = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     const toLoad = attachments.filter(a => !processingRef.current.has(a.id))
@@ -58,6 +63,50 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
     return () => { cancelled = true }
   }, [attachments])
+
+  // Pick the next CAD that has no thumbnail yet and queue it for baking.
+  useEffect(() => {
+    if (bakeAtt) return
+    const next = attachments.find(a =>
+      getFileType(a.file_name) === 'cad' && !thumbs[a.id] && !a.thumb_path && !bakeAttempted.current.has(a.id))
+    if (!next) return
+    bakeAttempted.current.add(next.id)
+    let cancelled = false
+    ;(async () => {
+      const { data } = await supabase.storage.from('quotations').createSignedUrl(next.storage_path, 3600)
+      if (cancelled) return
+      if (!data?.signedUrl) return
+      setBakeAtt(next)
+      setBakeUrl(data.signedUrl)
+    })()
+    return () => { cancelled = true }
+  }, [attachments, thumbs, bakeAtt])
+
+  // Safety: if a CAD bake stalls, advance to the next one after a timeout.
+  useEffect(() => {
+    if (!bakeAtt) return
+    const t = setTimeout(() => { setBakeAtt(null); setBakeUrl(null) }, 30000)
+    return () => clearTimeout(t)
+  }, [bakeAtt])
+
+  function finishBake(dataUrl?: string) {
+    if (bakeAtt && dataUrl) {
+      saveThumb(bakeAtt, dataUrl)
+      setThumbs(prev => ({ ...prev, [bakeAtt.id]: dataUrl }))
+    }
+    setBakeAtt(null)
+    setBakeUrl(null)
+  }
+
+  // Small live-render widget used only while baking CAD thumbnails the first time.
+  const bakerWidget = bakeAtt && bakeUrl ? (
+    <div className="fixed bottom-4 right-4 z-40 w-44 rounded-lg border border-gray-200 bg-white shadow-lg overflow-hidden">
+      <div className="h-32 bg-gray-50">
+        <CadViewer url={bakeUrl} fileName={bakeAtt.file_name} onCapture={finishBake} onError={() => finishBake()} />
+      </div>
+      <div className="px-2 py-1 text-[10px] text-gray-500 truncate">Pripravljam predoglede…</div>
+    </div>
+  ) : null
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files || !quoteId) return
@@ -347,6 +396,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           </div>
         </div>
       )}
+      {bakerWidget}
       </>
     )
   }
@@ -483,6 +533,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         </div>
       </div>
 
+      {bakerWidget}
       {/* Full-screen viewer — loads the real CAD/PDF only on click */}
       {previewAtt && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col" onClick={closePreview}>
