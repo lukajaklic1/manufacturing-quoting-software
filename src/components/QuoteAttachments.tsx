@@ -35,19 +35,14 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   const [previewAtt, setPreviewAtt] = useState<any>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [thumbs, setThumbs] = useState<Record<string, string>>({})
+  const [cadUrls, setCadUrls] = useState<Record<string, string>>({})
   const processingRef = useRef<Set<string>>(new Set())
-  // Sequential CAD baker: renders one unbaked CAD at a time in a small live viewer
-  // (reliable on a GPU browser) and bakes its thumbnail, then advances.
-  const [bakeAtt, setBakeAtt] = useState<any>(null)
-  const [bakeUrl, setBakeUrl] = useState<string | null>(null)
-  const bakeAttempted = useRef<Set<string>>(new Set())
 
+  // Load cached thumbnails (IndexedDB / storage) for all attachments.
   useEffect(() => {
     const toLoad = attachments.filter(a => !processingRef.current.has(a.id))
     if (toLoad.length === 0) return
-
     toLoad.forEach(a => processingRef.current.add(a.id))
-
     let cancelled = false
     ;(async () => {
       for (const att of toLoad) {
@@ -55,58 +50,25 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         try {
           const thumb = await ensureThumb(att)
           if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
-        } catch (e) {
-          console.error('preview error', e)
-        }
+        } catch { /* noop */ }
       }
     })()
-
     return () => { cancelled = true }
   }, [attachments])
 
-  // Pick the next CAD that has no thumbnail yet and queue it for baking.
+  // Fetch signed URLs for all CAD attachments that don't yet have a baked thumbnail,
+  // so each card can render a live mini-viewer and bake on first load.
   useEffect(() => {
-    if (bakeAtt) return
-    const next = attachments.find(a =>
-      getFileType(a.file_name) === 'cad' && !thumbs[a.id] && !a.thumb_path && !bakeAttempted.current.has(a.id))
-    if (!next) return
-    bakeAttempted.current.add(next.id)
+    const unbaked = attachments.filter(a =>
+      getFileType(a.file_name) === 'cad' && !thumbs[a.id] && !cadUrls[a.id])
+    if (unbaked.length === 0) return
     let cancelled = false
-    ;(async () => {
-      const { data } = await supabase.storage.from('quotations').createSignedUrl(next.storage_path, 3600)
-      if (cancelled) return
-      if (!data?.signedUrl) return
-      setBakeAtt(next)
-      setBakeUrl(data.signedUrl)
-    })()
+    unbaked.forEach(async att => {
+      const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
+      if (!cancelled && data?.signedUrl) setCadUrls(prev => ({ ...prev, [att.id]: data.signedUrl }))
+    })
     return () => { cancelled = true }
-  }, [attachments, thumbs, bakeAtt])
-
-  // Safety: if a CAD bake stalls, advance to the next one after a timeout.
-  useEffect(() => {
-    if (!bakeAtt) return
-    const t = setTimeout(() => { setBakeAtt(null); setBakeUrl(null) }, 30000)
-    return () => clearTimeout(t)
-  }, [bakeAtt])
-
-  function finishBake(dataUrl?: string) {
-    if (bakeAtt && dataUrl) {
-      saveThumb(bakeAtt, dataUrl)
-      setThumbs(prev => ({ ...prev, [bakeAtt.id]: dataUrl }))
-    }
-    setBakeAtt(null)
-    setBakeUrl(null)
-  }
-
-  // Small live-render widget used only while baking CAD thumbnails the first time.
-  const bakerWidget = bakeAtt && bakeUrl ? (
-    <div className="fixed bottom-4 right-4 z-40 w-44 rounded-lg border border-gray-200 bg-white shadow-lg overflow-hidden">
-      <div className="h-32 bg-gray-50">
-        <CadViewer url={bakeUrl} fileName={bakeAtt.file_name} onCapture={finishBake} onError={() => finishBake()} />
-      </div>
-      <div className="px-2 py-1 text-[10px] text-gray-500 truncate">Pripravljam predoglede…</div>
-    </div>
-  ) : null
+  }, [attachments, thumbs])
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files || !quoteId) return
@@ -291,9 +253,20 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                     <div className="w-full h-32 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                       {thumbs[att.id] ? (
                         <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
+                      ) : isCad && cadUrls[att.id] ? (
+                        <div className="w-full h-full pointer-events-none" onClick={e => e.stopPropagation()}>
+                          <CadViewer
+                            url={cadUrls[att.id]}
+                            fileName={att.file_name}
+                            onCapture={dataUrl => {
+                              saveThumb(att, dataUrl)
+                              setThumbs(prev => ({ ...prev, [att.id]: dataUrl }))
+                            }}
+                          />
+                        </div>
                       ) : isCad ? (
                         <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                          <svg className="w-10 h-10 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                          <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
                         </div>
                       ) : isPdf ? (
                         <div className="w-full h-full bg-red-50 flex items-center justify-center">
@@ -396,7 +369,6 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           </div>
         </div>
       )}
-      {bakerWidget}
       </>
     )
   }
@@ -504,9 +476,20 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                   <div className="w-full h-24 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                     {thumbs[att.id] ? (
                       <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
+                    ) : ft === 'cad' && cadUrls[att.id] ? (
+                      <div className="w-full h-full pointer-events-none">
+                        <CadViewer
+                          url={cadUrls[att.id]}
+                          fileName={att.file_name}
+                          onCapture={dataUrl => {
+                            saveThumb(att, dataUrl)
+                            setThumbs(prev => ({ ...prev, [att.id]: dataUrl }))
+                          }}
+                        />
+                      </div>
                     ) : ft === 'cad' ? (
                       <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                        <svg className="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
                       </div>
                     ) : ft === 'pdf' ? (
                       <div className="w-full h-full bg-red-50 flex items-center justify-center">
@@ -533,7 +516,6 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         </div>
       </div>
 
-      {bakerWidget}
       {/* Full-screen viewer — loads the real CAD/PDF only on click */}
       {previewAtt && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col" onClick={closePreview}>
