@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Upload, File, Trash2, Download, FileText, LayoutGrid, List, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { ensureThumb, saveThumb } from '../lib/thumbs'
+import { pdfFirstPageThumb } from '../lib/pdfThumb'
 import CadViewer from './CadViewer'
 import PdfViewer from './PdfViewer'
 
@@ -40,29 +41,43 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   const [loadingThumbs, setLoadingThumbs] = useState<Set<string>>(new Set())
   const processingRef = useRef<Set<string>>(new Set())
 
-  // Load cached/rendered thumbnails for all attachments (PDFs render off-screen via pdf.js).
+  // Load cached thumbnails from IndexedDB/storage for all attachments.
   useEffect(() => {
     const toLoad = attachments.filter(a => !processingRef.current.has(a.id))
     if (toLoad.length === 0) return
     toLoad.forEach(a => processingRef.current.add(a.id))
-    // Mark PDFs as loading so cards show a spinner instead of the static icon
-    const pdfs = toLoad.filter(a => getFileType(a.file_name) === 'pdf')
-    if (pdfs.length > 0) setLoadingThumbs(prev => { const s = new Set(prev); pdfs.forEach(a => s.add(a.id)); return s })
     let cancelled = false
     ;(async () => {
       for (const att of toLoad) {
         if (cancelled) break
         try {
           const thumb = await ensureThumb(att)
-          if (!cancelled) {
-            if (thumb) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
-            setLoadingThumbs(prev => { const s = new Set(prev); s.delete(att.id); return s })
-          }
-        } catch { setLoadingThumbs(prev => { const s = new Set(prev); s.delete(att.id); return s }) }
+          if (thumb && !cancelled) setThumbs(prev => ({ ...prev, [att.id]: thumb }))
+        } catch { /* noop */ }
       }
     })()
     return () => { cancelled = true }
   }, [attachments])
+
+  // As soon as the preloaded signed URL for a PDF is available, render its thumbnail
+  // directly via pdf.js — faster than ensureThumb creating its own signed URL.
+  useEffect(() => {
+    const pdfsReady = attachments.filter(a =>
+      getFileType(a.file_name) === 'pdf' && cadUrls[a.id] && !thumbs[a.id])
+    if (pdfsReady.length === 0) return
+    pdfsReady.forEach(a => setLoadingThumbs(prev => { const s = new Set(prev); s.add(a.id); return s }))
+    let cancelled = false
+    pdfsReady.forEach(async att => {
+      try {
+        const thumb = await pdfFirstPageThumb(cadUrls[att.id], att.id)
+        if (!cancelled) {
+          if (thumb) { saveThumb(att, thumb); setThumbs(prev => ({ ...prev, [att.id]: thumb })) }
+          setLoadingThumbs(prev => { const s = new Set(prev); s.delete(att.id); return s })
+        }
+      } catch { setLoadingThumbs(prev => { const s = new Set(prev); s.delete(att.id); return s }) }
+    })
+    return () => { cancelled = true }
+  }, [cadUrls])
 
   // Preload signed URLs for ALL attachments so clicks are instant (no wait on signed URL fetch).
   // CAD-specific: also used to render the mini live-viewer for thumbnail baking.
