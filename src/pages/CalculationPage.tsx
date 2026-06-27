@@ -133,12 +133,12 @@ export default function CalculationPage() {
 
   return (
     <div className="p-4 lg:p-6 lg:h-full lg:flex lg:flex-col">
-      <button onClick={() => navigate(ro ? `/quotes/${quoteId}/review` : `/quotes/${quoteId}/edit`)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-4 shrink-0"><ChevronLeft className="w-4 h-4" />{ro ? s.reviewTitle : s.quotes}</button>
+      <button onClick={() => navigate(ro ? `/quotes/${quoteId}` : `/quotes/${quoteId}/edit`)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-4 shrink-0"><ChevronLeft className="w-4 h-4" />{ro ? s.reviewTitle : s.quotes}</button>
 
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap shrink-0">
         <h1 className="text-2xl font-bold text-gray-900">{c.part_name || s.partName}</h1>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => navigate(ro ? `/quotes/${quoteId}/review` : `/quotes/${quoteId}/edit`)} disabled={saving}>{ro ? t.common.back : t.common.cancel}</Button>
+          <Button variant="secondary" onClick={() => navigate(ro ? `/quotes/${quoteId}` : `/quotes/${quoteId}/edit`)} disabled={saving}>{ro ? t.common.back : t.common.cancel}</Button>
           {!ro && <Button loading={saving} onClick={save}>{t.common.save}</Button>}
         </div>
       </div>
