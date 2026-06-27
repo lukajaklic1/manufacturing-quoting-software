@@ -125,9 +125,11 @@ async function renderThumb(att: any): Promise<string | null> {
 // Fetch an already-persisted thumbnail by storage path, cached by `key`.
 // Used for quote_items.thumb_path on the offers list (no re-render, no repeat downloads).
 export async function getThumbByPath(key: string, thumbPath: string | null | undefined): Promise<string | null> {
-  if (!thumbPath) return null
+  // Always check memory/IndexedDB first — thumbnail may have been baked this session
+  // even if thumb_path hasn't been written to DB yet.
   const cached = await getCached(key)
   if (cached) return cached
+  if (!thumbPath) return null
   const d = await downloadThumb(thumbPath)
   if (d) await setCached(key, d)
   return d
