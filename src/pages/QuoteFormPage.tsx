@@ -330,7 +330,6 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
             {status === 'draft' && <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>}
             <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
           </>}
-          </>}
           {readOnly && <>
             {(status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
               <Button variant="secondary" onClick={() => navigate(`/quotes/${id}/edit`)} className="gap-2"><Pencil className="w-4 h-4" />{s.editOffer}</Button>}
