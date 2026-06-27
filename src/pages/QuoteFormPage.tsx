@@ -332,7 +332,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           </>}
           {readOnly && <>
             {(status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
-              <Button variant="secondary" onClick={() => navigate(`/quotes/${id}/edit`)} className="gap-2"><Pencil className="w-4 h-4" />{s.editOffer}</Button>}
+              <Button variant="secondary" onClick={() => { window.location.href = `/quotes/${id}/edit` }} className="gap-2"><Pencil className="w-4 h-4" />{s.editOffer}</Button>}
             {status === 'draft' &&
               <Button loading={saving} onClick={issue} disabled={!customerId} className="gap-2">{s.issueOffer}</Button>}
             {status !== 'draft' && snapshot && <PDFDownloadLink document={<OfferPdf snap={snapshot} />} fileName={`Ponudba_${quoteNumber}.pdf`}>
