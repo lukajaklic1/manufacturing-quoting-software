@@ -324,7 +324,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         </h1>
         <div className="flex gap-2">
           {!readOnly && <>
-            {editMode ? <>
+            {editMode && status !== 'draft' ? <>
               <Button variant="secondary" onClick={() => navigate(`/quotes/${id}`)} disabled={saving}>{t.common.cancel}</Button>
               <Button loading={saving} onClick={save} disabled={!customerId}>{s.saveChanges ?? t.common.save}</Button>
             </> : <>
