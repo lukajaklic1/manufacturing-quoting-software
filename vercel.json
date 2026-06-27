@@ -16,7 +16,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
         { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net; worker-src 'self' blob: 'wasm-unsafe-eval'; child-src 'self' blob: 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' blob: data: https://*.supabase.co wss://*.supabase.co https://api.supabase.com https://cdn.jsdelivr.net; frame-src 'self' blob: https://*.supabase.co; frame-ancestors 'none';" }
+        { "key": "X-CSP-Disabled", "value": "temporarily removed for WASM debugging" }
       ]
     }
   ],
