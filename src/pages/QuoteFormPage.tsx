@@ -104,8 +104,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
   }, [readOnly, snapshot, pieces])
 
   // Thumbnail per piece = first CAD attachment for that piece.
-  // Re-evaluates whenever attachments change (e.g. after delete) by checking
-  // whether the CAD that provided the current thumb is still present.
+  // Always re-evaluates when attachments change; uses pieceThumbSourceRef to detect
+  // when the source CAD changed (e.g. deleted) and clears stale state.
   useEffect(() => {
     let cancelled = false
     ;(async () => {
@@ -115,31 +115,35 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         const cad = atts.find(a => isCad3D(a.file_name))
 
         if (!cad) {
-          // No CAD left → clear thumbnail
           if (pieceThumbs[p.id]) setPieceThumbs(prev => { const n = { ...prev }; delete n[p.id!]; return n })
           delete pieceThumbSourceRef.current[p.id]
           if (p.thumb_path) clearPieceThumb(p.id)
           continue
         }
 
-        // If we already have a thumb FROM THIS same CAD, skip
+        // Source CAD unchanged — skip
         if (pieceThumbs[p.id] && pieceThumbSourceRef.current[p.id] === cad.id) continue
 
-        // CAD changed or no thumb yet — load from cache or storage
-        if (p.thumb_path) {
-          const cached = await getThumbByPath(p.id, p.thumb_path)
-          if (cached && !cancelled) {
-            setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
-            pieceThumbSourceRef.current[p.id] = cad.id
-          }
-          continue
+        // Source CAD changed — clear stale piece thumb_path so we don't reload old image
+        if (pieceThumbSourceRef.current[p.id] && pieceThumbSourceRef.current[p.id] !== cad.id) {
+          if (!cancelled) setPieceThumbs(prev => { const n = { ...prev }; delete n[p.id!]; return n })
+          if (p.thumb_path) { clearPieceThumb(p.id); p.thumb_path = null }
         }
+
+        // Load from the current CAD's baked thumbnail
         if (cad.thumb_path) {
           const cached = await getThumbByPath(cad.id, cad.thumb_path)
           if (cached && !cancelled) {
             setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
             pieceThumbSourceRef.current[p.id] = cad.id
             if (company && id) persistPieceThumb(p.id, cached)
+          }
+        } else if (p.thumb_path) {
+          // Fallback to piece's own cached thumb (only if source hasn't changed)
+          const cached = await getThumbByPath(p.id, p.thumb_path)
+          if (cached && !cancelled) {
+            setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
+            pieceThumbSourceRef.current[p.id] = cad.id
           }
         }
       }
