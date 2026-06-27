@@ -285,10 +285,9 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                           <CadViewer
                             url={cadUrls[att.id]}
                             fileName={att.file_name}
-                            onCapture={dataUrl => {
-                              saveThumb(att, dataUrl)
+                            onCapture={async dataUrl => {
+                              await saveThumb(att, dataUrl)
                               setThumbs(prev => ({ ...prev, [att.id]: dataUrl }))
-                              // Notify parent so pieceThumbs effect re-runs with updated att
                               if (att.quote_item_id) onChange([...attachments.map(a => a.id === att.id ? { ...a, thumb_path: att.thumb_path } : a)])
                             }}
                           />
@@ -520,8 +519,8 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                         <CadViewer
                           url={cadUrls[att.id]}
                           fileName={att.file_name}
-                          onCapture={dataUrl => {
-                            saveThumb(att, dataUrl)
+                          onCapture={async dataUrl => {
+                            await saveThumb(att, dataUrl)
                             setThumbs(prev => ({ ...prev, [att.id]: dataUrl }))
                             if (att.quote_item_id) onChange([...attachments.map(a => a.id === att.id ? { ...a, thumb_path: att.thumb_path } : a)])
                           }}
