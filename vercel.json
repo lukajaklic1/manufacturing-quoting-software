@@ -22,5 +22,6 @@
   ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  ],
+  "buildCommand": "node scripts/patch-occt.mjs && tsc -b && vite build"
 }
