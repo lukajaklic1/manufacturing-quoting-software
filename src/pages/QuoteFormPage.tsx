@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2, Boxes, Pencil, Eye, Download, Send, Check, X } from 'lucide-react'
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer'
@@ -69,6 +69,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
   const [pieceToDelete, setPieceToDelete] = useState<string | null>(null)
   const [deleteQuoteOpen, setDeleteQuoteOpen] = useState(false)
   const [pieceThumbs, setPieceThumbs] = useState<Record<string, string>>({})
+  // pieceId → cadAttachmentId that currently provides the thumbnail
+  const pieceThumbSourceRef = useRef<Record<string, string>>({})
 
   useEffect(() => { if (company) init() }, [company, id])
 
@@ -101,31 +103,42 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     })
   }, [readOnly, snapshot, pieces])
 
-  // Thumbnail per piece = first uploaded CAD model only. No CAD → no thumbnail
-  // (clears any legacy non-CAD thumbnail). Persisted so the quotes list shows it cheaply.
+  // Thumbnail per piece = first CAD attachment for that piece.
+  // Re-evaluates whenever attachments change (e.g. after delete) by checking
+  // whether the CAD that provided the current thumb is still present.
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       for (const p of pieces) {
-        if (!p.id || pieceThumbs[p.id]) continue
+        if (!p.id) continue
         const atts = attachments.filter(a => a.quote_item_id === p.id)
         const cad = atts.find(a => isCad3D(a.file_name))
+
         if (!cad) {
-          if (p.thumb_path) clearPieceThumb(p.id) // had a non-CAD thumb → remove it
+          // No CAD left → clear thumbnail
+          if (pieceThumbs[p.id]) setPieceThumbs(prev => { const n = { ...prev }; delete n[p.id!]; return n })
+          delete pieceThumbSourceRef.current[p.id]
+          if (p.thumb_path) clearPieceThumb(p.id)
           continue
         }
-        // Use the piece's own persisted thumb if present (instant from cache)…
+
+        // If we already have a thumb FROM THIS same CAD, skip
+        if (pieceThumbs[p.id] && pieceThumbSourceRef.current[p.id] === cad.id) continue
+
+        // CAD changed or no thumb yet — load from cache or storage
         if (p.thumb_path) {
           const cached = await getThumbByPath(p.id, p.thumb_path)
-          if (cached && !cancelled) setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
+          if (cached && !cancelled) {
+            setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
+            pieceThumbSourceRef.current[p.id] = cad.id
+          }
           continue
         }
-        // …else reuse the CAD attachment's baked thumbnail (baked when its 3D viewer
-        // was first opened). No off-screen WebGL render here (unreliable / can hang).
         if (cad.thumb_path) {
           const cached = await getThumbByPath(cad.id, cad.thumb_path)
           if (cached && !cancelled) {
             setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
+            pieceThumbSourceRef.current[p.id] = cad.id
             if (company && id) persistPieceThumb(p.id, cached)
           }
         }
