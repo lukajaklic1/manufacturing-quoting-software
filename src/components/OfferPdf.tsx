@@ -87,8 +87,18 @@ const s = StyleSheet.create({
   footerBank: { fontSize: 7, color: c.muted },
 })
 
+function fmtNum(n: number, decimals = 2) {
+  const parts = n.toFixed(decimals).split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  return decimals > 0 ? parts[0] + ',' + parts[1] : parts[0]
+}
+
 function eur(n: number) {
-  return n.toLocaleString('sl-SI', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+  return fmtNum(n, 2) + ' €'
+}
+
+function fmtQty(n: number) {
+  return fmtNum(n, 0)
 }
 
 function fmtDate(d: string | null | undefined) {
@@ -194,7 +204,7 @@ export default function OfferPdf({ snap }: { snap: OfferSnapshot }) {
             <View style={s.qtyTable}>
               {item.quantities.map((q, qi) => (
                 <View key={qi} style={[s.qtyLine, qi > 0 ? s.qtyLineBorder : {}]}>
-                  <View style={s.colQty}><Text style={{ fontSize: 9, fontWeight: 700, textAlign: 'right' }}>{q.qty}</Text></View>
+                  <View style={s.colQty}><Text style={{ fontSize: 9, fontWeight: 700, textAlign: 'right' }}>{fmtQty(q.qty)}</Text></View>
                   <View style={s.colUnit}><Text style={{ fontSize: 9, textAlign: 'center', color: c.muted }}>{item.unit}</Text></View>
                   <View style={s.colPrice}><Text style={{ fontSize: 9, textAlign: 'right' }}>{eur(q.unit_price)}</Text></View>
                   <View style={s.colTotal}><Text style={{ fontSize: 9, fontWeight: 700, textAlign: 'right' }}>{eur(q.total)}</Text></View>
