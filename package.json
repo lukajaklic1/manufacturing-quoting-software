@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "postinstall": "node scripts/patch-occt.mjs"
+    "postinstall": "node scripts/patch-occt.mjs",
+    "vercel-build": "node scripts/patch-occt.mjs && tsc -b && vite build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
