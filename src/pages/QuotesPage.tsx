@@ -74,15 +74,11 @@ export default function QuotesPage() {
     const cadExts = ['step','stp','iges','igs','stl','obj','ply','fbx']
     const isCad = (name: string) => cadExts.includes(name.toLowerCase().split('.').pop() ?? '')
 
-    // Best thumbnail per item_id: prefer CAD attachment with thumb_path set, else first CAD
+    // First CAD attachment per item (by created_at asc) — matches the rule in QuoteFormPage
     const attThumb: Record<string, { id: string; thumb_path: string | null }> = {}
     for (const a of attList) {
       if (!a.quote_item_id || !isCad(a.file_name)) continue
-      const existing = attThumb[a.quote_item_id]
-      // Prefer an attachment that already has a persisted thumb_path
-      if (!existing || (!existing.thumb_path && a.thumb_path)) {
-        attThumb[a.quote_item_id] = { id: a.id, thumb_path: a.thumb_path }
-      }
+      if (!attThumb[a.quote_item_id]) attThumb[a.quote_item_id] = { id: a.id, thumb_path: a.thumb_path }
     }
 
     const counts: Record<string, number> = {}
