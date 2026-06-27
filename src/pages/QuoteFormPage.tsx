@@ -247,7 +247,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     setSaving(false)
     if (!res) return
     toast.success(t.common.saved)
-    if (editMode) navigate(`/quotes/${res.quoteId}`)
+    if (editMode && status !== 'draft') navigate(`/quotes/${res.quoteId}`)
     else navigate(`/quotes/${res.quoteId}/edit`, { replace: true })
   }
 
