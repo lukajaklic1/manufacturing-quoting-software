@@ -63,19 +63,18 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     return () => { cancelled = true }
   }, [attachments])
 
-  // Fetch signed URLs for all CAD attachments that don't yet have a baked thumbnail,
-  // so each card can render a live mini-viewer and bake on first load.
+  // Preload signed URLs for ALL attachments so clicks are instant (no wait on signed URL fetch).
+  // CAD-specific: also used to render the mini live-viewer for thumbnail baking.
   useEffect(() => {
-    const unbaked = attachments.filter(a =>
-      getFileType(a.file_name) === 'cad' && !thumbs[a.id] && !cadUrls[a.id])
-    if (unbaked.length === 0) return
+    const missing = attachments.filter(a => !cadUrls[a.id])
+    if (missing.length === 0) return
     let cancelled = false
-    unbaked.forEach(async att => {
+    missing.forEach(async att => {
       const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
       if (!cancelled && data?.signedUrl) setCadUrls(prev => ({ ...prev, [att.id]: data.signedUrl }))
     })
     return () => { cancelled = true }
-  }, [attachments, thumbs])
+  }, [attachments])
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files || !quoteId) return
@@ -125,9 +124,11 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
   async function openPreview(att: any) {
     setPreviewAtt(att)
+    // Use preloaded URL if available, otherwise fetch fresh
+    if (cadUrls[att.id]) { setPreviewUrl(cadUrls[att.id]); return }
     setPreviewUrl(null)
     const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
-    if (data?.signedUrl) setPreviewUrl(data.signedUrl)
+    if (data?.signedUrl) { setCadUrls(prev => ({ ...prev, [att.id]: data.signedUrl })); setPreviewUrl(data.signedUrl) }
   }
 
   function closePreview() {
@@ -401,9 +402,10 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     // (interactive, in-window). The render also bakes the thumbnail for grids/lists.
     async function selectAtt(att: any) {
       setSelectedAtt(att)
+      if (cadUrls[att.id]) { setSelectedUrl(cadUrls[att.id]); return }
       setSelectedUrl(null)
       const { data } = await supabase.storage.from('quotations').createSignedUrl(att.storage_path, 3600)
-      if (data?.signedUrl) setSelectedUrl(data.signedUrl)
+      if (data?.signedUrl) { setCadUrls(prev => ({ ...prev, [att.id]: data.signedUrl })); setSelectedUrl(data.signedUrl) }
     }
 
     // Auto-select first file on mount.
