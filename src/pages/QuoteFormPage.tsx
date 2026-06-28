@@ -274,7 +274,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
 
     const snap = await buildSnapshot({ ...({} as Quote), quote_number: quoteNumber, valid_until: validUntil || null, lead_time: leadTime || null, payment_terms: paymentTerms || null, parity: parity || null, contact_person: contactPerson || null, contact_email: contactEmail || null, contact_phone: contactPhone || null, notes: notes || null } as Quote, cust as Customer | null, company, items, calcs, itemThumbs)
     if (snap.items.some(it => !(it.quantities[0]?.unit_price > 0))) { setSaving(false); toast.error(s.validateNoPrice); return }
-    const { error } = await supabase.from('quotes').update({ snapshot: snap, status: 'issued', issued_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', res.quoteId)
+    const newStatus = status === 'sent' ? 'sent' : 'issued'
+    const { error } = await supabase.from('quotes').update({ snapshot: snap, status: newStatus, issued_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', res.quoteId)
     setSaving(false)
     if (error) { toast.error(error.message); return }
     toast.success(s.offerIssued)
@@ -325,8 +326,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         <div className="flex gap-2">
           {!readOnly && <>
             {isSaved && status === 'draft' && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
-            {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.cancel}</Button>}
-            {isSaved && status !== 'draft' && <Button variant="secondary" onClick={() => navigate(`/quotes/${id}`)} disabled={saving}>{t.common.cancel}</Button>}
+            {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.back}</Button>}
+            {isSaved && status !== 'draft' && <Button variant="secondary" onClick={() => navigate(`/quotes/${id}`)} disabled={saving}>{t.common.back}</Button>}
             {status === 'draft' && <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>}
             <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
           </>}
