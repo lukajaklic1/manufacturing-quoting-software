@@ -32,7 +32,11 @@ export default function LandingPage() {
 
   if (loading) return null
 
-  const painIcons = [Clock, Eye, FileText]
+  const painIcons = [
+    { icon: Zap, cls: 'bg-blue-50 text-blue-600' },
+    { icon: BarChart2, cls: 'bg-green-50 text-green-600' },
+    { icon: TrendingUp, cls: 'bg-purple-50 text-purple-600' },
+  ]
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
@@ -89,15 +93,6 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        {/* Stats */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 mb-16">
-          {(['stat1', 'stat2', 'stat3'] as const).map(k => (
-            <div key={k} className="text-center">
-              <p className="text-4xl font-bold text-gray-900">{l[`${k}Val` as keyof typeof l] as string}</p>
-              <p className="text-sm text-gray-500 mt-1">{l[`${k}Label` as keyof typeof l] as string}</p>
-            </div>
-          ))}
-        </div>
 
         {/* App preview */}
         <div className="relative mx-auto max-w-4xl hidden sm:block">
@@ -134,8 +129,8 @@ export default function LandingPage() {
               <div className="flex-1 flex flex-col gap-3">
                 <div className="grid grid-cols-4 gap-3">
                   {(isSl
-                    ? [['Aktivne ponudbe','14'],['Pridobljene','8'],['Stranke','23'],['Pipeline','184.200 €']]
-                    : [['Active quotes','14'],['Won','8'],['Customers','23'],['Pipeline','€184,200']]
+                    ? [['Ponujena vrednost','184.200 €'],['Dobljena vrednost','120.000 €'],['Poslane ponudbe','25'],['Dobljene ponudbe','12']]
+                    : [['Quoted value','€184,200'],['Won value','€120,000'],['Sent quotes','25'],['Won quotes','12']]
                   ).map(([label, val]) => (
                     <div key={label} className="bg-white rounded-xl border border-gray-200 p-3">
                       <p className="text-xs text-gray-400 mb-1">{label}</p>
@@ -144,14 +139,7 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 p-4 flex-1">
-                  <p className="text-xs font-semibold text-gray-500 mb-3">{isSl ? 'Vrednost ponudb po mesecih' : 'Quote value by month'}</p>
-                  <div className="flex items-end gap-2 h-20">
-                    {[40, 65, 45, 80, 55, 90, 70, 95, 60, 85, 75, 100].map((h, i) => (
-                      <div key={i} className="flex-1 bg-blue-100 rounded-sm relative overflow-hidden">
-                        <div className="absolute bottom-0 left-0 right-0 bg-blue-500 rounded-sm" style={{ height: `${h}%` }} />
-                      </div>
-                    ))}
-                  </div>
+                  <p className="text-xs font-semibold text-gray-500">{isSl ? 'Vrednost ponudb po mesecih' : 'Quote value by month'}</p>
                 </div>
               </div>
             </div>
@@ -163,16 +151,15 @@ export default function LandingPage() {
       <section className="bg-gray-50 border-y border-gray-100 py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.painTitle}</p>
-            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.painHeading}</h2>
-            <p className="text-gray-500 mt-4 text-lg max-w-xl mx-auto">{l.painSubtitle}</p>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight max-w-2xl mx-auto">{l.painTitle}</h2>
+            <p className="text-gray-500 mt-4 text-lg max-w-2xl mx-auto">{l.painSubtitle}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {(['pain1', 'pain2', 'pain3'] as const).map((k, i) => {
-              const Icon = painIcons[i]
+              const { icon: Icon, cls } = painIcons[i]
               return (
                 <div key={k} className="bg-white rounded-2xl border border-gray-200 p-8">
-                  <div className="inline-flex p-3 rounded-xl bg-red-50 text-red-500 mb-5">
+                  <div className={`inline-flex p-3 rounded-xl ${cls} mb-5`}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">{l[`${k}Title` as keyof typeof l] as string}</h3>
