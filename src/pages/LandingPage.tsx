@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Zap, ArrowRight, Calculator, TrendingUp, FileText, BarChart2, Settings, ChevronDown, Check, Clock, Eye } from 'lucide-react'
+import { Zap, ArrowRight, Calculator, TrendingUp, FileText, BarChart2, Settings, ChevronDown, Check } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import AppLogo from '../components/ui/AppLogo'
