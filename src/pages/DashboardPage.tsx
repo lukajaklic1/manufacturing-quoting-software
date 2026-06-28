@@ -189,8 +189,9 @@ export default function DashboardPage() {
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" tickFormatter={(date) => {
                 if (date.includes('-')) {
-                  const [y, m, d] = date.split('-');
-                  return `${d}.${m}.${y.slice(2)}`;
+                  const parts = date.split('-');
+                  const [y, m, d] = parts;
+                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
                 }
                 return date;
               }} />
@@ -209,8 +210,9 @@ export default function DashboardPage() {
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" tickFormatter={(date) => {
                 if (date.includes('-')) {
-                  const [y, m, d] = date.split('-');
-                  return `${d}.${m}.${y.slice(2)}`;
+                  const parts = date.split('-');
+                  const [y, m, d] = parts;
+                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
                 }
                 return date;
               }} />
@@ -229,8 +231,9 @@ export default function DashboardPage() {
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" tickFormatter={(date) => {
                 if (date.includes('-')) {
-                  const [y, m, d] = date.split('-');
-                  return `${d}.${m}.${y.slice(2)}`;
+                  const parts = date.split('-');
+                  const [y, m, d] = parts;
+                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
                 }
                 return date;
               }} />
@@ -249,8 +252,9 @@ export default function DashboardPage() {
               <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
               <XAxis dataKey="period" tickFormatter={(date) => {
                 if (date.includes('-')) {
-                  const [y, m, d] = date.split('-');
-                  return `${d}.${m}.${y.slice(2)}`;
+                  const parts = date.split('-');
+                  const [y, m, d] = parts;
+                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
                 }
                 return date;
               }} />
