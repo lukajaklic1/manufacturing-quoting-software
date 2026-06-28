@@ -15,7 +15,6 @@ const FEATURE_ICONS = [
 ]
 
 const STEP_NUMS = ['01', '02', '03', '04']
-const TESTIMONIALS = ['t1', 't2', 't3'] as const
 const FAQ_KEYS = ['faq1', 'faq2', 'faq3', 'faq4', 'faq5'] as const
 
 export default function LandingPage() {
@@ -151,6 +150,7 @@ export default function LandingPage() {
       <section className="bg-gray-50 border-y border-gray-100 py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
+            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{isSl ? 'Zakaj Costflow' : 'Why Costflow'}</p>
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight max-w-2xl mx-auto">{l.painTitle}</h2>
             <p className="text-gray-500 mt-4 text-lg max-w-2xl mx-auto">{l.painSubtitle}</p>
           </div>
@@ -199,6 +199,7 @@ export default function LandingPage() {
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.howTitle}</p>
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.howHeading}</h2>
+            <p className="text-gray-500 mt-4 text-lg max-w-2xl mx-auto">{l.howSubtitle}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {STEP_NUMS.map((num, i) => (
@@ -214,26 +215,37 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
+      {/* ── Za koga ── */}
       <section className="py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.testimonialsTitle}</p>
-            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.testimonialsHeading}</h2>
+            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{isSl ? 'Za koga' : 'For whom'}</p>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{isSl ? 'Komu je namenjen Costflow?' : 'Who is Costflow for?'}</h2>
+            <p className="text-gray-500 mt-4 text-lg">{isSl ? 'Costflow je zasnovan za proizvodna podjetja, ki pripravijo ponudbe na podlagi materiala, operacij in stroškov dela.' : 'Costflow is built for manufacturers who quote based on materials, operations, and labour costs.'}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map(k => (
-              <div key={k} className="bg-gray-50 rounded-2xl border border-gray-100 p-8 flex flex-col gap-5">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                  ))}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {(isSl ? [
+              [Settings, 'bg-blue-50 text-blue-600', 'Orodjarne', 'Natančen izračun strojnih ur, materiala in dela za orodja, forme in priprave.'],
+              [Calculator, 'bg-green-50 text-green-600', 'CNC obdelava', 'Vsaka operacija — rezkanje, struženje, EDM — ima svojo urno postavko in čas obdelave.'],
+              [Zap, 'bg-orange-50 text-orange-600', 'Varjenje in jeklene konstrukcije', 'Kalkulacija materiala, časa varjenja in površinske obdelave za varjene sestave in konstrukcije.'],
+              [FileText, 'bg-purple-50 text-purple-600', 'Lasersko rezanje in pločevinarstvo', 'Stroški rezanja, upogibanja in obdelave pločevine glede na material, debelino in čas stroja.'],
+              [BarChart2, 'bg-indigo-50 text-indigo-600', 'Maloserijska in naročniška proizvodnja', 'Vsak kos zahteva svojo kalkulacijo. Costflow zagotavlja enoten proces za celotno ekipo.'],
+              [TrendingUp, 'bg-teal-50 text-teal-600', 'Kooperacija in podizvajalstvo', 'Stroški zunanjih storitev in kooperantov so vključeni skupaj z lastnimi stroški v eno ponudbo.'],
+            ] : [
+              [Settings, 'bg-blue-50 text-blue-600', 'Tool & Die Shops', 'Precise calculation of machine hours, materials and labour for tools, moulds and fixtures.'],
+              [Calculator, 'bg-green-50 text-green-600', 'CNC Machining', 'Every operation — milling, turning, EDM — has its own hourly rate and cycle time in the quote.'],
+              [Zap, 'bg-orange-50 text-orange-600', 'Welding & Steel Structures', 'Material, welding time and surface treatment costs calculated together for every assembly.'],
+              [FileText, 'bg-purple-50 text-purple-600', 'Laser Cutting & Sheet Metal', 'Cutting, bending and forming costs based on material type, thickness and machine time.'],
+              [BarChart2, 'bg-indigo-50 text-indigo-600', 'Custom & Job-Shop Manufacturing', 'Every part needs its own calculation. Costflow ensures a consistent process across your team.'],
+              [TrendingUp, 'bg-teal-50 text-teal-600', 'Subcontracting', 'External service and subcontractor costs included alongside your own in a single quote.'],
+            ]).map(([Icon, cls, title, desc]) => (
+              <div key={title as string} className="bg-white rounded-2xl border border-gray-200 p-8">
+                <div className={`inline-flex p-3 rounded-xl ${cls} mb-5`}>
+                  {/* @ts-ignore */}
+                  <Icon className="w-5 h-5" />
                 </div>
-                <p className="text-gray-700 leading-relaxed flex-1">"{l[`${k}Quote` as keyof typeof l] as string}"</p>
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="font-semibold text-gray-900">{l[`${k}Name` as keyof typeof l] as string}</p>
-                  <p className="text-sm text-gray-500">{l[`${k}Role` as keyof typeof l] as string}</p>
-                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{title as string}</h3>
+                <p className="text-gray-500 leading-relaxed">{desc as string}</p>
               </div>
             ))}
           </div>
@@ -244,7 +256,6 @@ export default function LandingPage() {
       <section id="faq" className="bg-gray-50 border-t border-gray-100 py-24">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.faqTitle}</p>
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.faqHeading}</h2>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100">
