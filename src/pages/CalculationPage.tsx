@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
 import { useNavigate, useParams, useSearchParams, Navigate } from 'react-router-dom'
 import { ChevronLeft, ChevronDown, Plus, Trash2, Boxes, ShoppingCart, Cog, Package, Wrench } from 'lucide-react'
 import { supabase } from '../lib/supabase'
@@ -47,6 +47,12 @@ export default function CalculationPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [collapsedProcs, setCollapsedProcs] = useState<Set<number>>(new Set())
+  const [collapsedMats, setCollapsedMats] = useState<Set<number>>(new Set())
+  const [collapsedParts, setCollapsedParts] = useState<Set<number>>(new Set())
+  const [collapsedTooling, setCollapsedTooling] = useState<Set<number>>(new Set())
+  const [collapsedPack, setCollapsedPack] = useState<Set<number>>(new Set())
+  const toggler = (setter: Dispatch<SetStateAction<Set<number>>>) => (i: number) =>
+    setter(prev => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n })
 
   useEffect(() => { if (company && itemId) init() }, [company, itemId])
 
@@ -173,9 +179,19 @@ export default function CalculationPage() {
               <div className="flex flex-col gap-3">
                 {c.raw_materials.map((r, i) => {
                   const set = (pp: Partial<RawMaterialRow>) => patch({ raw_materials: upd(c.raw_materials, i, pp) })
+                  const collapsed = collapsedMats.has(i)
                   return (
-                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-8">
-                      <button onClick={() => patch({ raw_materials: c.raw_materials.filter((_, j) => j !== i) })} className="absolute top-2.5 right-2.5 text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                        <button onClick={() => toggler(setCollapsedMats)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        {!ro && <button onClick={() => patch({ raw_materials: c.raw_materials.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                      </div>
+                      {collapsed ? (
+                        <div>
+                          <div className="text-[15px] font-bold text-gray-900">{r.name || s.shapes[r.shape as MaterialShape] || '—'}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{s.total}: <b className="text-gray-700">{money(rawTotal(r))}</b></div>
+                        </div>
+                      ) : (<>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="flex flex-col gap-1">
                           <label className="text-xs font-medium text-gray-500">{s.shape}</label>
@@ -230,6 +246,7 @@ export default function CalculationPage() {
                         <span className="text-gray-500">{s.weight}: <b className="text-gray-800">{rawWeight(r).toLocaleString('de-DE', { maximumFractionDigits: 3 })} {u.kg}</b></span>
                         <span className="ml-auto text-gray-500">{s.total}: <b className="text-gray-900">{money(rawTotal(r))}</b></span>
                       </div>
+                      </>)}
                     </div>
                   )
                 })}
@@ -245,9 +262,19 @@ export default function CalculationPage() {
               <div className="flex flex-col gap-3">
                 {c.purchased_parts.map((r, i) => {
                   const set = (pp: Partial<PurchasedPartRow>) => patch({ purchased_parts: upd(c.purchased_parts, i, pp) })
+                  const collapsed = collapsedParts.has(i)
                   return (
-                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-8">
-                      <button onClick={() => patch({ purchased_parts: c.purchased_parts.filter((_, j) => j !== i) })} className="absolute top-2.5 right-2.5 text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                        <button onClick={() => toggler(setCollapsedParts)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        {!ro && <button onClick={() => patch({ purchased_parts: c.purchased_parts.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                      </div>
+                      {collapsed ? (
+                        <div>
+                          <div className="text-[15px] font-bold text-gray-900">{r.name || '—'}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{s.total}: <b className="text-gray-700">{money(purchasedTotal(r))}</b>/{u.piece}</div>
+                        </div>
+                      ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.purchasedName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
@@ -266,6 +293,7 @@ export default function CalculationPage() {
                       <div className="flex items-center justify-end mt-3 text-sm border-t border-gray-100 pt-2">
                         <span className="text-gray-500">{s.total}: <b className="text-gray-900">{money(purchasedTotal(r))}</b>/{u.piece}</span>
                       </div>
+                      </>)}
                     </div>
                   )
                 })}
@@ -421,9 +449,19 @@ export default function CalculationPage() {
               <div className="flex flex-col gap-3">
                 {c.tooling.map((r, i) => {
                   const set = (pp: Partial<ToolingRow>) => patch({ tooling: upd(c.tooling, i, pp) })
+                  const collapsed = collapsedTooling.has(i)
                   return (
-                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-8">
-                      <button onClick={() => patch({ tooling: c.tooling.filter((_, j) => j !== i) })} className="absolute top-2.5 right-2.5 text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                        <button onClick={() => toggler(setCollapsedTooling)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        {!ro && <button onClick={() => patch({ tooling: c.tooling.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                      </div>
+                      {collapsed ? (
+                        <div>
+                          <div className="text-[15px] font-bold text-gray-900">{r.name || '—'}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{s.total}: <b className="text-gray-700">{money(toolingTotal(r))}</b>/{u.piece}</div>
+                        </div>
+                      ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.toolName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
@@ -437,6 +475,7 @@ export default function CalculationPage() {
                       <div className="flex items-center justify-end mt-3 text-sm border-t border-gray-100 pt-2">
                         <span className="text-gray-500">{s.total}: <b className="text-gray-900">{money(toolingTotal(r))}</b>/{u.piece}</span>
                       </div>
+                      </>)}
                     </div>
                   )
                 })}
@@ -452,9 +491,19 @@ export default function CalculationPage() {
               <div className="flex flex-col gap-3">
                 {c.packaging.map((r, i) => {
                   const set = (pp: Partial<PackagingRow>) => patch({ packaging: upd(c.packaging, i, pp) })
+                  const collapsed = collapsedPack.has(i)
                   return (
-                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-8">
-                      <button onClick={() => patch({ packaging: c.packaging.filter((_, j) => j !== i) })} className="absolute top-2.5 right-2.5 text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                        <button onClick={() => toggler(setCollapsedPack)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        {!ro && <button onClick={() => patch({ packaging: c.packaging.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                      </div>
+                      {collapsed ? (
+                        <div>
+                          <div className="text-[15px] font-bold text-gray-900">{r.name || '—'}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{s.total}: <b className="text-gray-700">{money(packagingTotal(r))}</b>/{u.piece}</div>
+                        </div>
+                      ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.packagingName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
@@ -463,6 +512,7 @@ export default function CalculationPage() {
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <Mini label={`${s.costPerPieceShort} (${sym})`} value={r.price_per_unit} onValue={v => set({ price_per_unit: v ?? 0 })} decimals={2} />
                       </div>
+                      </>)}
                     </div>
                   )
                 })}
