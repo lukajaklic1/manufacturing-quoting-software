@@ -295,29 +295,29 @@ export default function CalculationPage() {
                     return next
                   })
                   return (
-                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-8">
-                      {/* Collapse toggle + trash */}
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
+                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
+                      {/* Top-right: chevron + trash */}
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                        <button onClick={toggleCollapse} className="text-gray-400 hover:text-gray-700">
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} />
+                        </button>
                         {!ro && (
                           <button onClick={() => patch({ processes: c.processes.filter((_, j) => j !== i) })}
                             className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
                         )}
                       </div>
 
-                      {/* Clickable header row — name + chevron */}
-                      <div className="flex items-center gap-1.5 mb-3 cursor-pointer select-none" onClick={toggleCollapse}>
-                        <ChevronDown className={`w-3.5 h-3.5 text-gray-400 shrink-0 transition-transform ${collapsed ? '-rotate-90' : ''}`} />
-                        <span className="flex-1 text-[15px] font-bold text-gray-900 truncate">{r.name || '—'}</span>
-                        {collapsed && (
-                          <span className="text-xs text-gray-500 shrink-0 flex gap-3">
+                      {collapsed ? (
+                        /* Collapsed view: just name + prices per qty */
+                        <div>
+                          <div className="text-[15px] font-bold text-gray-900 mb-1">{r.name || '—'}</div>
+                          <div className="flex flex-wrap gap-x-4 text-xs text-gray-500">
                             {qtyResults.map(({ q }) => (
-                              <span key={q}>{q.toLocaleString('de-DE')} {u.piece}: <b className="text-gray-700">{money(processTotal(r, q))}</b></span>
+                              <span key={q}>{q.toLocaleString('de-DE')} {u.piece}: <b className="text-gray-700">{money(processTotal(r, q))}</b>/{u.piece}</span>
                             ))}
-                          </span>
-                        )}
-                      </div>
-
-                      {!collapsed && (<>
+                          </div>
+                        </div>
+                      ) : (<>
                       {/* Operation name dropdown */}
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.operationName}</label>
@@ -406,6 +406,7 @@ export default function CalculationPage() {
                       </div>
                       </>)}
                     </div>
+
                   )
                 })}
                 <div className="flex justify-end pt-1 text-sm"><span className="text-gray-500">{s.totalProcesses}: <b className="text-gray-900">{money(totals.total_processes)}</b></span></div>
