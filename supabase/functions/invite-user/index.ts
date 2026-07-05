@@ -37,10 +37,10 @@ Deno.serve(async (req) => {
     // Verify the caller is an admin and get their company
     const { data: callerProfile } = await admin
       .from('users')
-      .select('company_id, is_admin')
+      .select('company_id, is_admin, is_active')
       .eq('id', caller.id)
       .single()
-    if (!callerProfile?.is_admin) return json({ error: 'forbidden' }, 403)
+    if (!callerProfile?.is_admin || callerProfile?.is_active === false) return json({ error: 'forbidden' }, 403)
 
     // Record the invitation
     const token = crypto.randomUUID()
