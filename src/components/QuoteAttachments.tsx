@@ -21,6 +21,8 @@ interface QuoteAttachmentsProps {
 type FileType = 'cad' | 'pdf' | 'bom' | 'other'
 type ViewMode = 'grid' | 'list'
 
+const imageExts = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp']
+
 function getFileType(filename: string): FileType {
   const ext = filename.toLowerCase().split('.').pop() || ''
   const cadExts = ['step', 'stp', 'iges', 'igs', 'stl', 'obj', 'ply', 'fbx']
@@ -29,6 +31,10 @@ function getFileType(filename: string): FileType {
   if (ext === 'pdf') return 'pdf'
   if (ext === 'bom' || filename.toLowerCase().includes('bom')) return 'bom'
   return 'other'
+}
+
+function isImage(filename: string) {
+  return imageExts.includes(filename.toLowerCase().split('.').pop() || '')
 }
 
 function fmtAttachmentCount(n: number, lang: string) {
@@ -321,6 +327,8 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                         <div className="w-full h-full bg-red-50 flex items-center justify-center">
                           <FileText className="w-8 h-8 text-red-300" />
                         </div>
+                      ) : isImage(att.file_name) && cadUrls[att.id] ? (
+                        <img src={cadUrls[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                       ) : (
                         <File className="w-8 h-8 text-gray-300" />
                       )}
@@ -555,6 +563,8 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                       <div className="w-full h-full bg-red-50 flex items-center justify-center">
                         <FileText className="w-8 h-8 text-red-300" />
                       </div>
+                    ) : isImage(att.file_name) && cadUrls[att.id] ? (
+                      <img src={cadUrls[att.id]} alt="" className="w-full h-full object-contain bg-white" />
                     ) : (
                       <File className="w-8 h-8 text-gray-300" />
                     )}
