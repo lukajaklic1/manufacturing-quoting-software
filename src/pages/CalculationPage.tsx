@@ -6,6 +6,7 @@ import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
+import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Input from '../components/ui/Input'
 import NumberInput from '../components/ui/NumberInput'
 import QuoteAttachments from '../components/QuoteAttachments'
@@ -57,6 +58,18 @@ export default function CalculationPage() {
   const [collapsedParts, setCollapsedParts] = useState<Set<number>>(() => lsLoad('parts'))
   const [collapsedTooling, setCollapsedTooling] = useState<Set<number>>(() => lsLoad('tooling'))
   const [collapsedPack, setCollapsedPack] = useState<Set<number>>(() => lsLoad('pack'))
+
+  const [deleteTarget, setDeleteTarget] = useState<{ section: 'mats' | 'parts' | 'procs' | 'tooling' | 'pack'; i: number } | null>(null)
+  const confirmDelete = () => {
+    if (!deleteTarget) return
+    const { section, i } = deleteTarget
+    if (section === 'mats') patch({ raw_materials: c!.raw_materials.filter((_, j) => j !== i) })
+    else if (section === 'parts') patch({ purchased_parts: c!.purchased_parts.filter((_, j) => j !== i) })
+    else if (section === 'procs') patch({ processes: c!.processes.filter((_, j) => j !== i) })
+    else if (section === 'tooling') patch({ tooling: c!.tooling.filter((_, j) => j !== i) })
+    else if (section === 'pack') patch({ packaging: c!.packaging.filter((_, j) => j !== i) })
+    setDeleteTarget(null)
+  }
 
   const toggler = (setter: Dispatch<SetStateAction<Set<number>>>, section: string) => (i: number) =>
     setter(prev => {
@@ -195,7 +208,7 @@ export default function CalculationPage() {
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
                         <button onClick={() => toggler(setCollapsedMats, 'mats')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
-                        {!ro && <button onClick={() => patch({ raw_materials: c.raw_materials.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                        {!ro && <button onClick={() => setDeleteTarget({ section: 'mats', i })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
                         <div>
@@ -278,7 +291,7 @@ export default function CalculationPage() {
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
                         <button onClick={() => toggler(setCollapsedParts, 'parts')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
-                        {!ro && <button onClick={() => patch({ purchased_parts: c.purchased_parts.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                        {!ro && <button onClick={() => setDeleteTarget({ section: 'parts', i })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
                         <div>
@@ -337,7 +350,7 @@ export default function CalculationPage() {
                           <ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} />
                         </button>
                         {!ro && (
-                          <button onClick={() => patch({ processes: c.processes.filter((_, j) => j !== i) })}
+                          <button onClick={() => setDeleteTarget({ section: 'procs', i })}
                             className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
                         )}
                       </div>
@@ -461,7 +474,7 @@ export default function CalculationPage() {
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
                         <button onClick={() => toggler(setCollapsedTooling, 'tooling')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
-                        {!ro && <button onClick={() => patch({ tooling: c.tooling.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                        {!ro && <button onClick={() => setDeleteTarget({ section: 'tooling', i })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
                         <div>
@@ -503,7 +516,7 @@ export default function CalculationPage() {
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
                         <button onClick={() => toggler(setCollapsedPack, 'pack')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
-                        {!ro && <button onClick={() => patch({ packaging: c.packaging.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
+                        {!ro && <button onClick={() => setDeleteTarget({ section: 'pack', i })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
                         <div>
@@ -595,6 +608,16 @@ export default function CalculationPage() {
           {company && <QuoteAttachments quoteId={quoteId} companyId={company.id} quoteItemId={itemId} attachments={attachments} onChange={setAttachments} inline readonly={ro} />}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title={t.common.confirmDeleteTitle}
+        message={t.common.cannotUndo}
+        confirmLabel={t.common.deleteEntity}
+        danger
+      />
     </div>
   )
 }
