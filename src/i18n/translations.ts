@@ -204,7 +204,7 @@ export const translations = {
       totalPctOnProduction: 'Total % on production base',
       marginPerYear: 'Margin (€/yr)',
       totalAnnualRevenue: 'Total annual revenue',
-      overheadCalcHint: 'Overhead % = cost-centre pool ÷ base. These rates feed every new calculation.',
+      overheadCalcHint: 'Enter annual costs by cost centre. The system automatically calculates overhead rates applied to every new calculation.',
       companyProfile: 'Company profile',
       quoteSettings: 'Quote settings',
       bankDetails: 'Bank details',
