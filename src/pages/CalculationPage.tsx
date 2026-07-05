@@ -295,28 +295,31 @@ export default function CalculationPage() {
                     return next
                   })
                   return (
-                    <div key={i} className="rounded-xl bg-white border border-gray-200 overflow-hidden">
-                      {/* Card header — always visible, click to collapse */}
-                      <div className="flex items-center gap-2 px-3 py-2.5 cursor-pointer select-none hover:bg-gray-50" onClick={toggleCollapse}>
-                        <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${collapsed ? '-rotate-90' : ''}`} />
-                        <span className="flex-1 text-[15px] font-bold text-gray-900 truncate">{r.name || <span className="text-gray-400 font-normal">—</span>}</span>
-                        {collapsed && (
-                          <span className="text-sm text-gray-500 shrink-0">
-                            {qtyResults.map(({ q }) => (
-                              <span key={q} className="ml-3"><b className="text-gray-700">{money(processTotal(r, q))}</b>/{u.piece}</span>
-                            ))}
-                          </span>
-                        )}
+                    <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-8">
+                      {/* Collapse toggle + trash */}
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
                         {!ro && (
-                          <button onClick={e => { e.stopPropagation(); patch({ processes: c.processes.filter((_, j) => j !== i) }) }}
-                            className="ml-1 text-gray-300 hover:text-red-500 shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => patch({ processes: c.processes.filter((_, j) => j !== i) })}
+                            className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
                         )}
                       </div>
 
-                      {!collapsed && (
-                      <div className="p-3 pt-0 border-t border-gray-100">
-                      {/* Operation name — dropdown (pick a preset or type your own) */}
-                      <div className="flex flex-col gap-1 mb-3 mt-3">
+                      {/* Clickable header row — name + chevron */}
+                      <div className="flex items-center gap-1.5 mb-3 cursor-pointer select-none" onClick={toggleCollapse}>
+                        <ChevronDown className={`w-3.5 h-3.5 text-gray-400 shrink-0 transition-transform ${collapsed ? '-rotate-90' : ''}`} />
+                        <span className="flex-1 text-[15px] font-bold text-gray-900 truncate">{r.name || '—'}</span>
+                        {collapsed && (
+                          <span className="text-xs text-gray-500 shrink-0 flex gap-3">
+                            {qtyResults.map(({ q }) => (
+                              <span key={q}>{q.toLocaleString('de-DE')} {u.piece}: <b className="text-gray-700">{money(processTotal(r, q))}</b></span>
+                            ))}
+                          </span>
+                        )}
+                      </div>
+
+                      {!collapsed && (<>
+                      {/* Operation name dropdown */}
+                      <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.operationName}</label>
                         <select value={(s.operationList as readonly string[]).includes(r.name) ? r.name : (r.name ? '__custom' : '')}
                           onChange={e => { if (e.target.value !== '__custom') set({ name: e.target.value }) }}
@@ -401,8 +404,7 @@ export default function CalculationPage() {
                           <span key={q}>{q.toLocaleString('de-DE')} {u.piece}: <b className="text-gray-700">{money(processTotal(r, q))}</b>/{u.piece}</span>
                         ))}
                       </div>
-                      </div>
-                      )}
+                      </>)}
                     </div>
                   )
                 })}
