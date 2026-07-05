@@ -332,7 +332,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
             <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
           </>}
           {readOnly && <>
-            {hasPerm('quotes', 'create') && (status === 'draft' || status === 'issued' || status === 'sent' || (isAdmin && (status === 'won' || status === 'lost'))) &&
+            {hasPerm('quotes', 'create') && (status === 'draft' || status === 'issued' || status === 'sent') &&
               <Button variant="secondary" onClick={() => { window.location.href = `/quotes/${id}/edit` }} className="gap-2"><Pencil className="w-4 h-4" />{s.editOffer}</Button>}
             {hasPerm('quotes', 'create') && status === 'draft' &&
               <Button loading={saving} onClick={issue} disabled={!customerId} className="gap-2">{s.issueOffer}</Button>}
