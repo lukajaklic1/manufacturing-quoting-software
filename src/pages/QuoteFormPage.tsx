@@ -49,7 +49,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
   const [quoteNumber, setQuoteNumber] = useState('')
   const [alreadySent, setAlreadySent] = useState(false)
   const [status, setStatusState] = useState<QuoteStatus>('draft')
-  const [confirm, setConfirm] = useState<null | 'accepted' | 'rejected'>(null)
+  const [confirm, setConfirm] = useState<null | 'won' | 'lost'>(null)
   const [tab, setTab] = useState<'overview' | 'pdf'>('overview')
   const [snapshot, setSnapshot] = useState<OfferSnapshot | null>(null)
   const isSaved = !!quoteNumber
@@ -341,8 +341,8 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
             </PDFDownloadLink>}
             {hasPerm('quotes', 'create') && status === 'issued' && <Button onClick={() => changeStatus('sent')} className="gap-2"><Send className="w-4 h-4" />{s.markSentLabel}</Button>}
             {hasPerm('quotes', 'create') && status === 'sent' && <>
-              <Button onClick={() => setConfirm('accepted')} className="gap-2"><Check className="w-4 h-4" />{s.markAccepted}</Button>
-              <Button variant="secondary" onClick={() => setConfirm('rejected')} className="gap-2"><X className="w-4 h-4" />{s.markRejected}</Button>
+              <Button onClick={() => setConfirm('won')} className="gap-2"><Check className="w-4 h-4" />{s.markAccepted}</Button>
+              <Button variant="secondary" onClick={() => setConfirm('lost')} className="gap-2"><X className="w-4 h-4" />{s.markRejected}</Button>
             </>}
             {(status === 'won' || status === 'lost') && isAdmin &&
               <Button variant="secondary" onClick={() => changeStatus('sent')} className="gap-2">{s.adminRevert}</Button>}
@@ -478,9 +478,9 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
 
       <ConfirmDialog open={!!confirm} onClose={() => setConfirm(null)}
         onConfirm={() => { if (confirm) changeStatus(confirm); setConfirm(null) }}
-        title={confirm === 'rejected' ? s.markRejected : s.markAccepted}
-        message={confirm === 'rejected' ? s.confirmLost : s.confirmWon}
-        confirmLabel={confirm === 'rejected' ? s.markRejected : s.markAccepted} danger={confirm === 'rejected'} />
+        title={confirm === 'lost' ? s.markRejected : s.markAccepted}
+        message={confirm === 'lost' ? s.confirmLost : s.confirmWon}
+        confirmLabel={confirm === 'lost' ? s.markRejected : s.markAccepted} danger={confirm === 'lost'} />
     </div>
   )
 }
