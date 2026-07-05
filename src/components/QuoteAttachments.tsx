@@ -332,15 +332,23 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                       ) : (
                         <File className="w-8 h-8 text-gray-300" />
                       )}
-                      {/* Delete X top-right */}
-                      {!readonly && (
+                      {/* Actions top-right */}
+                      <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={(e) => { e.stopPropagation(); deleteFile(att) }}
-                          className="absolute top-1 right-1 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
+                          onClick={(e) => { e.stopPropagation(); downloadFile(att) }}
+                          className="w-5 h-5 bg-white rounded-full shadow flex items-center justify-center hover:bg-blue-50"
                         >
-                          <X className="w-3 h-3 text-gray-500 hover:text-red-600" />
+                          <Download className="w-3 h-3 text-gray-500 hover:text-blue-600" />
                         </button>
-                      )}
+                        {!readonly && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); deleteFile(att) }}
+                            className="w-5 h-5 bg-white rounded-full shadow flex items-center justify-center hover:bg-red-50"
+                          >
+                            <X className="w-3 h-3 text-gray-500 hover:text-red-600" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                     {/* Footer */}
                     <div className="px-2 py-1.5 flex flex-col gap-1">
@@ -568,12 +576,18 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                     ) : (
                       <File className="w-8 h-8 text-gray-300" />
                     )}
-                    {!readonly && (
-                      <button onClick={e => { e.stopPropagation(); deleteFile(att) }}
-                        className="absolute top-1 right-1 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <X className="w-3 h-3 text-gray-500 hover:text-red-600" />
+                    <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={e => { e.stopPropagation(); downloadFile(att) }}
+                        className="w-5 h-5 bg-white rounded-full shadow flex items-center justify-center hover:bg-blue-50">
+                        <Download className="w-3 h-3 text-gray-500 hover:text-blue-600" />
                       </button>
-                    )}
+                      {!readonly && (
+                        <button onClick={e => { e.stopPropagation(); deleteFile(att) }}
+                          className="w-5 h-5 bg-white rounded-full shadow flex items-center justify-center hover:bg-red-50">
+                          <X className="w-3 h-3 text-gray-500 hover:text-red-600" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="px-2 py-1.5">
                     <p className="text-xs font-medium text-gray-700 truncate">{att.file_name}</p>
