@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Building2, Receipt, CreditCard } from 'lucide-react'
+import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -38,6 +39,7 @@ export default function SettingsPage() {
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+  if (!isAdmin) return <Navigate to="/dashboard" replace />
 
   const prefix = form.quote_prefix ?? 'Q'
   const nextNum = (form.quote_counter ?? 0) + 1

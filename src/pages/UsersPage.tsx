@@ -190,7 +190,7 @@ export default function UsersPage() {
   }
 
   async function toggleActive(u: AppUser) {
-    const { error } = await supabase.from('users').update({ is_active: !u.is_active, updated_at: new Date().toISOString() }).eq('id', u.id)
+    const { error } = await supabase.rpc('set_user_active', { p_user_id: u.id, p_active: !u.is_active })
     if (error) { toast.error(error.message); return }
     toast.success(t.common.saved)
     load()
@@ -204,10 +204,14 @@ export default function UsersPage() {
       first_name: editForm.first_name.trim(),
       last_name: editForm.last_name.trim(),
       job_title: editForm.job_title.trim() || null,
-      is_admin: editForm.is_admin,
       updated_at: new Date().toISOString(),
     }).eq('id', editUser.id)
     if (uErr) { setSavingPerms(false); toast.error(uErr.message); return }
+
+    if (editForm.is_admin !== editUser.is_admin) {
+      const { error: aErr } = await supabase.rpc('set_user_admin', { p_user_id: editUser.id, p_is_admin: editForm.is_admin })
+      if (aErr) { setSavingPerms(false); toast.error(aErr.message); return }
+    }
 
     if (!editForm.is_admin) {
       const rows = MODULES.map(module => ({ user_id: editUser.id, module, ...editPerms[module] }))
