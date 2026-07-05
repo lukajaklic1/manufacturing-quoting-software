@@ -164,7 +164,7 @@ export default function CalculationPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:flex-1 lg:min-h-0">
         <fieldset disabled={ro} style={{ display: 'contents' }}>
         {/* Calculator — scrolls inside its own column (scrollbar sits at the column edge) */}
-        <div className="flex flex-col gap-5 lg:overflow-y-auto lg:pr-3 lg:pb-6">
+        <div className={`flex flex-col gap-5 lg:overflow-y-auto lg:pr-3 lg:pb-6${ro ? ' pointer-events-none select-none' : ''}`}>
           {/* Part info + quantities */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -193,7 +193,7 @@ export default function CalculationPage() {
                   const collapsed = collapsedMats.has(i)
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2" style={{ pointerEvents: 'auto' }}>
                         <div role="button" onClick={() => toggler(setCollapsedMats, 'mats')(i)} className="text-gray-400 hover:text-gray-700 cursor-pointer"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></div>
                         {!ro && <button onClick={() => patch({ raw_materials: c.raw_materials.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
@@ -276,7 +276,7 @@ export default function CalculationPage() {
                   const collapsed = collapsedParts.has(i)
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2" style={{ pointerEvents: 'auto' }}>
                         <div role="button" onClick={() => toggler(setCollapsedParts, 'parts')(i)} className="text-gray-400 hover:text-gray-700 cursor-pointer"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></div>
                         {!ro && <button onClick={() => patch({ purchased_parts: c.purchased_parts.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
@@ -332,7 +332,7 @@ export default function CalculationPage() {
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       {/* Top-right: chevron + trash */}
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2" style={{ pointerEvents: 'auto' }}>
                         <div role="button" onClick={toggleCollapse} className="text-gray-400 hover:text-gray-700 cursor-pointer">
                           <ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} />
                         </div>
@@ -459,7 +459,7 @@ export default function CalculationPage() {
                   const collapsed = collapsedTooling.has(i)
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2" style={{ pointerEvents: 'auto' }}>
                         <div role="button" onClick={() => toggler(setCollapsedTooling, 'tooling')(i)} className="text-gray-400 hover:text-gray-700 cursor-pointer"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></div>
                         {!ro && <button onClick={() => patch({ tooling: c.tooling.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
@@ -501,7 +501,7 @@ export default function CalculationPage() {
                   const collapsed = collapsedPack.has(i)
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-2" style={{ pointerEvents: 'auto' }}>
                         <div role="button" onClick={() => toggler(setCollapsedPack, 'pack')(i)} className="text-gray-400 hover:text-gray-700 cursor-pointer"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></div>
                         {!ro && <button onClick={() => patch({ packaging: c.packaging.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
