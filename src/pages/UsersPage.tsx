@@ -151,7 +151,7 @@ export default function UsersPage() {
         job_title: inv.job_title.trim() || null,
         is_admin: inviteAsAdmin,
         permissions,
-        redirect_to: `${window.location.origin}/accept-invite`,
+        redirect_to: `${import.meta.env.VITE_APP_URL ?? window.location.origin}/accept-invite`,
       },
     })
     setInviting(false)
