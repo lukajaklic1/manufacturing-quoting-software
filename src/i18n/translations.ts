@@ -84,6 +84,8 @@ export const translations = {
         price: 'Price', time: 'Lead time', quality: 'Quality', competitor: 'Competitor', other: 'Other',
       },
       // Quote items / pieces
+      assignee: 'Assignee',
+      noAssignee: 'Unassigned',
       pieces: 'Pieces',
       addPiece: 'Add piece',
       partName: 'Part name',
@@ -1085,6 +1087,8 @@ export const translations = {
         price: 'Cena', time: 'Rok dobave', quality: 'Kakovost', competitor: 'Konkurenca', other: 'Drugo',
       },
       // Kosi
+      assignee: 'Zadolženi',
+      noAssignee: 'Nedodeljeno',
       pieces: 'Kosi',
       addPiece: 'Dodaj kos',
       partName: 'Naziv kosa',

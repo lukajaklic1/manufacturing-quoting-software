@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { Plus, Eye, Pencil, FileText, Search, Check, X, Box } from 'lucide-react'
+import { Plus, Eye, Pencil, FileText, Search, Check, X, Box, ChevronDown } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { getThumbByPath } from '../lib/thumbs'
 import { useCompany } from '../hooks/useCompany'
@@ -10,6 +10,8 @@ import Pagination from '../components/ui/Pagination'
 import { countQuotes } from '../utils/pluralize'
 import type { Quote, QuoteStatus } from '../types/database'
 import { format } from 'date-fns'
+
+interface CompanyUser { id: string; first_name: string; last_name: string }
 
 
 const PAGE_SIZE = 20
@@ -27,7 +29,7 @@ const STATUS_STYLE: Record<QuoteStatus, string> = {
   frozen: 'bg-purple-100 text-purple-700',
 }
 
-interface Row extends Quote { customers: { name: string } | null }
+interface Row extends Quote { customers: { name: string } | null; assignee: { first_name: string; last_name: string } | null }
 
 export default function QuotesPage() {
   const { company, hasPerm, loading: permLoading } = useCompany()
@@ -39,19 +41,25 @@ export default function QuotesPage() {
   const [annual, setAnnual] = useState<Record<string, number>>({})
   const [partSlots, setPartSlots] = useState<Record<string, (string | null)[]>>({}) // quote_id → up to 4 slots (CAD url or null placeholder)
   const [partCounts, setPartCounts] = useState<Record<string, number>>({})            // quote_id → total piece count
+  const [companyUsers, setCompanyUsers] = useState<CompanyUser[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<QuoteStatus | 'all'>('all')
   const [customerFilter, setCustomerFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
 
-  useEffect(() => { if (company) load() }, [company])
+  useEffect(() => { if (company) { load(); loadUsers() } }, [company])
+
+  async function loadUsers() {
+    const { data } = await supabase.from('users').select('id, first_name, last_name').eq('company_id', company!.id).eq('is_active', true).order('first_name')
+    if (data) setCompanyUsers(data as CompanyUser[])
+  }
 
   async function load() {
     if (!company) return
     setLoading(true)
     const [{ data: q }, { data: calc }, { data: items }, { data: atts }] = await Promise.all([
-      supabase.from('quotes').select('*, customers(name)').eq('company_id', company.id).order('created_at', { ascending: false }),
+      supabase.from('quotes').select('*, customers(name), assignee:users!assignee_id(first_name, last_name)').eq('company_id', company.id).order('created_at', { ascending: false }),
       supabase.from('calculations').select('annual_value, quote_items!inner(quote_id)').eq('company_id', company.id),
       supabase.from('quote_items').select('id, quote_id, thumb_path, position').eq('company_id', company.id).order('position'),
       supabase.from('quote_attachments').select('id, quote_item_id, thumb_path, file_name').eq('company_id', company.id).not('quote_item_id', 'is', null).order('created_at'),
@@ -153,7 +161,7 @@ export default function QuotesPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[920px]">
             <thead className="bg-gray-50 border-b border-gray-100"><tr>
-              {[s.quoteNumber, s.customer, s.contactPerson, s.pieces, t.common.status, s.annualValue, t.common.created, ''].map((h, i) => (
+              {[s.quoteNumber, s.customer, s.contactPerson, s.pieces, t.common.status, s.annualValue, t.common.created, s.assignee, ''].map((h, i) => (
                 <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
               ))}
             </tr></thead>
@@ -183,6 +191,17 @@ export default function QuotesPage() {
                   <td className="px-4 py-3 text-gray-700">{(annual[q.id] ?? 0).toLocaleString('de-DE', { style: 'currency', currency: company?.currency ?? 'EUR' })}</td>
                   <td className="px-4 py-3 text-gray-500">{format(new Date(q.created_at), 'd. M. yyyy')}</td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <AssigneeCell
+                      quoteId={q.id}
+                      assigneeId={q.assignee_id}
+                      assignee={q.assignee}
+                      users={companyUsers}
+                      canEdit={canEdit}
+                      noAssigneeLabel={s.noAssignee}
+                      onChange={(uid) => setRows(prev => prev.map(r => r.id === q.id ? { ...r, assignee_id: uid, assignee: companyUsers.find(u => u.id === uid) ?? null } : r))}
+                    />
+                  </td>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                     <div className="flex items-center gap-1 justify-end">
                       {canEdit && q.status === 'draft'
                         ? <button onClick={() => navigate(`/quotes/${q.id}/edit`)} title={t.common.edit} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>
@@ -197,6 +216,70 @@ export default function QuotesPage() {
       </div>
 
       <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
+    </div>
+  )
+}
+
+function AssigneeCell({ quoteId, assigneeId, assignee, users, canEdit, noAssigneeLabel, onChange }: {
+  quoteId: string
+  assigneeId: string | null
+  assignee: { first_name: string; last_name: string } | null
+  users: CompanyUser[]
+  canEdit: boolean
+  noAssigneeLabel: string
+  onChange: (uid: string | null) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [])
+
+  async function pick(uid: string | null) {
+    setOpen(false)
+    if (uid === assigneeId) return
+    setSaving(true)
+    await supabase.from('quotes').update({ assignee_id: uid }).eq('id', quoteId)
+    onChange(uid)
+    setSaving(false)
+  }
+
+  const label = assignee ? `${assignee.first_name} ${assignee.last_name}` : null
+
+  if (!canEdit) {
+    return <span className="text-sm text-gray-500">{label ?? '—'}</span>
+  }
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        disabled={saving}
+        className={`flex items-center gap-1 text-sm rounded-lg px-2 py-1 transition-colors ${label ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-400 hover:bg-gray-100'}`}>
+        {saving ? <span className="w-3 h-3 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" /> : null}
+        <span className="max-w-[120px] truncate">{label ?? noAssigneeLabel}</span>
+        <ChevronDown className="w-3 h-3 shrink-0 text-gray-400" />
+      </button>
+      {open && (
+        <div className="absolute z-30 mt-1 right-0 w-44 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+          <div className="max-h-52 overflow-y-auto py-1">
+            <button onClick={() => pick(null)} className="flex items-center w-full px-3 py-2 text-sm text-left hover:bg-gray-50 gap-2">
+              <span className="flex-1 text-gray-400 italic">{noAssigneeLabel}</span>
+              {!assigneeId && <Check className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+            </button>
+            {users.map(u => (
+              <button key={u.id} onClick={() => pick(u.id)} className="flex items-center w-full px-3 py-2 text-sm text-left hover:bg-gray-50 gap-2">
+                <span className="flex-1 text-gray-800 truncate">{u.first_name} {u.last_name}</span>
+                {assigneeId === u.id && <Check className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

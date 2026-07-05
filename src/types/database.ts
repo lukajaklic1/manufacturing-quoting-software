@@ -222,6 +222,7 @@ export interface Quote {
   parity: string | null
   notes: string | null
   created_by: string
+  assignee_id: string | null
   sent_at: string | null
   snapshot: OfferSnapshot | null
   issued_at: string | null
