@@ -367,7 +367,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
       <>{/* Top: quote data (left) + attachments (right) — frozen in read-only review */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
         {/* LEFT COLUMN - Quote Form */}
-        <div>
+        <div className={readOnly ? 'pointer-events-none select-none' : ''}>
           <fieldset disabled={readOnly}>
           {/* Quote header */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
