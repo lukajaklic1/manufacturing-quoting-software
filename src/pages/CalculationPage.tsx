@@ -164,7 +164,8 @@ export default function CalculationPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:flex-1 lg:min-h-0">
         <fieldset disabled={ro} style={{ display: 'contents' }}>
         {/* Calculator — scrolls inside its own column (scrollbar sits at the column edge) */}
-        <div className={`flex flex-col gap-5 lg:overflow-y-auto lg:pr-3 lg:pb-6${ro ? ' pointer-events-none select-none' : ''}`}>
+        <div className="flex flex-col gap-5 lg:overflow-y-auto lg:pr-3 lg:pb-6">
+          <div className={ro ? 'pointer-events-none select-none contents' : 'contents'}>
           {/* Part info + quantities */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -586,6 +587,7 @@ export default function CalculationPage() {
               </table>
             </div>
           </div>
+          </div>{/* end pointer-events wrapper */}
         </div>
 
         </fieldset>
