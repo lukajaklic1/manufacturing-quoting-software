@@ -60,7 +60,7 @@ export default function QuotesPage() {
     setLoading(true)
     const [{ data: q }, { data: calc }, { data: items }, { data: atts }] = await Promise.all([
       supabase.from('quotes').select('*, customers(name), assignee:users!assignee_id(first_name, last_name)').eq('company_id', company.id).order('created_at', { ascending: false }),
-      supabase.from('calculations').select('annual_value, quote_items!inner(quote_id)').eq('company_id', company.id),
+      supabase.from('calculations').select('selling_price, quote_items!inner(quote_id, quantity)').eq('company_id', company.id),
       supabase.from('quote_items').select('id, quote_id, thumb_path, position').eq('company_id', company.id).order('position'),
       supabase.from('quote_attachments').select('id, quote_item_id, thumb_path, file_name').eq('company_id', company.id).not('quote_item_id', 'is', null).order('created_at'),
     ])
@@ -69,7 +69,8 @@ export default function QuotesPage() {
     for (const c of (calc as any[]) ?? []) {
       const qi = Array.isArray(c.quote_items) ? c.quote_items[0] : c.quote_items
       const qid = qi?.quote_id
-      if (qid) map[qid] = (map[qid] ?? 0) + Number(c.annual_value)
+      const qty = Number(qi?.quantity ?? 1)
+      if (qid) map[qid] = (map[qid] ?? 0) + Number(c.selling_price) * qty
     }
     setAnnual(map)
 
