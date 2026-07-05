@@ -51,7 +51,7 @@ export default function QuotesPage() {
   useEffect(() => { if (company) { load(); loadUsers() } }, [company])
 
   async function loadUsers() {
-    const { data } = await supabase.from('users').select('id, first_name, last_name').eq('company_id', company!.id).order('first_name')
+    const { data } = await supabase.from('users').select('id, first_name, last_name').eq('is_active', true).order('first_name')
     if (data) setCompanyUsers(data as CompanyUser[])
   }
 
