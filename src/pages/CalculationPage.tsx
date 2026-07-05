@@ -46,13 +46,24 @@ export default function CalculationPage() {
   const [attachments, setAttachments] = useState<QuoteAttachment[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [collapsedProcs, setCollapsedProcs] = useState<Set<number>>(new Set())
-  const [collapsedMats, setCollapsedMats] = useState<Set<number>>(new Set())
-  const [collapsedParts, setCollapsedParts] = useState<Set<number>>(new Set())
-  const [collapsedTooling, setCollapsedTooling] = useState<Set<number>>(new Set())
-  const [collapsedPack, setCollapsedPack] = useState<Set<number>>(new Set())
-  const toggler = (setter: Dispatch<SetStateAction<Set<number>>>) => (i: number) =>
-    setter(prev => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n })
+
+  const lsKey = (section: string) => `cf_collapsed_${itemId}_${section}`
+  const lsLoad = (section: string) => {
+    try { return new Set<number>(JSON.parse(localStorage.getItem(lsKey(section)) ?? '[]')) }
+    catch { return new Set<number>() }
+  }
+  const [collapsedProcs, setCollapsedProcs] = useState<Set<number>>(() => lsLoad('procs'))
+  const [collapsedMats, setCollapsedMats] = useState<Set<number>>(() => lsLoad('mats'))
+  const [collapsedParts, setCollapsedParts] = useState<Set<number>>(() => lsLoad('parts'))
+  const [collapsedTooling, setCollapsedTooling] = useState<Set<number>>(() => lsLoad('tooling'))
+  const [collapsedPack, setCollapsedPack] = useState<Set<number>>(() => lsLoad('pack'))
+
+  const toggler = (setter: Dispatch<SetStateAction<Set<number>>>, section: string) => (i: number) =>
+    setter(prev => {
+      const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i)
+      localStorage.setItem(lsKey(section), JSON.stringify([...n]))
+      return n
+    })
 
   useEffect(() => { if (company && itemId) init() }, [company, itemId])
 
@@ -183,7 +194,7 @@ export default function CalculationPage() {
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
-                        <button onClick={() => toggler(setCollapsedMats)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        <button onClick={() => toggler(setCollapsedMats, 'mats')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
                         {!ro && <button onClick={() => patch({ raw_materials: c.raw_materials.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
@@ -266,7 +277,7 @@ export default function CalculationPage() {
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
-                        <button onClick={() => toggler(setCollapsedParts)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        <button onClick={() => toggler(setCollapsedParts, 'parts')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
                         {!ro && <button onClick={() => patch({ purchased_parts: c.purchased_parts.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
@@ -317,11 +328,7 @@ export default function CalculationPage() {
                   const setupOp = r.setup_with_operator ? opCost : 0
                   const setupPerBatch = (Number(r.setup_min) || 0) / 60 * (mRate + setupQty * (Number(r.setup_rate) || 0) + setupOp)
                   const collapsed = collapsedProcs.has(i)
-                  const toggleCollapse = () => setCollapsedProcs(prev => {
-                    const next = new Set(prev)
-                    next.has(i) ? next.delete(i) : next.add(i)
-                    return next
-                  })
+                  const toggleCollapse = () => toggler(setCollapsedProcs, 'procs')(i)
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       {/* Top-right: chevron + trash */}
@@ -453,7 +460,7 @@ export default function CalculationPage() {
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
-                        <button onClick={() => toggler(setCollapsedTooling)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        <button onClick={() => toggler(setCollapsedTooling, 'tooling')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
                         {!ro && <button onClick={() => patch({ tooling: c.tooling.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
@@ -495,7 +502,7 @@ export default function CalculationPage() {
                   return (
                     <div key={i} className="relative rounded-xl bg-white border border-gray-200 p-3 pr-16">
                       <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
-                        <button onClick={() => toggler(setCollapsedPack)(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
+                        <button onClick={() => toggler(setCollapsedPack, 'pack')(i)} className="text-gray-400 hover:text-gray-700"><ChevronDown className={`w-4 h-4 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`} /></button>
                         {!ro && <button onClick={() => patch({ packaging: c.packaging.filter((_, j) => j !== i) })} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                       {collapsed ? (
