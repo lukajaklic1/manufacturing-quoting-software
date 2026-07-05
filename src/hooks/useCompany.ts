@@ -34,6 +34,11 @@ export function useCompany(): CompanyState {
       .single()
       .then(async ({ data }) => {
         const prof = data as AppUser | null
+        if (prof && !prof.is_active) {
+          await supabase.auth.signOut()
+          setLoading(false)
+          return
+        }
         setProfile(prof)
         if (prof) {
           const [{ data: compData }, { data: permData }] = await Promise.all([

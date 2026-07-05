@@ -46,6 +46,7 @@ export interface User {
   email: string
   phone: string | null
   is_admin: boolean
+  is_active: boolean
   department_id: string | null
   job_title: string | null
   created_at: string

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Pencil, Users, Mail, X } from 'lucide-react'
+import { Plus, Pencil, Users, Mail, X, PowerOff, Power } from 'lucide-react'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -189,6 +189,13 @@ export default function UsersPage() {
     setEditPerms(prev => ({ ...prev, [module]: { ...prev[module], [`can_${action}`]: !prev[module][`can_${action}` as keyof PermMap[string]] } }))
   }
 
+  async function toggleActive(u: AppUser) {
+    const { error } = await supabase.from('users').update({ is_active: !u.is_active, updated_at: new Date().toISOString() }).eq('id', u.id)
+    if (error) { toast.error(error.message); return }
+    toast.success(t.common.saved)
+    load()
+  }
+
   async function saveUser() {
     if (!editUser) return
     if (!editForm.first_name.trim() || !editForm.last_name.trim()) return
@@ -261,12 +268,21 @@ export default function UsersPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{t.common.active}</span>
+                      {u.is_active
+                        ? <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{t.common.active}</span>
+                        : <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">{s.inactive}</span>}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 justify-end">
                         <button onClick={() => openEdit(u)} title={s.editPermissions}
                           className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
+                        {u.id !== primaryAdminId && (
+                          <button onClick={() => toggleActive(u)}
+                            title={u.is_active ? s.deactivateUser : s.reactivateUser}
+                            className={`p-1.5 rounded-lg transition-colors ${u.is_active ? 'text-gray-400 hover:text-red-600 hover:bg-red-50' : 'text-gray-400 hover:text-green-600 hover:bg-green-50'}`}>
+                            {u.is_active ? <PowerOff className="w-3.5 h-3.5" /> : <Power className="w-3.5 h-3.5" />}
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

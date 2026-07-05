@@ -739,6 +739,9 @@ export const translations = {
       department: 'Department',
       jobTitle: 'Job title',
       noDepartment: 'No department',
+      deactivateUser: 'Deactivate',
+      reactivateUser: 'Reactivate',
+      inactive: 'Inactive',
     },
 
     acceptInvite: {
@@ -1737,6 +1740,9 @@ export const translations = {
       department: 'Oddelek',
       jobTitle: 'Delovno mesto',
       noDepartment: 'Brez oddelka',
+      deactivateUser: 'Deaktiviraj',
+      reactivateUser: 'Reaktiviraj',
+      inactive: 'Neaktiven',
     },
 
     acceptInvite: {
