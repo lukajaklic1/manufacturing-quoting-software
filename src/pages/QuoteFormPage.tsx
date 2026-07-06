@@ -64,7 +64,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
   const [notes, setNotes] = useState('')
   const [pieces, setPieces] = useState<PieceRow[]>([{ key: nk(), part_name: '', part_number: '', quantity: 1 }])
   const [removedIds, setRemovedIds] = useState<string[]>([])
-  const [prices, setPrices] = useState<Record<string, { sell: number; annual: number }>>({}) // item id → totals
+  const [prices, setPrices] = useState<Record<string, { sell: number; annual: number; quantities?: number[] }>>({}) // item id → totals
   const [attachments, setAttachments] = useState<QuoteAttachment[]>([])
   const [pieceToDelete, setPieceToDelete] = useState<string | null>(null)
   const [deleteQuoteOpen, setDeleteQuoteOpen] = useState(false)
@@ -175,9 +175,9 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
       setPieces(its.length ? its.map(it => ({ key: nk(), id: it.id, part_name: it.part_name, part_number: it.part_number ?? '', quantity: it.quantity, thumb_path: it.thumb_path })) : [{ key: nk(), part_name: '', part_number: '', quantity: 1 }])
       const ids = its.map(i => i.id)
       if (ids.length) {
-        const { data: calcs } = await supabase.from('calculations').select('quote_item_id, selling_price, annual_value').in('quote_item_id', ids)
-        const m: Record<string, { sell: number; annual: number }> = {}
-        for (const cc of (calcs as Pick<Calculation, 'quote_item_id' | 'selling_price' | 'annual_value'>[]) ?? []) m[cc.quote_item_id] = { sell: cc.selling_price, annual: cc.annual_value }
+        const { data: calcs } = await supabase.from('calculations').select('quote_item_id, selling_price, annual_value, quantities').in('quote_item_id', ids)
+        const m: Record<string, { sell: number; annual: number; quantities?: number[] }> = {}
+        for (const cc of (calcs as any[]) ?? []) m[cc.quote_item_id] = { sell: cc.selling_price, annual: cc.annual_value, quantities: cc.quantities }
         setPrices(m)
       }
       const { data: att } = await supabase.from('quote_attachments').select('*').eq('quote_id', id).order('created_at')
@@ -432,7 +432,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
                 </td>
                 <td className="px-2 py-2 text-sm font-medium text-gray-900">{p.part_name || `#${idx + 1}`}</td>
                 <td className="px-2 py-2 w-32 text-sm text-gray-600">{p.part_number || '—'}</td>
-                <td className="px-2 py-2 w-28 text-sm text-gray-700">{p.quantity.toLocaleString('de-DE')} {u.piece}</td>
+                <td className="px-2 py-2 w-40 text-sm text-gray-700">{p.id && prices[p.id]?.quantities?.filter(q => q > 0).length ? prices[p.id].quantities!.filter(q => q > 0).map(q => q.toLocaleString('de-DE')).join(', ') + ' ' + u.piece : p.quantity.toLocaleString('de-DE') + ' ' + u.piece}</td>
                 <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">{p.id && prices[p.id] ? money(prices[p.id].sell) : '—'}</td>
                 <td className="px-4 py-2" onClick={e => e.stopPropagation()}>
                   <div className="flex gap-1 justify-end">
