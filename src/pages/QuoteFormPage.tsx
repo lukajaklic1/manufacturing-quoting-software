@@ -328,8 +328,11 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
             {isSaved && status === 'draft' && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
             {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.back}</Button>}
             {isSaved && status !== 'draft' && <Button variant="secondary" onClick={() => navigate(`/quotes/${id}`)} disabled={saving}>{t.common.back}</Button>}
-            {status === 'draft' && <Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>}
-            <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button>
+            {status === 'draft'
+              ? <><Button variant="secondary" loading={saving} onClick={save} disabled={!customerId}>{t.common.save}</Button>
+                  <Button loading={saving} onClick={issue} disabled={!customerId}>{s.issueOffer}</Button></>
+              : <Button loading={saving} onClick={save} disabled={!customerId}>{s.saveChanges}</Button>
+            }
           </>}
           {readOnly && <>
             {hasPerm('quotes', 'create') && (status === 'draft' || status === 'issued' || status === 'sent') &&
