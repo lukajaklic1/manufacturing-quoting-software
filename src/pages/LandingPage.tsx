@@ -103,14 +103,14 @@ export default function LandingPage() {
                 <div className="w-3 h-3 rounded-full bg-green-400" />
               </div>
               <div className="flex-1 mx-3 bg-gray-100 rounded-md h-6 flex items-center px-3">
-                <span className="text-xs text-gray-400">app.costflow.com/dashboard</span>
+                <span className="text-xs text-gray-400">app.toolingdesk.com/dashboard</span>
               </div>
             </div>
             <div className="bg-gray-50 p-6 flex gap-4 min-h-[280px]">
               <div className="w-44 bg-white rounded-xl border border-gray-200 p-3 flex flex-col gap-1 shrink-0">
                 <div className="flex items-center gap-2 p-2 mb-2">
                   <div className="w-6 h-6 bg-blue-600 rounded-md" />
-                  <span className="text-xs font-semibold text-gray-800">Costflow</span>
+                  <span className="text-xs font-semibold text-gray-800">Toolingdesk</span>
                 </div>
                 {[
                   isSl ? 'Nadzorna plošča' : 'Dashboard',
@@ -150,7 +150,7 @@ export default function LandingPage() {
       <section className="bg-gray-50 border-y border-gray-100 py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{isSl ? 'Zakaj Costflow' : 'Why Costflow'}</p>
+            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{isSl ? 'Zakaj Toolingdesk' : 'Why Toolingdesk'}</p>
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight max-w-2xl mx-auto">{l.painTitle}</h2>
             <p className="text-gray-500 mt-4 text-lg max-w-2xl mx-auto">{l.painSubtitle}</p>
           </div>
@@ -220,8 +220,8 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{isSl ? 'Za koga' : 'For whom'}</p>
-            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{isSl ? 'Komu je namenjen Costflow?' : 'Who is Costflow for?'}</h2>
-            <p className="text-gray-500 mt-4 text-lg">{isSl ? 'Costflow je zasnovan za proizvodna podjetja, ki pripravijo ponudbe na podlagi materiala, operacij in stroškov dela.' : 'Costflow is built for manufacturers who quote based on materials, operations, and labour costs.'}</p>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{isSl ? 'Komu je namenjen Toolingdesk?' : 'Who is Toolingdesk for?'}</h2>
+            <p className="text-gray-500 mt-4 text-lg">{isSl ? 'Toolingdesk je zasnovan za proizvodna podjetja, ki pripravijo ponudbe na podlagi materiala, operacij in stroškov dela.' : 'Toolingdesk is built for manufacturers who quote based on materials, operations, and labour costs.'}</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {(isSl ? [
@@ -229,14 +229,14 @@ export default function LandingPage() {
               [Calculator, 'bg-green-50 text-green-600', 'CNC obdelava', 'Vsaka operacija — rezkanje, struženje, EDM — ima svojo urno postavko in čas obdelave.'],
               [Zap, 'bg-orange-50 text-orange-600', 'Varjenje in jeklene konstrukcije', 'Kalkulacija materiala, časa varjenja in površinske obdelave za varjene sestave in konstrukcije.'],
               [FileText, 'bg-purple-50 text-purple-600', 'Lasersko rezanje in pločevinarstvo', 'Stroški rezanja, upogibanja in obdelave pločevine glede na material, debelino in čas stroja.'],
-              [BarChart2, 'bg-indigo-50 text-indigo-600', 'Maloserijska in naročniška proizvodnja', 'Vsak kos zahteva svojo kalkulacijo. Costflow zagotavlja enoten proces za celotno ekipo.'],
+              [BarChart2, 'bg-indigo-50 text-indigo-600', 'Maloserijska in naročniška proizvodnja', 'Vsak kos zahteva svojo kalkulacijo. Toolingdesk zagotavlja enoten proces za celotno ekipo.'],
               [TrendingUp, 'bg-teal-50 text-teal-600', 'Kooperacija in podizvajalstvo', 'Stroški zunanjih storitev in kooperantov so vključeni skupaj z lastnimi stroški v eno ponudbo.'],
             ] : [
               [Settings, 'bg-blue-50 text-blue-600', 'Tool & Die Shops', 'Precise calculation of machine hours, materials and labour for tools, moulds and fixtures.'],
               [Calculator, 'bg-green-50 text-green-600', 'CNC Machining', 'Every operation — milling, turning, EDM — has its own hourly rate and cycle time in the quote.'],
               [Zap, 'bg-orange-50 text-orange-600', 'Welding & Steel Structures', 'Material, welding time and surface treatment costs calculated together for every assembly.'],
               [FileText, 'bg-purple-50 text-purple-600', 'Laser Cutting & Sheet Metal', 'Cutting, bending and forming costs based on material type, thickness and machine time.'],
-              [BarChart2, 'bg-indigo-50 text-indigo-600', 'Custom & Job-Shop Manufacturing', 'Every part needs its own calculation. Costflow ensures a consistent process across your team.'],
+              [BarChart2, 'bg-indigo-50 text-indigo-600', 'Custom & Job-Shop Manufacturing', 'Every part needs its own calculation. Toolingdesk ensures a consistent process across your team.'],
               [TrendingUp, 'bg-teal-50 text-teal-600', 'Subcontracting', 'External service and subcontractor costs included alongside your own in a single quote.'],
             ]).map(([Icon, cls, title, desc]) => (
               <div key={title as string} className="bg-white rounded-2xl border border-gray-200 p-8">
@@ -315,7 +315,7 @@ export default function LandingPage() {
           <div className="flex gap-6 text-sm text-gray-400 order-first sm:order-last">
             <Link to="/privacy" className="hover:text-gray-700 transition-colors">{l.footerPrivacy}</Link>
             <Link to="/terms" className="hover:text-gray-700 transition-colors">{l.footerTerms}</Link>
-            <a href="mailto:info@costflow.com" className="hover:text-gray-700 transition-colors">{l.footerContact}</a>
+            <a href="mailto:info@toolingdesk.com" className="hover:text-gray-700 transition-colors">{l.footerContact}</a>
           </div>
         </div>
       </footer>
