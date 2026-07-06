@@ -402,7 +402,7 @@ export default function CalculationPage() {
                           <label className="text-xs font-medium text-gray-500">{s.machine}</label>
                           <select value={r.machine_id ?? ''} onChange={e => {
                             const m = machines.find(x => x.id === e.target.value)
-                            set(m ? { machine_id: m.id, machine_rate: machineRate(m) } : { machine_id: null })
+                            set(m ? { machine_id: m.id, machine_rate: machineRate(m) } : { machine_id: null, machine_rate: 0 })
                           }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
                             <option value="">—</option>
                             {machines.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
