@@ -59,9 +59,12 @@ Deno.serve(async (req) => {
     })
     if (invErr) return json({ error: invErr.message }, 400)
 
-    // Send the Supabase invite email (redirects to the accept-invite page)
+    // Send the Supabase invite email — append token to redirect URL so
+    // AcceptInvitePage can pass it to accept_invitation(p_token)
+    const baseRedirect = redirect_to ?? Deno.env.get('ALLOWED_ORIGIN') ?? 'https://toolingdesk.com'
+    const redirectWithToken = `${baseRedirect}${baseRedirect.includes('?') ? '&' : '?'}token=${token}`
     const { error: inviteErr } = await admin.auth.admin.inviteUserByEmail(email, {
-      redirectTo: redirect_to,
+      redirectTo: redirectWithToken,
     })
     if (inviteErr) return json({ error: inviteErr.message }, 400)
 

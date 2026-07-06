@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { UserPlus } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
@@ -8,6 +8,7 @@ import AppLogo from '../components/ui/AppLogo'
 
 export default function AcceptInvitePage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { session, loading } = useAuth()
   const { t, lang, setLang } = useLanguage()
   const a = t.acceptInvite
@@ -25,7 +26,10 @@ export default function AcceptInvitePage() {
     const { error: pwErr } = await supabase.auth.updateUser({ password })
     if (pwErr) { setError(pwErr.message); setSubmitting(false); return }
 
-    const { error: rpcErr } = await (supabase as any).rpc('accept_invitation')
+    const token = searchParams.get('token')
+    if (!token) { setError(lang === 'sl' ? 'Manjka žeton za povabilo — prosimo odpirite originalno e-poštno povabilo' : 'Missing invitation token — please open the original invite email'); setSubmitting(false); return }
+
+    const { error: rpcErr } = await supabase.rpc('accept_invitation', { p_token: token })
     if (rpcErr) { setError(rpcErr.message); setSubmitting(false); return }
 
     navigate('/dashboard')

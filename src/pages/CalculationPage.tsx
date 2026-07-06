@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronDown, Plus, Trash2, Boxes, ShoppingCart, Cog, Packa
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
+import { translations } from '../i18n/translations'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
@@ -357,13 +358,19 @@ export default function CalculationPage() {
                       {/* Operation name dropdown */}
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.operationName}</label>
-                        <select value={(s.operationList as readonly string[]).includes(r.name) ? r.name : (r.name ? '__custom' : '')}
-                          onChange={e => { if (e.target.value !== '__custom') set({ name: e.target.value }) }}
-                          className="rounded-md border border-gray-300 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
-                          <option value="">—</option>
-                          {s.operationList.map(op => <option key={op} value={op}>{op}</option>)}
-                          {r.name && !(s.operationList as readonly string[]).includes(r.name) && <option value="__custom">{r.name}</option>}
-                        </select>
+                        {(() => {
+                          const allLists = [translations.en.qp.operationList, translations.sl.qp.operationList]
+                          const opIdx = r.name ? allLists.reduce<number>((found, list) => found >= 0 ? found : list.indexOf(r.name), -1) : -1
+                          return (
+                            <select value={opIdx >= 0 ? String(opIdx) : (r.name ? '__custom' : '')}
+                              onChange={e => { const idx = parseInt(e.target.value); if (!isNaN(idx)) set({ name: s.operationList[idx] }) }}
+                              className="rounded-md border border-gray-300 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                              <option value="">—</option>
+                              {s.operationList.map((op, idx) => <option key={idx} value={String(idx)}>{op}</option>)}
+                              {r.name && opIdx === -1 && <option value="__custom">{r.name}</option>}
+                            </select>
+                          )
+                        })()}
                       </div>
 
                       {/* Machine + its hourly rate */}
