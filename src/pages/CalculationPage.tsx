@@ -359,7 +359,7 @@ export default function CalculationPage() {
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.operationName}</label>
                         {(() => {
-                          const allLists: string[][] = [translations.en.qp.operationList as string[], translations.sl.qp.operationList as string[]]
+                          const allLists = [translations.en.qp.operationList as unknown as string[], translations.sl.qp.operationList as unknown as string[]]
                           const opIdx = r.name ? allLists.reduce<number>((found, list) => found >= 0 ? found : list.indexOf(r.name), -1) : -1
                           return (
                             <select value={opIdx >= 0 ? String(opIdx) : (r.name ? '__custom' : '')}
