@@ -438,7 +438,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
                 <td className="px-2 py-2 text-sm font-medium text-gray-900">{p.part_name || `#${idx + 1}`}</td>
                 <td className="px-2 py-2 w-32 text-sm text-gray-600">{p.part_number || '—'}</td>
                 <td className="px-2 py-2 w-40 text-sm text-gray-700">{p.id && prices[p.id]?.quantities?.filter(q => q > 0).length ? prices[p.id].quantities!.filter(q => q > 0).map(q => q.toLocaleString('de-DE')).join(', ') + ' ' + u.piece : p.quantity.toLocaleString('de-DE') + ' ' + u.piece}</td>
-                <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">{p.id && prices[p.id]?.allPrices?.length ? prices[p.id].allPrices!.map(pr => money(pr)).join(', ') : p.id && prices[p.id] ? money(prices[p.id].sell) : '—'}</td>
+                <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">{p.id && prices[p.id] ? money(prices[p.id].sell) : '—'}</td>
                 <td className="px-4 py-2" onClick={e => e.stopPropagation()}>
                   <div className="flex gap-1 justify-end">
                     {readOnly
