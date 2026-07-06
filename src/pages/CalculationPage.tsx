@@ -13,6 +13,7 @@ import QuoteAttachments from '../components/QuoteAttachments'
 import { computeTotals, rawTotal, purchasedTotal, processTotal, packagingTotal, toolingTotal } from '../hooks/useCalculator'
 import { rawWeight, rawVolumeCm3 } from '../lib/materialWeight'
 import { currencySymbol } from '../lib/currency'
+import { buildSnapshot } from '../lib/offerSnapshot'
 import type {
   Machine, LaborRate, Material, MaterialShape, QuoteItem, Calculation, QuoteAttachment,
   RawMaterialRow, PurchasedPartRow, ProcessRow, PackagingRow, ToolingRow, InvestmentRow,
@@ -128,6 +129,28 @@ export default function CalculationPage() {
     }, { onConflict: 'quote_item_id' })
     setSaving(false)
     if (ce) { toast.error(ce.message); return }
+
+    // If the quote already has a snapshot, rebuild it so the PDF stays in sync with saved data.
+    if (quoteId) {
+      const { data: quote } = await supabase.from('quotes').select('*').eq('id', quoteId).single()
+      if ((quote as any)?.snapshot) {
+        const [{ data: allItems }, { data: cust }] = await Promise.all([
+          supabase.from('quote_items').select('*').eq('quote_id', quoteId).order('position'),
+          supabase.from('customers').select('*').eq('id', (quote as any).customer_id).single(),
+        ])
+        const items = (allItems as QuoteItem[]) ?? []
+        if (items.length) {
+          const { data: cs } = await supabase.from('calculations').select('*').in('quote_item_id', items.map(i => i.id))
+          const calcsMap: Record<string, Calculation> = {}
+          for (const c of (cs as Calculation[]) ?? []) calcsMap[c.quote_item_id] = c
+          const thumbs: Record<string, string> = {}
+          for (const it of items) { if ((it as any).thumb_path) thumbs[it.id] = (it as any).thumb_path }
+          const newSnap = await buildSnapshot(quote as any, cust as any, company, items, calcsMap, thumbs)
+          await supabase.from('quotes').update({ snapshot: newSnap, updated_at: new Date().toISOString() }).eq('id', quoteId)
+        }
+      }
+    }
+
     toast.success(t.common.saved)
   }
 
