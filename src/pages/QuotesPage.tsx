@@ -159,7 +159,7 @@ export default function QuotesPage() {
         </select>
         <select value={assigneeFilter} onChange={e => { setAssigneeFilter(e.target.value); setPage(1) }}
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="all">{s.assignee}: {t.common.all}</option>
+          <option value="all">{s.assignee}: {lang === 'sl' ? 'Vsi' : 'All'}</option>
           <option value="unassigned">{s.noAssignee}</option>
           {companyUsers.map(u => <option key={u.id} value={u.id}>{u.first_name} {u.last_name}</option>)}
         </select>
