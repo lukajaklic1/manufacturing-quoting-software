@@ -15,7 +15,7 @@ interface CompanyUser { id: string; first_name: string; last_name: string }
 
 
 const PAGE_SIZE = 20
-const STATUSES: QuoteStatus[] = ['draft', 'issued', 'sent', 'accepted', 'rejected', 'expired']
+const STATUSES: QuoteStatus[] = ['draft', 'issued', 'sent', 'won', 'lost', 'accepted', 'rejected', 'expired', 'frozen']
 
 const STATUS_STYLE: Record<QuoteStatus, string> = {
   draft: 'bg-gray-100 text-gray-600',
@@ -45,6 +45,7 @@ export default function QuotesPage() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<QuoteStatus | 'all'>('all')
   const [customerFilter, setCustomerFilter] = useState('all')
+  const [assigneeFilter, setAssigneeFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
 
@@ -115,12 +116,19 @@ export default function QuotesPage() {
   const customerOptions = Array.from(new Map(rows.filter(r => r.customer_id).map(r => [r.customer_id, r.customers?.name ?? '—'])).entries())
     .sort((a, b) => a[1].localeCompare(b[1]))
 
-  const filtered = rows.filter(r =>
-    (statusFilter === 'all' || r.status === statusFilter) &&
-    (customerFilter === 'all' || r.customer_id === customerFilter) &&
-    (!search || r.quote_number.toLowerCase().includes(search.toLowerCase()) ||
-      (r.customers?.name ?? '').toLowerCase().includes(search.toLowerCase()) ||
-      (r.contact_person ?? '').toLowerCase().includes(search.toLowerCase())))
+  const filtered = rows.filter(r => {
+    const assigneeName = r.assignee ? `${r.assignee.first_name} ${r.assignee.last_name}`.toLowerCase() : ''
+    const q = search.toLowerCase()
+    return (
+      (statusFilter === 'all' || r.status === statusFilter) &&
+      (customerFilter === 'all' || r.customer_id === customerFilter) &&
+      (assigneeFilter === 'all' || (assigneeFilter === 'unassigned' ? !r.assignee_id : r.assignee_id === assigneeFilter)) &&
+      (!search || r.quote_number.toLowerCase().includes(q) ||
+        (r.customers?.name ?? '').toLowerCase().includes(q) ||
+        (r.contact_person ?? '').toLowerCase().includes(q) ||
+        assigneeName.includes(q))
+    )
+  })
 
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
@@ -137,6 +145,11 @@ export default function QuotesPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="relative">
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
+            className="pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48" />
+        </div>
         <CustomerCombo options={customerOptions} value={customerFilter} onChange={v => { setCustomerFilter(v); setPage(1) }}
           allLabel={`${s.customer}: ${t.common.all}`} placeholder={s.customer} />
         <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as QuoteStatus | 'all'); setPage(1) }}
@@ -144,11 +157,12 @@ export default function QuotesPage() {
           <option value="all">{t.common.status}: {t.common.all}</option>
           {STATUSES.map(st => <option key={st} value={st}>{s.status[st]}</option>)}
         </select>
-        <div className="relative ml-auto max-w-xs w-full">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
+        <select value={assigneeFilter} onChange={e => { setAssigneeFilter(e.target.value); setPage(1) }}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="all">{s.assignee}: {t.common.all}</option>
+          <option value="unassigned">{s.noAssignee}</option>
+          {companyUsers.map(u => <option key={u.id} value={u.id}>{u.first_name} {u.last_name}</option>)}
+        </select>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
