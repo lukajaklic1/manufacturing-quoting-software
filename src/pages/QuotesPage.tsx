@@ -15,7 +15,7 @@ interface CompanyUser { id: string; first_name: string; last_name: string }
 
 
 const PAGE_SIZE = 20
-const STATUSES: QuoteStatus[] = ['draft', 'issued', 'sent', 'won', 'lost', 'accepted', 'rejected', 'expired', 'frozen']
+const STATUSES: QuoteStatus[] = ['draft', 'issued', 'sent', 'won', 'lost']
 
 const STATUS_STYLE: Record<QuoteStatus, string> = {
   draft: 'bg-gray-100 text-gray-600',
