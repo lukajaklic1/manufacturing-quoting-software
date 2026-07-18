@@ -55,11 +55,18 @@ export default function SuperAdminDashboardPage() {
         <div className="text-center py-20 text-gray-400">Nalagam...</div>
       ) : stats ? (
         <div className="space-y-6">
-          <div className="grid grid-cols-3 gap-4">
-            <StatCard icon={<Building2 size={20} />} label="Skupaj podjetij" value={pluralCompanies(stats.total_companies)} color="blue" />
-            <StatCard icon={<Users size={20} />} label="Aktivni uporabniki" value={pluralUsers(stats.total_users)} color="green" />
-            <StatCard icon={<TrendingUp size={20} />} label="Nova podjetja ta mesec" value={pluralCompanies(stats.new_this_month)} color="purple" />
-          </div>
+          {(() => {
+            const currentMonth = new Date().toISOString().slice(0, 7)
+            const newUsersThisMonth = stats.user_growth.find(d => d.month === currentMonth)?.count ?? 0
+            return (
+              <div className="grid grid-cols-4 gap-4">
+                <StatCard icon={<Building2 size={20} />} label="Skupaj podjetij" value={pluralCompanies(stats.total_companies)} color="blue" />
+                <StatCard icon={<Users size={20} />} label="Aktivni uporabniki" value={pluralUsers(stats.total_users)} color="green" />
+                <StatCard icon={<TrendingUp size={20} />} label="Nova podjetja ta mesec" value={pluralCompanies(stats.new_this_month)} color="purple" />
+                <StatCard icon={<Users size={20} />} label="Novi uporabniki ta mesec" value={pluralUsers(newUsersThisMonth)} color="orange" />
+              </div>
+            )
+          })()}
 
           <div className="grid grid-cols-2 gap-4">
             <AreaChart
@@ -139,11 +146,12 @@ function AreaChart({ data, label, color, fillColor }: {
   )
 }
 
-function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string; color: 'blue' | 'green' | 'purple' }) {
+function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string; color: 'blue' | 'green' | 'purple' | 'orange' }) {
   const colors = {
     blue: 'bg-blue-50 text-blue-600',
     green: 'bg-green-50 text-green-600',
     purple: 'bg-purple-50 text-purple-600',
+    orange: 'bg-orange-50 text-orange-600',
   }
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
