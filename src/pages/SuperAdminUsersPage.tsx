@@ -60,7 +60,7 @@ export default function SuperAdminUsersPage() {
     : users
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-8">
+    <div className="px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Uporabniki</h1>
