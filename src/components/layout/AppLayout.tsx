@@ -1,15 +1,24 @@
-import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
+import { supabase } from '../../lib/supabase'
 import Sidebar from './Sidebar'
 import AppLogo from '../ui/AppLogo'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { session, loading, isPasswordRecovery } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null)
+  const location = useLocation()
 
-  if (loading) {
+  useEffect(() => {
+    if (session) {
+      supabase.rpc('is_super_admin').then(({ data }) => setIsSuperAdmin(!!data))
+    }
+  }, [session])
+
+  if (loading || (session && isSuperAdmin === null)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
@@ -18,6 +27,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   if (!session || isPasswordRecovery) return <Navigate to={isPasswordRecovery ? '/reset-password' : '/'} replace />
+
+  if (isSuperAdmin && location.pathname !== '/super-admin') return <Navigate to="/super-admin" replace />
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
