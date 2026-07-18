@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../lib/supabase'
@@ -10,8 +10,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { session, loading, isPasswordRecovery } = useAuth()
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const location = useLocation()
-
   useEffect(() => {
     if (session) {
       supabase.rpc('is_super_admin').then(({ data }) => setIsSuperAdmin(!!data))
