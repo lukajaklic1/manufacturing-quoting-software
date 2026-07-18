@@ -19,7 +19,8 @@ export default function LoginPage() {
     setLoading(true)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) { setError(error.message); setLoading(false); return }
-    navigate('/dashboard')
+    const { data: isSuperAdmin } = await supabase.rpc('is_super_admin')
+    navigate(isSuperAdmin ? '/super-admin' : '/dashboard')
   }
 
   return (
