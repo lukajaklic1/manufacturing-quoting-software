@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import { useEffect, useState } from 'react'
 import { Zap, ArrowRight, Calculator, TrendingUp, FileText, BarChart2, Settings, ChevronDown, Check } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
@@ -26,7 +27,11 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!loading && session) navigate('/dashboard', { replace: true })
+    if (!loading && session) {
+      supabase.rpc('is_super_admin').then(({ data }) => {
+        navigate(data ? '/super-admin' : '/dashboard', { replace: true })
+      })
+    }
   }, [session, loading])
 
   if (loading) return null
