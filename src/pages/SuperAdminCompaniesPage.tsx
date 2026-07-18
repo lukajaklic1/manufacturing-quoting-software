@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Power, PowerOff, RefreshCw } from 'lucide-react'
+import { Power, PowerOff } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from '../components/ui/Toast'
-import Button from '../components/ui/Button'
 
 interface Company {
   id: string
@@ -10,6 +9,20 @@ interface Company {
   is_active: boolean
   created_at: string
   user_count?: number
+}
+
+function pluralUsers(n: number) {
+  if (n === 1) return '1 uporabnik'
+  if (n === 2) return '2 uporabnika'
+  if (n === 3 || n === 4) return `${n} uporabniki`
+  return `${n} uporabnikov`
+}
+
+function pluralCompanies(n: number) {
+  if (n === 1) return '1 podjetje'
+  if (n === 2) return '2 podjetji'
+  if (n === 3 || n === 4) return `${n} podjetja`
+  return `${n} podjetij`
 }
 
 export default function SuperAdminCompaniesPage() {
@@ -48,15 +61,9 @@ export default function SuperAdminCompaniesPage() {
 
   return (
     <div className="px-8 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Podjetja</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{companies.length} podjetij na platformi</p>
-        </div>
-        <Button variant="secondary" onClick={load} disabled={loading}>
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          Osveži
-        </Button>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Podjetja</h1>
+        <p className="text-sm text-gray-500 mt-0.5">{pluralCompanies(companies.length)} na platformi</p>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -79,7 +86,7 @@ export default function SuperAdminCompaniesPage() {
               <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50">
                 <td className="px-5 py-3.5 font-medium text-gray-900">{c.name}</td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(c.created_at)}</td>
-                <td className="px-5 py-3.5 text-center text-gray-600">{c.user_count}</td>
+                <td className="px-5 py-3.5 text-center text-gray-600">{pluralUsers(c.user_count ?? 0)}</td>
                 <td className="px-5 py-3.5 text-center">
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                     c.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'

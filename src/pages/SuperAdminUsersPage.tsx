@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Power, PowerOff, RefreshCw } from 'lucide-react'
+import { Power, PowerOff } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from '../components/ui/Toast'
-import Button from '../components/ui/Button'
 
 interface UserRow {
   id: string
@@ -12,8 +11,16 @@ interface UserRow {
   company_id: string
   company_name: string
   is_active: boolean
+  is_admin: boolean
   is_super_admin: boolean
   created_at: string
+}
+
+function pluralUsers(n: number) {
+  if (n === 1) return '1 uporabnik'
+  if (n === 2) return '2 uporabnika'
+  if (n === 3 || n === 4) return `${n} uporabniki`
+  return `${n} uporabnikov`
 }
 
 export default function SuperAdminUsersPage() {
@@ -61,15 +68,9 @@ export default function SuperAdminUsersPage() {
 
   return (
     <div className="px-8 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Uporabniki</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{users.length} uporabnikov na platformi</p>
-        </div>
-        <Button variant="secondary" onClick={load} disabled={loading}>
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          Osveži
-        </Button>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Uporabniki</h1>
+        <p className="text-sm text-gray-500 mt-0.5">{pluralUsers(users.length)} na platformi</p>
       </div>
 
       <div className="mb-4">
@@ -89,6 +90,7 @@ export default function SuperAdminUsersPage() {
               <th className="text-left px-5 py-3 font-medium text-gray-500">Uporabnik</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">E-pošta</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Podjetje</th>
+              <th className="text-center px-5 py-3 font-medium text-gray-500">Vloga</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Registriran</th>
               <th className="text-center px-5 py-3 font-medium text-gray-500">Status</th>
               <th className="px-5 py-3 w-12" />
@@ -96,19 +98,23 @@ export default function SuperAdminUsersPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} className="px-5 py-12 text-center text-gray-400">Nalagam...</td></tr>
+              <tr><td colSpan={7} className="px-5 py-12 text-center text-gray-400">Nalagam...</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={6} className="px-5 py-12 text-center text-gray-400">Ni rezultatov</td></tr>
+              <tr><td colSpan={7} className="px-5 py-12 text-center text-gray-400">Ni rezultatov</td></tr>
             ) : filtered.map(u => (
               <tr key={u.id} className="border-t border-gray-100 hover:bg-gray-50">
-                <td className="px-5 py-3.5 font-medium text-gray-900">
-                  {u.first_name} {u.last_name}
-                  {u.is_super_admin && (
-                    <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">admin</span>
-                  )}
-                </td>
+                <td className="px-5 py-3.5 font-medium text-gray-900">{u.first_name} {u.last_name}</td>
                 <td className="px-5 py-3.5 text-gray-500">{u.email}</td>
                 <td className="px-5 py-3.5 text-gray-600">{u.company_name}</td>
+                <td className="px-5 py-3.5 text-center">
+                  {u.is_super_admin ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Super admin</span>
+                  ) : u.is_admin ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Admin</span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Uporabnik</span>
+                  )}
+                </td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(u.created_at)}</td>
                 <td className="px-5 py-3.5 text-center">
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
