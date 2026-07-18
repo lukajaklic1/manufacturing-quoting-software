@@ -8,13 +8,15 @@ import AppLogo from '../ui/AppLogo'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { session, loading, isPasswordRecovery } = useAuth()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
     if (session) {
       supabase.rpc('is_super_admin').then(({ data }) => setIsSuperAdmin(!!data))
+    } else {
+      setIsSuperAdmin(null)
     }
   }, [session])
 
@@ -28,12 +30,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (!session || isPasswordRecovery) return <Navigate to={isPasswordRecovery ? '/reset-password' : '/'} replace />
 
-  if (isSuperAdmin && location.pathname !== '/super-admin') return <Navigate to="/super-admin" replace />
+  // Super admins have no business being in company routes — send them home
+  if (isSuperAdmin) return <Navigate to="/super-admin" replace />
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-
-      {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"
@@ -41,7 +42,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      {/* Sidebar — fixed drawer on mobile, static on desktop */}
       <div className={`
         fixed inset-y-0 left-0 z-50 lg:static lg:z-auto
         transform transition-transform duration-200 ease-in-out
@@ -50,9 +50,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <Sidebar onClose={() => setSidebarOpen(false)} />
       </div>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile top bar */}
         <header className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
