@@ -26,6 +26,7 @@ import TermsPage from './pages/TermsPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import AcceptInvitePage from './pages/AcceptInvitePage'
+import SuperAdminPage from './pages/SuperAdminPage'
 
 const queryClient = new QueryClient()
 
@@ -71,6 +72,7 @@ export default function Root() {
             <Route path="/users"            element={<App><UsersPage /></App>} />
             <Route path="/settings"         element={<App><SettingsPage /></App>} />
 
+            <Route path="/super-admin" element={<App><SuperAdminPage /></App>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           </LanguageProvider>
