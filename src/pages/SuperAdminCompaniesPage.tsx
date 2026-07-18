@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Power, PowerOff } from 'lucide-react'
+import { Power, PowerOff, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from '../components/ui/Toast'
+import Pagination from '../components/ui/Pagination'
 
 interface Company {
   id: string
@@ -10,6 +11,8 @@ interface Company {
   created_at: string
   user_count?: number
 }
+
+const PAGE_SIZE = 20
 
 function pluralUsers(n: number) {
   if (n === 1) return '1 uporabnik'
@@ -29,6 +32,10 @@ export default function SuperAdminCompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
   const [toggling, setToggling] = useState<string | null>(null)
+
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [page, setPage] = useState(1)
 
   useEffect(() => { load() }, [])
 
@@ -57,13 +64,46 @@ export default function SuperAdminCompaniesPage() {
     setToggling(null)
   }
 
+  const q = search.toLowerCase()
+  const filtered = companies.filter(c => {
+    const nameMatch = !search || c.name.toLowerCase().includes(q)
+    const statusMatch = statusFilter === 'all' ||
+      (statusFilter === 'active' && c.is_active) ||
+      (statusFilter === 'inactive' && !c.is_active)
+    return nameMatch && statusMatch
+  })
+
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   const fmt = (s: string) => new Date(s).toLocaleDateString('sl-SI')
 
   return (
     <div className="px-8 py-8">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Podjetja</h1>
         <p className="text-sm text-gray-500 mt-0.5">{pluralCompanies(companies.length)} na platformi</p>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        <div className="relative">
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Išči podjetje..."
+            value={search}
+            onChange={e => { setSearch(e.target.value); setPage(1) }}
+            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+          />
+        </div>
+
+        <select
+          value={statusFilter}
+          onChange={e => { setStatusFilter(e.target.value); setPage(1) }}
+          className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        >
+          <option value="all">Vsi statusi</option>
+          <option value="active">Aktivna</option>
+          <option value="inactive">Deaktivirana</option>
+        </select>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -80,9 +120,9 @@ export default function SuperAdminCompaniesPage() {
           <tbody>
             {loading ? (
               <tr><td colSpan={5} className="px-5 py-12 text-center text-gray-400">Nalagam...</td></tr>
-            ) : companies.length === 0 ? (
-              <tr><td colSpan={5} className="px-5 py-12 text-center text-gray-400">Ni podjetij</td></tr>
-            ) : companies.map(c => (
+            ) : paged.length === 0 ? (
+              <tr><td colSpan={5} className="px-5 py-12 text-center text-gray-400">Ni rezultatov</td></tr>
+            ) : paged.map(c => (
               <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50">
                 <td className="px-5 py-3.5 font-medium text-gray-900">{c.name}</td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(c.created_at)}</td>
@@ -108,6 +148,7 @@ export default function SuperAdminCompaniesPage() {
             ))}
           </tbody>
         </table>
+        <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
       </div>
     </div>
   )
