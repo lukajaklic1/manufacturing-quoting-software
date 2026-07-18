@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown } from 'lucide-react'
+import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown, Percent } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -108,11 +108,14 @@ export default function DashboardPage() {
   const totalSentCount = trends.reduce((sum, t) => sum + (t.sent_count || 0), 0)
   const totalRealizedCount = trends.reduce((sum, t) => sum + (t.realized_count || 0), 0)
 
+  const winRate = totalSentCount > 0 ? Math.round((totalRealizedCount / totalSentCount) * 100) : 0
+
   const cards = [
-    { label: lang === 'en' ? 'Total sent value' : 'Skupna ponujena vrednost', value: money(totalSentValue), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
-    { label: lang === 'en' ? 'Total realized value' : 'Skupna vrednost dobljenih ponudb', value: money(totalRealizedValue), icon: CheckCircle2, color: 'text-green-600 bg-green-50' },
-    { label: lang === 'en' ? 'Sent quotes count' : 'Število poslanih ponudb', value: String(totalSentCount), icon: FileText, color: 'text-purple-600 bg-purple-50' },
-    { label: lang === 'en' ? 'Realized quotes count' : 'Število dobljenih ponudb', value: String(totalRealizedCount), icon: Trophy, color: 'text-amber-600 bg-amber-50' },
+    { label: lang === 'en' ? 'Total sent value' : 'Vrednost poslanih ponudb', value: money(totalSentValue), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
+    { label: lang === 'en' ? 'Total realized value' : 'Vrednost dobljenih ponudb', value: money(totalRealizedValue), icon: CheckCircle2, color: 'text-green-600 bg-green-50' },
+    { label: lang === 'en' ? 'Sent quotes' : 'Število poslanih ponudb', value: String(totalSentCount), icon: FileText, color: 'text-purple-600 bg-purple-50' },
+    { label: lang === 'en' ? 'Won quotes' : 'Število dobljenih ponudb', value: String(totalRealizedCount), icon: Trophy, color: 'text-amber-600 bg-amber-50' },
+    { label: lang === 'en' ? 'Win rate' : 'Uspešnost', value: `${winRate}%`, icon: Percent, color: 'text-rose-600 bg-rose-50' },
   ]
 
   return (
@@ -169,7 +172,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         {cards.map(c => (
           <div key={c.label} className="bg-white rounded-xl border border-gray-200 p-5">
             <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${c.color}`}><c.icon className="w-5 h-5" /></div>
