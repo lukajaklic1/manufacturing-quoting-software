@@ -228,7 +228,7 @@ export default function LandingPage() {
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{isSl ? 'Komu je namenjen Toolingdesk?' : 'Who is Toolingdesk for?'}</h2>
             <p className="text-gray-500 mt-4 text-lg">{isSl ? 'Toolingdesk je zasnovan za proizvodna podjetja, ki pripravijo ponudbe na podlagi materiala, operacij in stroškov dela.' : 'Toolingdesk is built for manufacturers who quote based on materials, operations, and labour costs.'}</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {(isSl ? [
               [Settings, 'bg-blue-50 text-blue-600', 'Orodjarne', 'Natančen izračun strojnih ur, materiala in dela za orodja, forme in priprave.'],
               [Calculator, 'bg-green-50 text-green-600', 'CNC obdelava', 'Vsaka operacija — rezkanje, struženje, EDM — ima svojo urno postavko in čas obdelave.'],
