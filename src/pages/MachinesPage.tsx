@@ -86,7 +86,7 @@ export default function MachinesPage() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 text-center"><Factory className="w-9 h-9 text-gray-200 mb-2" /><p className="text-sm text-gray-400">{s.noMachines}</p></div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[560px]">
             <thead className="bg-gray-50 border-b border-gray-100"><tr>
               {[s.machineName, s.machineModel, s.category, s.ratePerHour, t.common.status, s.updatedAt, ''].map((h, i) => (
                 <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
@@ -115,7 +115,7 @@ export default function MachinesPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 
