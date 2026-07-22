@@ -118,9 +118,9 @@ export default function DashboardPage() {
   return (
     <div className="p-4 lg:p-6">
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
-          <div className="flex gap-2">
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">{t.nav.dashboard}</h1>
+          <div className="flex flex-wrap gap-2">
             {[
               { value: 1 as const, labelEn: '30 days', labelSl: '30 dni' },
               { value: 3 as const, labelEn: '3 months', labelSl: '3 meseci' },
@@ -271,7 +271,7 @@ export default function DashboardPage() {
       {sortedCustomers.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">{s.topCustomers}</h2></div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('customer_name')}>
@@ -324,7 +324,7 @@ export default function DashboardPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
           <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
             <div className="text-xs text-gray-500">{lang === 'en' ? `Page ${currentPage} of ${totalPages} (${filteredCustomers.length} customers)` : `Stran ${currentPage} od ${totalPages} (${filteredCustomers.length} strank)`}</div>
             <div className="flex gap-2">
