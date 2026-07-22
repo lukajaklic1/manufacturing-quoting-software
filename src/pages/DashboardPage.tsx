@@ -119,7 +119,8 @@ export default function DashboardPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-6">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">{t.nav.dashboard}</h1>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-0">
+          <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
           <div className="flex flex-wrap gap-2">
             {[
               { value: 1 as const, labelEn: '30 days', labelSl: '30 dni' },
@@ -132,6 +133,7 @@ export default function DashboardPage() {
                 {lang === 'en' ? p.labelEn : p.labelSl}
               </button>
             ))}
+          </div>
           </div>
         </div>
 
