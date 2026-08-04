@@ -98,16 +98,16 @@ export default function MaterialsPage() {
         <div className="relative">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
-            className="pl-9 pr-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
+            className="pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
         </div>
         <select value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-          <option value="">{t.filters.allCategories}</option>
+          className="rounded-lg border border-gray-200 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="">{s.category}: {t.common.all}</option>
           {CATEGORIES.map(c => <option key={c} value={c}>{s.matCat[c]}</option>)}
         </select>
         <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as typeof statusFilter); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-          <option value="all">{t.filters.allStatuses}</option>
+          className="rounded-lg border border-gray-200 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="all">{t.common.status}: {t.common.all}</option>
           <option value="active">{t.common.activeM}</option>
           <option value="inactive">{t.common.inactiveM}</option>
         </select>
