@@ -177,7 +177,7 @@ export default function QuotesPage() {
               {paged.map(q => (
                 <tr key={q.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate(canEdit && q.status === 'draft' ? `/quotes/${q.id}/edit` : `/quotes/${q.id}`)}>
                   <td className="px-4 py-3 font-mono text-gray-700">{q.quote_number}</td>
-                  <td className="px-4 py-3">{q.customers?.name ? <PersonBadge name={q.customers.name} /> : <span className="text-gray-400">—</span>}</td>
+                  <td className="px-4 py-3 text-gray-900">{q.customers?.name ?? '—'}</td>
                   <td className="px-4 py-3">
                     <div className="text-gray-900">{q.contact_person || '—'}</div>
                     {q.contact_email && <div className="text-xs text-gray-400">{q.contact_email}</div>}
