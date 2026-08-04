@@ -1,7 +1,8 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, FileText, Users, UserCog, Settings, LogOut, X, Factory, HardHat, Layers, Box, Building2,
+  LayoutDashboard, FileText, Users, UserCog, Settings, LogOut, X, Factory, HardHat, Layers, Box, Building2, PanelLeft,
 } from 'lucide-react'
+import { useSidebarCollapse } from './AppLayout'
 import { useAuth } from '../../hooks/useAuth'
 import { useCompany } from '../../hooks/useCompany'
 import { useLanguage } from '../../hooks/useLanguage'
@@ -24,6 +25,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onClose }: SidebarProps) {
+  const { toggle } = useSidebarCollapse()
   const { signOut } = useAuth()
   const { company, profile, hasPerm } = useCompany()
   const { lang, setLang, t } = useLanguage()
@@ -47,11 +49,16 @@ export default function Sidebar({ onClose }: SidebarProps) {
       {/* App logo — same height as PageHeader (h-[57px]) */}
       <div className="h-[57px] px-4 border-b border-gray-200 flex items-center justify-between shrink-0">
         <AppLogo size="sm" />
-        {onClose && (
-          <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors shrink-0">
-            <X className="w-4 h-4" />
+        <div className="flex items-center gap-1">
+          <button onClick={toggle} className="hidden lg:flex p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors" title="Hide sidebar">
+            <PanelLeft className="w-[18px] h-[18px]" />
           </button>
-        )}
+          {onClose && (
+            <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Company pill */}

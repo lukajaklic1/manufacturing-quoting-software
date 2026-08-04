@@ -14,14 +14,16 @@ export function PageHeader({ title, icon: Icon, action }: PageHeaderProps) {
   return (
     <div className="h-[57px] flex items-center justify-between px-4 lg:px-6 border-b border-gray-200 bg-white shrink-0">
       <div className="flex items-center gap-2">
-        <button
-          onClick={toggle}
-          className="hidden lg:flex p-1.5 rounded-md text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-          title={collapsed ? 'Show sidebar' : 'Hide sidebar'}
-        >
-          <PanelLeft className="w-4 h-4" />
-        </button>
-        {Icon && <Icon className="w-4 h-4 text-gray-500 shrink-0" />}
+        {collapsed && (
+          <button
+            onClick={toggle}
+            className="hidden lg:flex p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            title="Show sidebar"
+          >
+            <PanelLeft className="w-[18px] h-[18px]" />
+          </button>
+        )}
+        {Icon && <Icon className="w-4 h-4 text-gray-900 shrink-0" />}
         <h1 className="text-sm font-medium text-gray-900">{title}</h1>
       </div>
       {action}
