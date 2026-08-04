@@ -268,14 +268,17 @@ function AssigneeCell({ quoteId, assigneeId, assignee, users, canEdit, noAssigne
       <button
         onClick={() => setOpen(o => !o)}
         disabled={saving}
-        className="flex items-center gap-1 rounded-lg hover:bg-gray-100 transition-colors p-0.5">
+        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-800 hover:bg-gray-100 transition-colors" style={{ backgroundColor: '#fbfbfb' }}>
         {saving
-          ? <span className="w-3 h-3 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-2" />
+          ? <span className="w-3 h-3 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
           : label
-            ? <PersonBadge name={label} />
-            : <span className="text-xs text-gray-400 px-2 py-0.5">{noAssigneeLabel}</span>
+            ? <>
+                <span className="flex items-center justify-center rounded-full text-white font-bold shrink-0" style={{ backgroundColor: '#00d17e', width: 16, height: 16, fontSize: 9 }}>{label[0].toUpperCase()}</span>
+                <span>{label}</span>
+              </>
+            : <span className="text-gray-400">{noAssigneeLabel}</span>
         }
-        <ChevronDown className="w-3 h-3 shrink-0 text-gray-400" />
+        <ChevronDown className="w-3 h-3 shrink-0 text-gray-400 ml-0.5" />
       </button>
       {open && (
         <div className="absolute z-30 mt-1 right-0 w-44 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
