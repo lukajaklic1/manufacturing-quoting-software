@@ -13,6 +13,7 @@ import Pagination from '../components/ui/Pagination'
 import { countCustomers } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
 import { FilterSelect } from '../components/ui/FilterSelect'
+import { PersonBadge } from '../components/ui/PersonBadge'
 import type { Customer } from '../types/database'
 
 interface Form {
@@ -147,7 +148,7 @@ export default function CustomersPage() {
               {paginated.map(c => (
                 <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-medium text-gray-900">{c.name}{c.vat_number && <span className="ml-2 text-xs text-gray-400 font-normal">{c.vat_number}</span>}</td>
-                  <td className="px-4 py-3 text-gray-600">{c.contact_person ?? '—'}</td>
+                  <td className="px-4 py-3">{c.contact_person ? <PersonBadge name={c.contact_person} /> : <span className="text-gray-400">—</span>}</td>
                   <td className="px-4 py-3 text-gray-600">{c.email ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600">{c.phone ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600">{c.payment_terms ?? '—'}</td>
