@@ -113,7 +113,7 @@ export default function CustomersPage() {
 
   return (
     <div>
-      <PageHeader title={s.customers} action={canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newCustomer}</Button>} />
+      <PageHeader title={s.customers} icon={Users} action={canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newCustomer}</Button>} />
       <div className="p-4 lg:p-6">
       <p className="text-gray-500 text-sm mb-4">{countCustomers(lang, rows.length)}</p>
       <div className="flex flex-wrap items-center gap-2 mb-4">

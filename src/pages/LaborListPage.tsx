@@ -57,7 +57,7 @@ export default function LaborListPage() {
 
   return (
     <div>
-      <PageHeader title={t.nav.labor} action={canEdit && <Button onClick={() => navigate('/labor/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addLabor}</Button>} />
+      <PageHeader title={t.nav.labor} icon={HardHat} action={canEdit && <Button onClick={() => navigate('/labor/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addLabor}</Button>} />
       <div className="p-4 lg:p-6">
       <p className="text-gray-500 text-sm mb-4">{countWorkers(lang, rows.length)}</p>
       <div className="relative mb-4 max-w-xs">

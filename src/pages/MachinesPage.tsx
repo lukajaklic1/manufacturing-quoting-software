@@ -60,7 +60,7 @@ export default function MachinesPage() {
 
   return (
     <div>
-      <PageHeader title={t.nav.machines} action={canEdit && <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>} />
+      <PageHeader title={t.nav.machines} icon={Factory} action={canEdit && <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>} />
       <div className="p-4 lg:p-6">
       <p className="text-gray-500 text-sm mb-4">{countMachines(lang, rows.length)}</p>
       <div className="flex flex-wrap items-center gap-2 mb-4">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PageHeader } from '../components/ui/PageHeader'
+import { LayoutDashboard } from 'lucide-react'
 import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from '../lib/supabase'
@@ -120,6 +121,7 @@ export default function DashboardPage() {
     <div>
       <PageHeader
         title={t.nav.dashboard}
+        icon={LayoutDashboard}
         action={
           <div className="flex flex-wrap gap-2">
             {[

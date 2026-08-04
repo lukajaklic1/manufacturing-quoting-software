@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Building2, Receipt, CreditCard } from 'lucide-react'
+import { Building2, Receipt, CreditCard, Settings } from 'lucide-react'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -49,7 +49,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title={t.nav.settings} />
+      <PageHeader title={t.nav.settings} icon={Settings} />
       <div className="p-4 lg:p-6 max-w-3xl mx-auto">
       <div className="flex flex-col gap-6"><fieldset disabled={!isAdmin} className="contents">
         {/* Company profile */}

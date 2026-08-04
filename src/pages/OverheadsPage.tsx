@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import { Layers } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -67,7 +68,7 @@ export default function OverheadsPage() {
 
   return (
     <div>
-      <PageHeader title={t.nav.overheads} action={canEdit && <Button loading={saving} onClick={save}>{t.common.save}</Button>} />
+      <PageHeader title={t.nav.overheads} icon={Layers} action={canEdit && <Button loading={saving} onClick={save}>{t.common.save}</Button>} />
       <div className="p-4 lg:p-8 max-w-4xl mx-auto">
       <p className="text-xs text-gray-400 mb-6">{s.overheadCalcHint}</p>
       <div className="flex flex-col gap-6"><fieldset disabled={!canEdit} className="contents">

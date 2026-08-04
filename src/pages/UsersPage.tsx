@@ -233,7 +233,7 @@ export default function UsersPage() {
 
   return (
     <div>
-      <PageHeader title={t.nav.users} action={<Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>} />
+      <PageHeader title={t.nav.users} icon={UserCog} action={<Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>} />
       <div className="p-4 lg:p-6">
       <p className="text-gray-500 text-sm mb-4">{countUsers(lang, users.length + invites.length)}</p>
       <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
