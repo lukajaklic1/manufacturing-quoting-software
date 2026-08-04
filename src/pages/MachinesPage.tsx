@@ -12,6 +12,7 @@ import { effectiveMachineRate } from '../lib/machineRate'
 import { usedMachineIds } from '../lib/usageCheck'
 import { countMachines } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
+import { FilterSelect } from '../components/ui/FilterSelect'
 import { format } from 'date-fns'
 import type { Machine } from '../types/database'
 
@@ -69,11 +70,9 @@ export default function MachinesPage() {
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={`${s.machineName} / ${s.machineModel}`}
             className="w-full pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        <select value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-          <option value="all">{s.category}: {t.common.all}</option>
-          {Object.entries(s.cat).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
-        </select>
+        <FilterSelect label={s.category} value={catFilter === 'all' ? '' : catFilter} allLabel={t.common.all}
+          options={Object.entries(s.cat).map(([k, label]) => ({ value: k, label: label as string }))}
+          onChange={v => { setCatFilter(v || 'all'); setPage(1) }} />
       </div>
 
       <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">

@@ -9,6 +9,7 @@ import Button from '../components/ui/Button'
 import Pagination from '../components/ui/Pagination'
 import { countQuotes } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
+import { FilterSelect } from '../components/ui/FilterSelect'
 import type { Quote, QuoteStatus } from '../types/database'
 import { format } from 'date-fns'
 
@@ -148,17 +149,12 @@ export default function QuotesPage() {
         </div>
         <CustomerCombo options={customerOptions} value={customerFilter} onChange={v => { setCustomerFilter(v); setPage(1) }}
           allLabel={`${s.customer}: ${t.common.all}`} placeholder={s.customer} />
-        <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as QuoteStatus | 'all'); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="all">{t.common.status}: {t.common.all}</option>
-          {STATUSES.map(st => <option key={st} value={st}>{s.status[st]}</option>)}
-        </select>
-        <select value={assigneeFilter} onChange={e => { setAssigneeFilter(e.target.value); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="all">{s.assignee}: {t.common.all}</option>
-          <option value="unassigned">{s.noAssignee}</option>
-          {companyUsers.map(u => <option key={u.id} value={u.id}>{u.first_name} {u.last_name}</option>)}
-        </select>
+        <FilterSelect label={t.common.status} value={statusFilter === 'all' ? '' : statusFilter} allLabel={t.common.all}
+          options={STATUSES.map(st => ({ value: st, label: s.status[st] }))}
+          onChange={v => { setStatusFilter((v || 'all') as QuoteStatus | 'all'); setPage(1) }} />
+        <FilterSelect label={s.assignee} value={assigneeFilter === 'all' ? '' : assigneeFilter} allLabel={t.common.all}
+          options={[{ value: 'unassigned', label: s.noAssignee }, ...companyUsers.map(u => ({ value: u.id, label: `${u.first_name} ${u.last_name}` }))]}
+          onChange={v => { setAssigneeFilter(v || 'all'); setPage(1) }} />
       </div>
 
       <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">

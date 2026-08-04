@@ -14,6 +14,7 @@ import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Pagination from '../components/ui/Pagination'
 import { countMaterials } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
+import { FilterSelect } from '../components/ui/FilterSelect'
 import type { Material } from '../types/database'
 
 const PAGE_SIZE = 20
@@ -100,17 +101,12 @@ export default function MaterialsPage() {
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
             className="pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
         </div>
-        <select value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-          <option value="">{s.category}: {t.common.all}</option>
-          {CATEGORIES.map(c => <option key={c} value={c}>{s.matCat[c]}</option>)}
-        </select>
-        <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as typeof statusFilter); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-          <option value="all">{t.common.status}: {t.common.all}</option>
-          <option value="active">{t.common.activeM}</option>
-          <option value="inactive">{t.common.inactiveM}</option>
-        </select>
+        <FilterSelect label={s.category} value={catFilter} allLabel={t.common.all}
+          options={CATEGORIES.map(c => ({ value: c, label: s.matCat[c] }))}
+          onChange={v => { setCatFilter(v); setPage(1) }} />
+        <FilterSelect label={t.common.status} value={statusFilter === 'all' ? '' : statusFilter} allLabel={t.common.all}
+          options={[{ value: 'active', label: t.common.activeM }, { value: 'inactive', label: t.common.inactiveM }]}
+          onChange={v => { setStatusFilter((v || 'all') as typeof statusFilter); setPage(1) }} />
       </div>
 
       <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
