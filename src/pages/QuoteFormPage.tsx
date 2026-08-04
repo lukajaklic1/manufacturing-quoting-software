@@ -323,7 +323,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     <div className="p-4 lg:p-6">
       <button onClick={() => navigate('/quotes')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-4"><ChevronLeft className="w-4 h-4" />{s.quotes}</button>
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight text-gray-900 flex items-center gap-2">
           {readOnly ? s.reviewTitle : (editMode ? s.editQuote : s.newQuote)}
           {quoteNumber && <span className="font-mono text-gray-400">{quoteNumber}</span>}
           {readOnly && <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLE[status]}`}>{s.status[status]}</span>}

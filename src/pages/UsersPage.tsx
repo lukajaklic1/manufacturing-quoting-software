@@ -234,7 +234,7 @@ export default function UsersPage() {
     <div className="p-4 lg:p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.nav.users}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.users}</h1>
           <p className="text-gray-500 text-sm mt-1">{countUsers(lang, users.length + invites.length)}</p>
         </div>
         <Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>

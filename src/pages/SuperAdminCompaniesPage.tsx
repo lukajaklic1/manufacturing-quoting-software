@@ -79,7 +79,7 @@ export default function SuperAdminCompaniesPage() {
   return (
     <div className="px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Podjetja</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Podjetja</h1>
         <p className="text-sm text-gray-500 mt-0.5">{pluralCompanies(companies.length)} na platformi</p>
       </div>
 

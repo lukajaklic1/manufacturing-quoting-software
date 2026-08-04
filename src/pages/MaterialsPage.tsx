@@ -92,7 +92,7 @@ export default function MaterialsPage() {
     <div className="p-4 lg:p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{s.materials}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{s.materials}</h1>
           <p className="text-gray-500 text-sm mt-1">{countMaterials(lang, rows.length)}</p>
         </div>
         {canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newMaterial}</Button>}

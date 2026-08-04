@@ -101,7 +101,7 @@ export default function SuperAdminPage() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Super admin</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Super admin</h1>
           <p className="text-sm text-gray-500 mt-1">Toolingdesk platform overview</p>
         </div>
         <Button variant="secondary" onClick={loadAll} disabled={loading}>
@@ -241,7 +241,7 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
     <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
       <div className="text-blue-600 bg-blue-50 p-2.5 rounded-lg">{icon}</div>
       <div>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-2xl font-semibold tracking-tight text-gray-900">{value}</p>
         <p className="text-sm text-gray-500">{label}</p>
       </div>
     </div>

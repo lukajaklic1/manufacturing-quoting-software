@@ -68,7 +68,7 @@ export default function OverheadsPage() {
     <div className="p-4 lg:p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.nav.overheads}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.overheads}</h1>
           <p className="text-xs text-gray-400 mt-1">{s.overheadCalcHint}</p>
         </div>
         {canEdit && <Button loading={saving} onClick={save}>{t.common.save}</Button>}

@@ -47,7 +47,7 @@ export default function SuperAdminDashboardPage() {
   return (
     <div className="px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Nadzorna plošča</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Nadzorna plošča</h1>
         <p className="text-sm text-gray-500 mt-0.5">Pregled platforme</p>
       </div>
 
@@ -157,7 +157,7 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label:
     <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
       <div className={`p-3 rounded-xl ${colors[color]}`}>{icon}</div>
       <div>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-2xl font-semibold tracking-tight text-gray-900">{value}</p>
         <p className="text-sm text-gray-500 mt-0.5">{label}</p>
       </div>
     </div>

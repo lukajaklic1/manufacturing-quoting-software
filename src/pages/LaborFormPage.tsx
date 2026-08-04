@@ -85,7 +85,7 @@ export default function LaborFormPage() {
 
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{editMode ? l.name : s.addLabor}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{editMode ? l.name : s.addLabor}</h1>
           {editMode && l.updated_at && (
             <p className="text-xs text-gray-400 mt-1">
               {s.updatedAt}: {format(new Date(l.updated_at), 'd. M. yyyy, HH:mm')}{editorName ? ` · ${s.updatedBy}: ${editorName}` : ''}

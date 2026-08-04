@@ -94,7 +94,7 @@ export default function MachineFormPage() {
 
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{editMode ? m.name : s.addMachine}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{editMode ? m.name : s.addMachine}</h1>
           {editMode && m.updated_at && (
             <p className="text-xs text-gray-400 mt-1">
               {s.updatedAt}: {format(new Date(m.updated_at), 'd. M. yyyy, HH:mm')}{editorName ? ` · ${s.updatedBy}: ${editorName}` : ''}

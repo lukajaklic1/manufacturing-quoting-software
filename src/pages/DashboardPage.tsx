@@ -120,7 +120,7 @@ export default function DashboardPage() {
       <div className="mb-6">
         <div className="mb-4">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-0">
-          <h1 className="text-2xl font-bold text-gray-900">{t.nav.dashboard}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.dashboard}</h1>
           <div className="flex flex-wrap gap-2">
             {[
               { value: 1 as const, labelEn: '30 days', labelSl: '30 dni' },
@@ -176,7 +176,7 @@ export default function DashboardPage() {
           <div key={c.label} className="bg-white rounded-xl border border-gray-200 p-5">
             <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${c.color}`}><c.icon className="w-5 h-5" /></div>
             <p className="text-xs text-gray-400">{c.label}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-0.5">{c.value}</p>
+            <p className="text-2xl font-semibold tracking-tight text-gray-900 mt-0.5">{c.value}</p>
           </div>
         ))}
       </div>

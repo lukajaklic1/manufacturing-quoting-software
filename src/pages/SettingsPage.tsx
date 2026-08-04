@@ -48,7 +48,7 @@ export default function SettingsPage() {
 
   return (
     <div className="p-4 lg:p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.nav.settings}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-gray-900 mb-6">{t.nav.settings}</h1>
 
       <div className="flex flex-col gap-6"><fieldset disabled={!isAdmin} className="contents">
         {/* Company profile */}
