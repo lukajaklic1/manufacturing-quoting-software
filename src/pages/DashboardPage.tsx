@@ -138,7 +138,7 @@ export default function DashboardPage() {
           </div>
         }
       />
-      <div className="p-4 lg:p-6">
+      <div className="p-4">
       <div className="mb-6">
 
         {/* Filters */}
@@ -275,7 +275,7 @@ export default function DashboardPage() {
 
       {/* Top Customers */}
       {sortedCustomers.length > 0 && (
-        <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
+        <div className="-mx-4 border-t border-b border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200"><h2 className="text-sm font-semibold text-gray-900">{s.topCustomers}</h2></div>
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-200">

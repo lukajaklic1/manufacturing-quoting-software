@@ -12,7 +12,7 @@ export function PageHeader({ title, icon: Icon, action }: PageHeaderProps) {
   const { collapsed, toggle } = useSidebarCollapse()
 
   return (
-    <div className="h-[57px] flex items-center justify-between px-4 lg:px-6 border-b border-gray-200 bg-white shrink-0">
+    <div className="h-[57px] flex items-center justify-between px-4 border-b border-gray-200 bg-white shrink-0">
       <div className="flex items-center gap-2">
         {collapsed && (
           <button

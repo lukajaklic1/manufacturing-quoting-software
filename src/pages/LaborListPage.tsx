@@ -58,7 +58,7 @@ export default function LaborListPage() {
   return (
     <div>
       <PageHeader title={t.nav.labor} icon={HardHat} action={canEdit && <Button onClick={() => navigate('/labor/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addLabor}</Button>} />
-      <div className="p-4 lg:p-6">
+      <div className="p-4">
       <p className="text-gray-500 text-sm mb-4">{countWorkers(lang, rows.length)}</p>
       <div className="relative mb-4 max-w-xs">
         <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -66,7 +66,7 @@ export default function LaborListPage() {
           className="w-full pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
-      <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
+      <div className="-mx-4 border-t border-b border-gray-200">
         {loading ? (
           <div className="flex items-center justify-center h-40"><div className="animate-spin rounded-full h-7 w-7 border-b-2 border-blue-600" /></div>
         ) : filtered.length === 0 ? (

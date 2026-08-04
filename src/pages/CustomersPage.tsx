@@ -115,7 +115,7 @@ export default function CustomersPage() {
   return (
     <div>
       <PageHeader title={s.customers} icon={Users} action={canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newCustomer}</Button>} />
-      <div className="p-4 lg:p-6">
+      <div className="p-4">
       <p className="text-gray-500 text-sm mb-4">{countCustomers(lang, rows.length)}</p>
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative max-w-xs w-full">
@@ -128,7 +128,7 @@ export default function CustomersPage() {
           onChange={v => { setStatusFilter((v || 'all') as typeof statusFilter); setPage(1) }} />
       </div>
 
-      <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
+      <div className="-mx-4 border-t border-b border-gray-200">
         {loading ? (
           <div className="flex items-center justify-center h-48"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
         ) : filtered.length === 0 ? (

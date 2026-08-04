@@ -234,9 +234,9 @@ export default function UsersPage() {
   return (
     <div>
       <PageHeader title={t.nav.users} icon={UserCog} action={<Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>} />
-      <div className="p-4 lg:p-6">
+      <div className="p-4">
       <p className="text-gray-500 text-sm mb-4">{countUsers(lang, users.length + invites.length)}</p>
-      <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
+      <div className="-mx-4 border-t border-b border-gray-200">
         {dataLoading ? (
           <div className="flex items-center justify-center h-48"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
         ) : users.length === 0 && invites.length === 0 ? (
