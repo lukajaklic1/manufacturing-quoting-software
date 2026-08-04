@@ -100,7 +100,7 @@ export default function LaborListPage() {
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-500 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}>{format(new Date(l.updated_at), 'd. M. yyyy')}</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}>{format(new Date(l.updated_at), 'd. M. yyyy')}</span>
                       {l.editor && <PersonBadge name={`${l.editor.first_name} ${l.editor.last_name}`} />}
                     </div>
                   </td>
