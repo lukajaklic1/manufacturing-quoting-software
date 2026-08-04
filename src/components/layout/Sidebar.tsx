@@ -59,17 +59,17 @@ export default function Sidebar({ onClose }: SidebarProps) {
       )}
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2">
+      <nav className="flex-1 overflow-y-auto py-2 px-2">
         {NAV_KEYS.filter(item => (!item.adminOnly || profile?.is_admin) && (!('mod' in item) || hasPerm((item as { mod: Parameters<typeof hasPerm>[0] }).mod, 'view'))).map(({ to, icon: Icon, key }) => (
           <NavLink
             key={to}
             to={to}
             onClick={handleNavClick}
             className={({ isActive }) => cn(
-              'flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-medium transition-colors',
+              'flex items-center gap-2.5 px-3 py-1.5 rounded-md mb-0.5 text-sm font-medium transition-colors',
               isActive
-                ? 'bg-blue-50 text-blue-700'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900',
             )}
           >
             <Icon className="w-4 h-4 shrink-0" />
@@ -84,8 +84,8 @@ export default function Sidebar({ onClose }: SidebarProps) {
           to="/settings"
           onClick={handleNavClick}
           className={({ isActive }) => cn(
-            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-0.5',
-            isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+            'flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors mb-0.5',
+            isActive ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900',
           )}
         >
           <Settings className="w-4 h-4" />
