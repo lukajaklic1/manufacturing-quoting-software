@@ -61,9 +61,9 @@ export default function MachinesPage() {
 
   return (
     <div>
-      <PageHeader title={t.nav.machines} icon={Factory} action={canEdit && <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>} />
+      <PageHeader title={t.nav.machines} icon={Factory} count={rows.length} action={canEdit && <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>} />
       <div className="p-4">
-      <p className="text-gray-500 text-sm mb-4">{countMachines(lang, rows.length)}</p>
+
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative max-w-xs w-full">
           <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />

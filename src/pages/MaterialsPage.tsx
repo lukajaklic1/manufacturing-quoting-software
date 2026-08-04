@@ -92,9 +92,9 @@ export default function MaterialsPage() {
 
   return (
     <div>
-      <PageHeader title={s.materials} icon={Box} action={canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newMaterial}</Button>} />
+      <PageHeader title={s.materials} icon={Box} count={rows.length} action={canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newMaterial}</Button>} />
       <div className="p-4">
-      <p className="text-gray-500 text-sm mb-4">{countMaterials(lang, rows.length)}</p>
+
       <div className="flex flex-wrap gap-3 mb-4">
         <div className="relative">
           <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />

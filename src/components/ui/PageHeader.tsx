@@ -5,10 +5,11 @@ import { useSidebarCollapse } from '../layout/AppLayout'
 interface PageHeaderProps {
   title: string
   icon?: LucideIcon
+  count?: number
   action?: React.ReactNode
 }
 
-export function PageHeader({ title, icon: Icon, action }: PageHeaderProps) {
+export function PageHeader({ title, icon: Icon, count, action }: PageHeaderProps) {
   const { collapsed, toggle } = useSidebarCollapse()
 
   return (
@@ -25,6 +26,9 @@ export function PageHeader({ title, icon: Icon, action }: PageHeaderProps) {
         )}
         {Icon && <Icon className="w-4 h-4 text-gray-900 shrink-0" />}
         <h1 className="text-sm font-medium text-gray-900">{title}</h1>
+        {count !== undefined && (
+          <span className="text-xs font-medium text-gray-600 px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f0f0f0' }}>{count}</span>
+        )}
       </div>
       {action}
     </div>

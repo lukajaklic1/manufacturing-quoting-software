@@ -138,9 +138,9 @@ export default function QuotesPage() {
 
   return (
     <div>
-      <PageHeader title={s.quotes} icon={FileText} action={canEdit && <Button onClick={() => navigate('/quotes/new')} className="gap-2"><Plus className="w-4 h-4" />{s.newQuote}</Button>} />
+      <PageHeader title={s.quotes} icon={FileText} count={rows.length} action={canEdit && <Button onClick={() => navigate('/quotes/new')} className="gap-2"><Plus className="w-4 h-4" />{s.newQuote}</Button>} />
       <div className="p-4">
-      <p className="text-gray-500 text-sm mb-4">{countQuotes(lang, rows.length)}</p>
+
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative">
           <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
