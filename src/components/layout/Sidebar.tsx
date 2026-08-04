@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { useCompany } from '../../hooks/useCompany'
 import { useLanguage } from '../../hooks/useLanguage'
 import { cn } from '../../lib/cn'
+import AppLogo from '../ui/AppLogo'
 
 const NAV_KEYS = [
   { to: '/dashboard', icon: LayoutDashboard, key: 'dashboard' as const },
@@ -43,20 +44,27 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
   return (
     <aside className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col h-screen shrink-0">
-      {/* Company header — same height as PageHeader (h-[57px]) */}
+      {/* App logo — same height as PageHeader (h-[57px]) */}
       <div className="h-[57px] px-4 border-b border-gray-200 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">
-            {initials}
-          </div>
-          <p className="text-sm font-semibold text-gray-900 truncate">{company?.name ?? 'Toolingdesk'}</p>
-        </div>
+        <AppLogo size="sm" />
         {onClose && (
           <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors shrink-0">
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
+
+      {/* Company pill */}
+      {company && (
+        <div className="px-3 pt-3 pb-1">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-gray-200">
+            <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">
+              {initials}
+            </div>
+            <p className="text-sm font-medium text-gray-900 truncate">{company.name}</p>
+          </div>
+        </div>
+      )}
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-2 px-2">
