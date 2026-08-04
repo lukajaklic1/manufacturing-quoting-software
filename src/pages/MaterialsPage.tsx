@@ -96,7 +96,7 @@ export default function MaterialsPage() {
       <p className="text-gray-500 text-sm mb-4">{countMaterials(lang, rows.length)}</p>
       <div className="flex flex-wrap gap-3 mb-4">
         <div className="relative">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
             className="pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
         </div>

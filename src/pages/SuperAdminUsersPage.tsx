@@ -96,7 +96,7 @@ export default function SuperAdminUsersPage() {
 
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="relative">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Ime, priimek ali e-pošta..."
@@ -224,7 +224,7 @@ function ComboFilter({ options, value, onChange, placeholder, allLabel }: {
 
   return (
     <div className="relative" ref={ref}>
-      <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+      <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
       <input
         value={open ? query : selectedLabel}
         onChange={e => { setQuery(e.target.value); setOpen(true) }}

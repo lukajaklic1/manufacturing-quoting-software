@@ -85,7 +85,7 @@ export default function SuperAdminCompaniesPage() {
 
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="relative">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Išči podjetje..."
