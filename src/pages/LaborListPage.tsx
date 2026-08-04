@@ -98,9 +98,11 @@ export default function LaborListPage() {
                   <td className="px-4 py-2.5">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${l.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>{l.is_active ? t.common.active : t.common.inactive}</span>
                   </td>
-                  <td className="px-4 py-2.5 text-gray-500">
-                    <div>{format(new Date(l.updated_at), 'd. M. yyyy')}</div>
-                    {l.editor && <PersonBadge name={`${l.editor.first_name} ${l.editor.last_name}`} />}
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-500 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}>{format(new Date(l.updated_at), 'd. M. yyyy')}</span>
+                      {l.editor && <PersonBadge name={`${l.editor.first_name} ${l.editor.last_name}`} />}
+                    </div>
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>
                     <div className="flex gap-1 justify-end">
