@@ -5,6 +5,7 @@ import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
+import { PageHeader } from '../components/ui/PageHeader'
 import NumberInput from '../components/ui/NumberInput'
 import { computeOverhead } from '../lib/overhead'
 import { currencySymbol } from '../lib/currency'
@@ -65,15 +66,10 @@ export default function OverheadsPage() {
   if (!hasPerm('overheads', 'view')) return <Navigate to="/dashboard" replace />
 
   return (
-    <div className="p-4 lg:p-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.overheads}</h1>
-          <p className="text-xs text-gray-400 mt-1">{s.overheadCalcHint}</p>
-        </div>
-        {canEdit && <Button loading={saving} onClick={save}>{t.common.save}</Button>}
-      </div>
-
+    <div>
+      <PageHeader title={t.nav.overheads} action={canEdit && <Button loading={saving} onClick={save}>{t.common.save}</Button>} />
+      <div className="p-4 lg:p-8 max-w-4xl mx-auto">
+      <p className="text-xs text-gray-400 mb-6">{s.overheadCalcHint}</p>
       <div className="flex flex-col gap-6"><fieldset disabled={!canEdit} className="contents">
         {/* Bases first */}
         <Section title={s.bases}>
@@ -126,6 +122,7 @@ export default function OverheadsPage() {
           <div className="mt-4"><ResultBar label={s.totalAnnualRevenue} value={money(annualRevenue)} highlight /></div>
         </Section>
       </fieldset></div>
+    </div>
     </div>
   )
 }

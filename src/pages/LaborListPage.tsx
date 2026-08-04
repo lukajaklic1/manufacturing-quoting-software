@@ -8,6 +8,7 @@ import { useLanguage } from '../hooks/useLanguage'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
+import { PageHeader } from '../components/ui/PageHeader'
 import Pagination from '../components/ui/Pagination'
 import { effectiveLaborRate } from '../lib/laborRate'
 import { usedLaborIds } from '../lib/usageCheck'
@@ -55,15 +56,10 @@ export default function LaborListPage() {
   if (!permLoading && !hasPerm('labor_rates', 'view')) return <Navigate to="/dashboard" replace />
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.labor}</h1>
-          <p className="text-gray-500 text-sm mt-1">{countWorkers(lang, rows.length)}</p>
-        </div>
-        {canEdit && <Button onClick={() => navigate('/labor/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addLabor}</Button>}
-      </div>
-
+    <div>
+      <PageHeader title={t.nav.labor} action={canEdit && <Button onClick={() => navigate('/labor/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addLabor}</Button>} />
+      <div className="p-4 lg:p-6">
+      <p className="text-gray-500 text-sm mb-4">{countWorkers(lang, rows.length)}</p>
       <div className="relative mb-4 max-w-xs">
         <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
         <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={s.operatorTitle}
@@ -112,6 +108,7 @@ export default function LaborListPage() {
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
         title={t.nav.labor} message={s.deleteLaborConfirm} confirmLabel={t.common.delete} danger />
+    </div>
     </div>
   )
 }

@@ -11,6 +11,7 @@ import Input from '../components/ui/Input'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Pagination from '../components/ui/Pagination'
 import { countCustomers } from '../utils/pluralize'
+import { PageHeader } from '../components/ui/PageHeader'
 import type { Customer } from '../types/database'
 
 interface Form {
@@ -111,15 +112,10 @@ export default function CustomersPage() {
   if (!permLoading && !hasPerm('customers', 'view')) return <Navigate to="/dashboard" replace />
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{s.customers}</h1>
-          <p className="text-gray-500 text-sm mt-1">{countCustomers(lang, rows.length)}</p>
-        </div>
-        {canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newCustomer}</Button>}
-      </div>
-
+    <div>
+      <PageHeader title={s.customers} action={canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newCustomer}</Button>} />
+      <div className="p-4 lg:p-6">
+      <p className="text-gray-500 text-sm mb-4">{countCustomers(lang, rows.length)}</p>
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative max-w-xs w-full">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -204,6 +200,7 @@ export default function CustomersPage() {
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
         title={s.deleteCustomer} message={s.deleteCustomerConfirm} confirmLabel={t.common.delete} danger loading={deleting} />
+    </div>
     </div>
   )
 }

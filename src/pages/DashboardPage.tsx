@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { PageHeader } from '../components/ui/PageHeader'
 import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from '../lib/supabase'
@@ -116,11 +117,10 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="mb-6">
-        <div className="mb-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-0">
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.dashboard}</h1>
+    <div>
+      <PageHeader
+        title={t.nav.dashboard}
+        action={
           <div className="flex flex-wrap gap-2">
             {[
               { value: 1 as const, labelEn: '30 days', labelSl: '30 dni' },
@@ -129,13 +129,15 @@ export default function DashboardPage() {
               { value: 12 as const, labelEn: '12 months', labelSl: '12 mesecev' },
             ].map(p => (
               <button key={p.value} onClick={() => setPeriod(p.value)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${period === p.value ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium ${period === p.value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                 {lang === 'en' ? p.labelEn : p.labelSl}
               </button>
             ))}
           </div>
-          </div>
-        </div>
+        }
+      />
+      <div className="p-4 lg:p-6">
+      <div className="mb-6">
 
         {/* Filters */}
         <div className="relative w-80 flex gap-2">
@@ -342,6 +344,7 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+    </div>
     </div>
   )
 }

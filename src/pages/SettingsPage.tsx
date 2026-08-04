@@ -6,6 +6,7 @@ import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
+import { PageHeader } from '../components/ui/PageHeader'
 import Input from '../components/ui/Input'
 import { currencySymbol } from '../lib/currency'
 import type { Company } from '../types/database'
@@ -47,9 +48,9 @@ export default function SettingsPage() {
   const preview = `${prefix}${year}${String(nextNum).padStart(4, '0')}`
 
   return (
-    <div className="p-4 lg:p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-semibold tracking-tight text-gray-900 mb-6">{t.nav.settings}</h1>
-
+    <div>
+      <PageHeader title={t.nav.settings} />
+      <div className="p-4 lg:p-6 max-w-3xl mx-auto">
       <div className="flex flex-col gap-6"><fieldset disabled={!isAdmin} className="contents">
         {/* Company profile */}
         <Section icon={Building2} title={s.companyProfile}>
@@ -120,6 +121,7 @@ export default function SettingsPage() {
           {isAdmin && <SaveRow loading={saving === 'terms'} onClick={() => save('terms', ['quote_terms', 'quote_terms_en'])} label={t.common.save} />}
         </Section>
       </fieldset></div>
+    </div>
     </div>
   )
 }

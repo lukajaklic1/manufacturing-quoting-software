@@ -8,6 +8,7 @@ import { useLanguage } from '../hooks/useLanguage'
 import Button from '../components/ui/Button'
 import Pagination from '../components/ui/Pagination'
 import { countQuotes } from '../utils/pluralize'
+import { PageHeader } from '../components/ui/PageHeader'
 import type { Quote, QuoteStatus } from '../types/database'
 import { format } from 'date-fns'
 
@@ -135,15 +136,10 @@ export default function QuotesPage() {
   if (!permLoading && !hasPerm('quotes', 'view')) return <Navigate to="/dashboard" replace />
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{s.quotes}</h1>
-          <p className="text-gray-500 text-sm mt-1">{countQuotes(lang, rows.length)}</p>
-        </div>
-        {canEdit && <Button onClick={() => navigate('/quotes/new')} className="gap-2"><Plus className="w-4 h-4" />{s.newQuote}</Button>}
-      </div>
-
+    <div>
+      <PageHeader title={s.quotes} action={canEdit && <Button onClick={() => navigate('/quotes/new')} className="gap-2"><Plus className="w-4 h-4" />{s.newQuote}</Button>} />
+      <div className="p-4 lg:p-6">
+      <p className="text-gray-500 text-sm mb-4">{countQuotes(lang, rows.length)}</p>
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -231,6 +227,7 @@ export default function QuotesPage() {
       </div>
 
       <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
+    </div>
     </div>
   )
 }

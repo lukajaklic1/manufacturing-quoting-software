@@ -13,6 +13,7 @@ import NumberInput from '../components/ui/NumberInput'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Pagination from '../components/ui/Pagination'
 import { countMaterials } from '../utils/pluralize'
+import { PageHeader } from '../components/ui/PageHeader'
 import type { Material } from '../types/database'
 
 const PAGE_SIZE = 20
@@ -89,15 +90,10 @@ export default function MaterialsPage() {
   if (!permLoading && !hasPerm('materials', 'view')) return <Navigate to="/dashboard" replace />
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{s.materials}</h1>
-          <p className="text-gray-500 text-sm mt-1">{countMaterials(lang, rows.length)}</p>
-        </div>
-        {canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newMaterial}</Button>}
-      </div>
-
+    <div>
+      <PageHeader title={s.materials} action={canEdit && <Button onClick={openNew} className="gap-2"><Plus className="w-4 h-4" />{s.newMaterial}</Button>} />
+      <div className="p-4 lg:p-6">
+      <p className="text-gray-500 text-sm mb-4">{countMaterials(lang, rows.length)}</p>
       <div className="flex flex-wrap gap-3 mb-4">
         <div className="relative">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -178,6 +174,7 @@ export default function MaterialsPage() {
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
         title={s.deleteMaterial} message={s.deleteMaterialConfirm} confirmLabel={t.common.delete} danger />
+    </div>
     </div>
   )
 }

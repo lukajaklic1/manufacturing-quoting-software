@@ -4,7 +4,6 @@ import { Menu } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../lib/supabase'
 import Sidebar from './Sidebar'
-import AppLogo from '../ui/AppLogo'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { session, loading, isPasswordRecovery } = useAuth()
@@ -32,7 +31,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (isSuperAdmin) return <Navigate to="/super-admin" replace />
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"
@@ -56,7 +55,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <AppLogo size="sm" />
+          <span className="font-semibold text-gray-900">Toolingdesk</span>
         </header>
 
         <main className="flex-1 overflow-y-auto">

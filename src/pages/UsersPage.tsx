@@ -10,6 +10,7 @@ import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Pagination from '../components/ui/Pagination'
 import { countUsers } from '../utils/pluralize'
+import { PageHeader } from '../components/ui/PageHeader'
 import type { User as AppUser, UserPermission, UserInvitation } from '../types/database'
 
 const PAGE_SIZE = 20
@@ -231,15 +232,10 @@ export default function UsersPage() {
   if (!isAdmin) return <Navigate to="/dashboard" replace />
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.users}</h1>
-          <p className="text-gray-500 text-sm mt-1">{countUsers(lang, users.length + invites.length)}</p>
-        </div>
-        <Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>
-      </div>
-
+    <div>
+      <PageHeader title={t.nav.users} action={<Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>} />
+      <div className="p-4 lg:p-6">
+      <p className="text-gray-500 text-sm mb-4">{countUsers(lang, users.length + invites.length)}</p>
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {dataLoading ? (
           <div className="flex items-center justify-center h-48"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
@@ -401,6 +397,7 @@ export default function UsersPage() {
           </div>
         </div>
       </Modal>
+    </div>
     </div>
   )
 }

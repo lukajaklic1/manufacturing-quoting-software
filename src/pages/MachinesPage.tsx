@@ -11,6 +11,7 @@ import Pagination from '../components/ui/Pagination'
 import { effectiveMachineRate } from '../lib/machineRate'
 import { usedMachineIds } from '../lib/usageCheck'
 import { countMachines } from '../utils/pluralize'
+import { PageHeader } from '../components/ui/PageHeader'
 import { format } from 'date-fns'
 import type { Machine } from '../types/database'
 
@@ -58,15 +59,10 @@ export default function MachinesPage() {
   if (!permLoading && !hasPerm('machine_rates', 'view')) return <Navigate to="/dashboard" replace />
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.nav.machines}</h1>
-          <p className="text-gray-500 text-sm mt-1">{countMachines(lang, rows.length)}</p>
-        </div>
-        {canEdit && <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>}
-      </div>
-
+    <div>
+      <PageHeader title={t.nav.machines} action={canEdit && <Button onClick={() => navigate('/machines/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addMachine}</Button>} />
+      <div className="p-4 lg:p-6">
+      <p className="text-gray-500 text-sm mb-4">{countMachines(lang, rows.length)}</p>
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative max-w-xs w-full">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -123,6 +119,7 @@ export default function MachinesPage() {
 
       <ConfirmDialog open={!!toDelete} onClose={() => setToDelete(null)} onConfirm={doDelete}
         title={s.deleteMachine} message={s.deleteMachineConfirm} confirmLabel={t.common.delete} danger />
+    </div>
     </div>
   )
 }
