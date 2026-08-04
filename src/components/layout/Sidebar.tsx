@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, FileText, Users, UserCog, Settings, LogOut, X, Factory, HardHat, Layers, Box,
+  LayoutDashboard, FileText, Users, UserCog, Settings, LogOut, X, Factory, HardHat, Layers, Box, Building2,
 } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { useCompany } from '../../hooks/useCompany'
@@ -58,9 +58,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
       {company && (
         <div className="px-3 pt-3 pb-1">
           <div className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-gray-200">
-            <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white text-[9px] font-bold shrink-0">
-              {initials}
-            </div>
+            <Building2 className="w-4 h-4 text-gray-400 shrink-0" />
             <p className="text-sm font-medium text-gray-900 truncate">{company.name}</p>
           </div>
         </div>
