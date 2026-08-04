@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Pencil, Users, Mail, X, PowerOff, Power } from 'lucide-react'
+import { Plus, Pencil, Users, Mail, X, PowerOff, Power, UserCog } from 'lucide-react'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -229,7 +229,7 @@ export default function UsersPage() {
   const paginated = allRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
-  if (!isAdmin) return <Navigate to="/dashboard" replace />
+  if (!loading && !isAdmin) return <Navigate to="/dashboard" replace />
 
   return (
     <div>
