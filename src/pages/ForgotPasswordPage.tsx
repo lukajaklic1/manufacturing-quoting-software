@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
                   <label className="text-sm font-medium text-gray-700">{a.email}</label>
                   <input type="email" required autoComplete="email"
                     value={email} onChange={e => setEmail(e.target.value)}
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="you@company.com" />
                 </div>
 

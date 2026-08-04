@@ -45,28 +45,28 @@ export default function RegisterPage() {
               <label className="text-sm font-medium text-gray-700">{a.email}</label>
               <input type="email" required autoComplete="email"
                 value={email} onChange={e => setEmail(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="you@company.com" />
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">{a.password}</label>
               <input type="password" required autoComplete="new-password"
                 value={password} onChange={e => setPassword(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder={lang === 'sl' ? 'Vsaj 8 znakov' : 'Min. 8 characters'} />
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">{a.confirmPassword}</label>
               <input type="password" required autoComplete="new-password"
                 value={confirm} onChange={e => setConfirm(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••" />
             </div>
 
             {/* Terms agreement */}
             <label className="flex items-start gap-2.5 cursor-pointer">
               <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 shrink-0" />
+                className="mt-0.5 h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500 shrink-0" />
               <span className="text-sm text-gray-600">
                 {lang === 'sl' ? 'Strinjam se s ' : 'I agree to the '}
                 <Link to="/terms" target="_blank" className="text-blue-600 hover:underline font-medium">

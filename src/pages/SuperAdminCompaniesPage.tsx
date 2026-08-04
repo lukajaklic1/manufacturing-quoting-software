@@ -109,7 +109,7 @@ export default function SuperAdminCompaniesPage() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
+            <tr className="border-b border-gray-200 bg-gray-50">
               <th className="text-left px-5 py-3 font-medium text-gray-500">Podjetje</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Registrirano</th>
               <th className="text-center px-5 py-3 font-medium text-gray-500">Uporabniki</th>
@@ -123,7 +123,7 @@ export default function SuperAdminCompaniesPage() {
             ) : paged.length === 0 ? (
               <tr><td colSpan={5} className="px-5 py-12 text-center text-gray-400">Ni rezultatov</td></tr>
             ) : paged.map(c => (
-              <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50">
+              <tr key={c.id} className="border-t border-gray-200 hover:bg-gray-50">
                 <td className="px-5 py-3.5 font-medium text-gray-900">{c.name}</td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(c.created_at)}</td>
                 <td className="px-5 py-3.5 text-center text-gray-600">{pluralUsers(c.user_count ?? 0)}</td>

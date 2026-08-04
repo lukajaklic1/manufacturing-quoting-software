@@ -106,7 +106,7 @@ export default function LaborFormPage() {
           </div>
           <label className="flex items-center gap-2 text-sm text-gray-700 mt-5">
             <input type="checkbox" checked={l.is_active ?? true} onChange={e => setL(v => ({ ...v, is_active: e.target.checked }))}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />{s.active}
+              className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />{s.active}
           </label>
         </Section>
 
@@ -144,7 +144,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6">
       <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-      <hr className="border-gray-100 my-5" />
+      <hr className="border-gray-200 my-5" />
       {children}
     </div>
   )

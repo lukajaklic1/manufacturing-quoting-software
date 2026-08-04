@@ -144,16 +144,16 @@ export default function DashboardPage() {
               value={searchText}
               onChange={(e) => { setSearchText(e.target.value); setShowDropdown(true); }}
               onFocus={() => setShowDropdown(true)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500"
             />
           {showDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-64 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-64 overflow-y-auto">
               <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                 onClick={() => { setFilterCustomerId(null); setSearchText(''); setShowDropdown(false); setCurrentPage(1); }}>
                 {lang === 'en' ? '✓ All customers' : '✓ Vse stranke'}
               </div>
               {customers.filter(c => c.customer_name.toLowerCase().includes(searchText.toLowerCase())).map(c => (
-                <div key={c.customer_id} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer border-t border-gray-100"
+                <div key={c.customer_id} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                   onClick={() => { setFilterCustomerId(c.customer_id); setSearchText(c.customer_name); setShowDropdown(false); setCurrentPage(1); }}>
                   {filterCustomerId === c.customer_id && '✓ '}{c.customer_name}
                 </div>
@@ -272,9 +272,9 @@ export default function DashboardPage() {
       {/* Top Customers */}
       {sortedCustomers.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100"><h2 className="text-sm font-semibold text-gray-900">{s.topCustomers}</h2></div>
+          <div className="px-6 py-4 border-b border-gray-200"><h2 className="text-sm font-semibold text-gray-900">{s.topCustomers}</h2></div>
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('customer_name')}>
                   <div className="flex items-center gap-1">
@@ -327,7 +327,7 @@ export default function DashboardPage() {
               ))}
             </tbody>
           </table></div>
-          <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
             <div className="text-xs text-gray-500">{lang === 'en' ? `Page ${currentPage} of ${totalPages} (${filteredCustomers.length} customers)` : `Stran ${currentPage} od ${totalPages} (${filteredCustomers.length} strank)`}</div>
             <div className="flex gap-2">
               <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}

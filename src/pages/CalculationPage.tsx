@@ -232,7 +232,7 @@ export default function CalculationPage() {
                         <div className="flex flex-col gap-1">
                           <label className="text-xs font-medium text-gray-500">{s.shape}</label>
                           <select value={r.shape} onChange={e => set({ shape: e.target.value as MaterialShape })}
-                            className="rounded-md border border-gray-300 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
                             {(['sheet', 'round_bar', 'rect_bar', 'round_tube', 'square_tube', 'other'] as MaterialShape[]).map(sh => <option key={sh} value={sh}>{s.shapes[sh]}</option>)}
                           </select>
                         </div>
@@ -275,7 +275,7 @@ export default function CalculationPage() {
                         <Mini label={s.piecesPerStock} value={r.pieces_per_stock ?? 1} onValue={v => set({ pieces_per_stock: v ?? 1 })} />
                         <Mini label={s.scrapPct} unit={u.pct} value={r.scrap_pct} onValue={v => set({ scrap_pct: v ?? 0 })} />
                       </div>
-                      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mt-3 text-sm border-t border-gray-100 pt-2">
+                      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mt-3 text-sm border-t border-gray-200 pt-2">
                         {r.shape !== 'other' && <span className="text-gray-500">{s.density}: <b className="text-gray-800">{(Number(r.density) || 0).toLocaleString('de-DE', { maximumFractionDigits: 2 })} {u.gcm3}</b></span>}
                         {r.shape !== 'other' && <span className="text-gray-500">{s.volume}: <b className="text-gray-800">{rawVolumeCm3(r).toLocaleString('de-DE', { maximumFractionDigits: 2 })} {u.cm3}</b></span>}
                         {/* volume + density hidden for 'other' (manual weight, no geometry) */}
@@ -314,7 +314,7 @@ export default function CalculationPage() {
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.purchasedName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
-                          className="rounded-md border border-gray-300 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
@@ -326,7 +326,7 @@ export default function CalculationPage() {
                         <Mini label={`${s.pricePerUnit} (${sym})`} value={r.price_per_unit} onValue={v => set({ price_per_unit: v ?? 0 })} decimals={2} />
                         <Mini label={s.scrapPct} unit={u.pct} value={r.scrap_pct ?? 0} onValue={v => set({ scrap_pct: v ?? 0 })} />
                       </div>
-                      <div className="flex items-center justify-end mt-3 text-sm border-t border-gray-100 pt-2">
+                      <div className="flex items-center justify-end mt-3 text-sm border-t border-gray-200 pt-2">
                         <span className="text-gray-500">{s.total}: <b className="text-gray-900">{money(purchasedTotal(r))}</b>/{u.piece}</span>
                       </div>
                       </>)}
@@ -387,7 +387,7 @@ export default function CalculationPage() {
                           return (
                             <select value={opIdx >= 0 ? String(opIdx) : (r.name ? '__custom' : '')}
                               onChange={e => { const idx = parseInt(e.target.value); if (!isNaN(idx)) set({ name: s.operationList[idx] }) }}
-                              className="rounded-md border border-gray-300 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                              className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
                               <option value="">—</option>
                               {s.operationList.map((op, idx) => <option key={idx} value={String(idx)}>{op}</option>)}
                               {r.name && opIdx === -1 && <option value="__custom">{r.name}</option>}
@@ -411,7 +411,7 @@ export default function CalculationPage() {
                         <div className="w-28 shrink-0"><Mini label={`${s.machine} (${sym}/h)`} value={r.machine_rate ?? 0} onValue={v => set({ machine_rate: v ?? 0 })} decimals={2} /></div>
                       </div>
 
-                      <div className="mt-4 mb-3 pb-1.5 border-b border-gray-100 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">{s.runCost}</div>
+                      <div className="mt-4 mb-3 pb-1.5 border-b border-gray-200 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">{s.runCost}</div>
                       {/* Cycle + cavities — thirds, aligned with the operator row below */}
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <Mini label={`${s.cycleMin} (${u.min})`} value={r.cycle_min} onValue={v => set({ cycle_min: v ?? 0 })} decimals={2} />
@@ -433,7 +433,7 @@ export default function CalculationPage() {
                         <Mini label={`${s.operator} (${sym}/h)`} value={r.operator_rate ?? 0} onValue={v => set({ operator_rate: v ?? 0 })} decimals={2} />
                       </div>
 
-                      <div className="mt-4 mb-3 pb-1.5 border-b border-gray-100 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">{s.setupCost}</div>
+                      <div className="mt-4 mb-3 pb-1.5 border-b border-gray-200 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">{s.setupCost}</div>
                       {/* Setup: time + #technologists + technologist + rate */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <Mini label={`${s.setupCost} (${u.min})`} value={r.setup_min} onValue={v => set({ setup_min: v ?? 0 })} decimals={2} />
@@ -455,12 +455,12 @@ export default function CalculationPage() {
                       </div>
                       <label className="flex items-center gap-2 text-xs text-gray-600 mt-2 cursor-pointer">
                         <input type="checkbox" checked={r.setup_with_operator ?? false} onChange={e => set({ setup_with_operator: e.target.checked })}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                          className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />
                         {s.setupWithOperator}
                       </label>
 
                       {/* Breakdown — fixed parts (run/pc, setup/batch); total per quantity below */}
-                      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mt-3 text-sm border-t border-gray-100 pt-2">
+                      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mt-3 text-sm border-t border-gray-200 pt-2">
                         <span className="text-gray-500">{s.runCost}: <b className="text-gray-800">{money(runCost)}</b>/{u.piece}</span>
                         <span className="text-gray-500">{s.setupCost}: <b className="text-gray-800">{money(setupPerBatch)}</b> {s.perBatch}</span>
                       </div>
@@ -503,14 +503,14 @@ export default function CalculationPage() {
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.toolName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
-                          className="rounded-md border border-gray-300 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <Mini label={`${s.toolCost} (${sym})`} value={r.tool_cost} onValue={v => set({ tool_cost: v ?? 0 })} decimals={2} />
                         <Mini label={s.piecesPerTool} value={r.lifetime_pcs} onValue={v => set({ lifetime_pcs: v ?? 0 })} />
                         <Mini label={s.scrapPct} unit={u.pct} value={r.scrap_pct ?? 0} onValue={v => set({ scrap_pct: v ?? 0 })} />
                       </div>
-                      <div className="flex items-center justify-end mt-3 text-sm border-t border-gray-100 pt-2">
+                      <div className="flex items-center justify-end mt-3 text-sm border-t border-gray-200 pt-2">
                         <span className="text-gray-500">{s.total}: <b className="text-gray-900">{money(toolingTotal(r))}</b>/{u.piece}</span>
                       </div>
                       </>)}
@@ -545,7 +545,7 @@ export default function CalculationPage() {
                       <div className="flex flex-col gap-1 mb-3">
                         <label className="text-xs font-medium text-gray-500">{s.packagingName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
-                          className="rounded-md border border-gray-300 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <Mini label={`${s.costPerPieceShort} (${sym})`} value={r.price_per_unit} onValue={v => set({ price_per_unit: v ?? 0 })} decimals={2} />
@@ -565,12 +565,12 @@ export default function CalculationPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-2.5 text-sm">
               <div className="flex items-center justify-between text-gray-600"><span>{s.rawMaterials} + {s.purchasedParts} + {s.packaging}</span><span className="text-gray-800">{money(ohMatBase)}</span></div>
               <div className="flex items-center justify-between text-gray-600"><span>{s.processes} + {s.tooling}</span><span className="text-gray-800">{money(ohMfgBase)}</span></div>
-              <div className="flex items-center justify-between border-y border-gray-100 py-2 my-0.5 font-medium text-gray-700">
+              <div className="flex items-center justify-between border-y border-gray-200 py-2 my-0.5 font-medium text-gray-700">
                 <span>{s.directCosts}</span><b className="text-gray-900">{money(ohMatBase + ohMfgBase)}</b>
               </div>
               <OhRow label={s.materialOh} pct={c.oh_material_pct} onPct={v => patch({ oh_material_pct: v })} value={money(ohMatAmt)} />
               <OhRow label={s.mfgOh} pct={c.oh_mfg_pct} onPct={v => patch({ oh_mfg_pct: v })} value={money(ohMfgAmt)} />
-              <div className="flex items-center justify-between border-y border-gray-100 py-2 my-0.5 font-medium text-gray-700">
+              <div className="flex items-center justify-between border-y border-gray-200 py-2 my-0.5 font-medium text-gray-700">
                 <span>{s.subtotalBase}</span><b className="text-gray-900">{money(ohSubtotal)}</b>
               </div>
               <OhRow label={s.sga} pct={c.oh_sga_pct} onPct={v => patch({ oh_sga_pct: v })} value={money(ohSgaAmt)} />
@@ -579,10 +579,10 @@ export default function CalculationPage() {
               <div className="flex items-center justify-between border-t border-gray-200 pt-2 mt-0.5 font-semibold text-gray-800">
                 <span>{s.totalOverheadSum}</span><b className="text-gray-900">{money(totals.total_overhead)}</b>
               </div>
-              <div className="flex items-center justify-between border-t border-gray-100 pt-2 mt-0.5 font-medium text-gray-700">
+              <div className="flex items-center justify-between border-t border-gray-200 pt-2 mt-0.5 font-medium text-gray-700">
                 <span>{s.costPerPiece}</span><b className="text-gray-900">{money(totals.cost_per_piece)}</b>
               </div>
-              <div className="border-t border-gray-100 pt-2.5 mt-1">
+              <div className="border-t border-gray-200 pt-2.5 mt-1">
                 <OhRow label={s.profit} pct={c.profit_pct} onPct={v => patch({ profit_pct: v })} value={money(totals.selling_price - totals.cost_per_piece)} />
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-2 mt-0.5 text-base font-bold text-gray-900">
@@ -596,7 +596,7 @@ export default function CalculationPage() {
             <h4 className="text-[15px] font-bold text-gray-800 flex items-center gap-2 mb-3 px-0.5 pb-2 border-b border-gray-200">{s.calcResults}</h4>
             <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-400 uppercase tracking-wide">{s.quantity}</th>
                     {qtyResults.map(({ q }, i) => (

@@ -31,7 +31,7 @@ export default function Pagination({ total, page, pageSize, onChange }: Paginati
   }
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
       <p className="text-xs text-gray-400">
         {t.common.showing} <span className="font-medium text-gray-600">{from}–{to}</span> {t.common.of} <span className="font-medium text-gray-600">{total}</span>
       </p>

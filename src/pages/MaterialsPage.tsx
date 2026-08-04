@@ -102,15 +102,15 @@ export default function MaterialsPage() {
         <div className="relative">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
-            className="pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
+            className="pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
         </div>
         <select value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1) }}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
           <option value="">{t.filters.allCategories}</option>
           {CATEGORIES.map(c => <option key={c} value={c}>{s.matCat[c]}</option>)}
         </select>
         <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as typeof statusFilter); setPage(1) }}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
           <option value="all">{t.filters.allStatuses}</option>
           <option value="active">{t.common.activeM}</option>
           <option value="inactive">{t.common.inactiveM}</option>
@@ -124,7 +124,7 @@ export default function MaterialsPage() {
           <div className="flex flex-col items-center justify-center h-40 text-center"><Box className="w-9 h-9 text-gray-200 mb-2" /><p className="text-sm text-gray-400">{s.noMaterials}</p></div>
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[560px]">
-            <thead className="bg-gray-50 border-b border-gray-100"><tr>
+            <thead className="bg-gray-50 border-b border-gray-200"><tr>
               {[s.materialName, s.category, s.density, s.pricePerKg, t.common.status, ''].map((h, i) => (
                 <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
               ))}
@@ -158,7 +158,7 @@ export default function MaterialsPage() {
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-gray-700">{s.category}</label>
             <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
               <option value="">—</option>
               {CATEGORIES.map(c => <option key={c} value={c}>{s.matCat[c]}</option>)}
             </select>
@@ -168,7 +168,7 @@ export default function MaterialsPage() {
         </div>
         <label className="flex items-center gap-2 text-sm text-gray-700 mt-4">
           <input type="checkbox" checked={form.is_active} onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />{t.common.active}
+            className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />{t.common.active}
         </label>
         <div className="flex gap-3 justify-end mt-5">
           <Button variant="secondary" onClick={() => setOpen(false)}>{t.common.cancel}</Button>

@@ -387,7 +387,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
                   setCustomerId(cid)
                   const c = customers.find(x => x.id === cid)
                   if (c) { setContactPerson(c.contact_person ?? ''); setContactEmail(c.email ?? ''); setContactPhone(c.phone ?? ''); setPaymentTerms(c.payment_terms ?? ''); setParity(c.parity ?? '') }
-                }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                }} className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                   <option value="">{t.common.select}</option>
                   {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
@@ -402,7 +402,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
               <div className="sm:col-span-2 flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">{s.notes}</label>
                 <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
               </div>
             </div>
           </div>
@@ -422,7 +422,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
       </div>
       <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto mb-6">
         <table className="w-full text-sm min-w-[720px]">
-          <thead className="bg-gray-50 border-b border-gray-100"><tr>
+          <thead className="bg-gray-50 border-b border-gray-200"><tr>
             {['', s.partName, s.partNumber, s.quantity, s.sellingPrice, ''].map((h, i) => (
               <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
             ))}

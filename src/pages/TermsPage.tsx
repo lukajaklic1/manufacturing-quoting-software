@@ -8,7 +8,7 @@ export default function TermsPage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/"><AppLogo size="sm" /></Link>
           <div className="flex gap-1">
@@ -205,7 +205,7 @@ export default function TermsPage() {
 
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-100">
+        <div className="mt-12 pt-8 border-t border-gray-200">
           <Link to="/" className="text-sm text-blue-600 hover:underline">{isSl ? '← Nazaj na domačo stran' : '← Back to home'}</Link>
         </div>
       </div>

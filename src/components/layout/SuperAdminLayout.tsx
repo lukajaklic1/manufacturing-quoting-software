@@ -37,7 +37,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <aside className="w-56 shrink-0 flex flex-col bg-white border-r border-gray-200">
-        <div className="px-5 py-5 border-b border-gray-100">
+        <div className="px-5 py-5 border-b border-gray-200">
           <AppLogo size="sm" />
           <span className="mt-2 inline-block text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
             Super Admin
@@ -64,7 +64,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
           ))}
         </nav>
 
-        <div className="px-3 py-4 border-t border-gray-100">
+        <div className="px-3 py-4 border-t border-gray-200">
           <button
             onClick={signOut}
             className="flex items-center gap-2.5 px-3 py-2 w-full rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"

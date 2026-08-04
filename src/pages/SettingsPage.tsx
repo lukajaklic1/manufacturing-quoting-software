@@ -72,7 +72,7 @@ export default function SettingsPage() {
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">{t.settings.currency}</label>
               <select value={form.currency ?? 'EUR'} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                 {CURRENCIES.map(c => <option key={c} value={c}>{currencySymbol(c)} · {c}</option>)}
               </select>
             </div>
@@ -127,7 +127,7 @@ export default function SettingsPage() {
 function Section({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
         <div className="p-2 bg-blue-50 rounded-lg"><Icon className="w-4 h-4 text-blue-600" /></div>
         <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
       </div>

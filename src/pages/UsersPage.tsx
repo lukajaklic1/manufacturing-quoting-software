@@ -45,7 +45,7 @@ function PermMatrix({ perms, onToggle, labels }: { perms: PermMap; onToggle: (m:
     <div className="overflow-x-auto">
       <table className="w-full text-sm min-w-[460px]">
         <thead>
-          <tr className="border-b border-gray-100">
+          <tr className="border-b border-gray-200">
             <th className="text-left font-medium text-gray-400 uppercase tracking-wide text-xs py-2"></th>
             {ACTIONS.map(a => (
               <th key={a} className="text-center font-medium text-gray-400 uppercase tracking-wide text-xs py-2 px-2">{labels[`action_${a}`]}</th>
@@ -250,7 +250,7 @@ export default function UsersPage() {
           </div>
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[700px]">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 {[t.common.name, t.common.email, s.jobTitle, s.role, t.common.status, ''].map((h, i) => (
                   <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
@@ -341,14 +341,14 @@ export default function UsersPage() {
 
             <label className="flex items-center gap-2 text-sm text-gray-700">
               <input type="checkbox" checked={inviteAsAdmin} onChange={e => setInviteAsAdmin(e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />
               {s.inviteAsAdmin}
             </label>
 
             {inviteAsAdmin ? (
               <p className="text-xs text-gray-400">{s.adminAllAccess}</p>
             ) : (
-              <div className="border-t border-gray-100 pt-3">
+              <div className="border-t border-gray-200 pt-3">
                 <p className="text-sm font-medium text-gray-700 mb-2">{s.usersAndPermissions}</p>
                 <PermMatrix perms={invitePerms} onToggle={toggleInvitePerm} labels={permLabels} />
               </div>
@@ -380,7 +380,7 @@ export default function UsersPage() {
           {editUser?.id !== primaryAdminId && (
             <label className="flex items-center gap-2 text-sm text-gray-700">
               <input type="checkbox" checked={editForm.is_admin} onChange={e => setEditForm(v => ({ ...v, is_admin: e.target.checked }))}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />
               {s.admin}
             </label>
           )}
@@ -388,7 +388,7 @@ export default function UsersPage() {
           {editForm.is_admin ? (
             <p className="text-xs text-gray-400">{s.adminAllAccess}</p>
           ) : (
-            <div className="border-t border-gray-100 pt-3">
+            <div className="border-t border-gray-200 pt-3">
               <p className="text-sm font-medium text-gray-700 mb-2">{s.usersAndPermissions}</p>
               <PermMatrix perms={editPerms} onToggle={toggleEditPerm} labels={permLabels} />
             </div>

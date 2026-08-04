@@ -116,7 +116,7 @@ export default function MachineFormPage() {
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">{s.category}</label>
               <select value={m.category ?? ''} onChange={e => setM(v => ({ ...v, category: (e.target.value || null) as MachineCategory | null }))}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                 <option value="">—</option>
                 {CATEGORIES.map(c => <option key={c} value={c}>{s.cat[c]}</option>)}
               </select>
@@ -124,7 +124,7 @@ export default function MachineFormPage() {
           </div>
           <label className="flex items-center gap-2 text-sm text-gray-700 mt-5">
             <input type="checkbox" checked={m.is_active ?? true} onChange={e => setM(v => ({ ...v, is_active: e.target.checked }))}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />{s.active}
+              className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />{s.active}
           </label>
         </Section>
 
@@ -222,7 +222,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6">
       <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-      <hr className="border-gray-100 my-5" />
+      <hr className="border-gray-200 my-5" />
       {children}
     </div>
   )
@@ -242,7 +242,7 @@ function BreakdownTable({ rows, total, money, s }: {
   money: (n: number) => string; s: { perYear: string; perHour: string }
 }) {
   return (
-    <div className="mt-6 -mx-6 border-t border-gray-100">
+    <div className="mt-6 -mx-6 border-t border-gray-200">
       <table className="w-full text-sm">
         <thead><tr className="text-xs text-gray-400"><th className="text-left font-medium px-6 py-3"></th><th className="text-right font-medium px-6 py-3">{s.perYear}</th><th className="text-right font-medium px-6 py-3">{s.perHour}</th></tr></thead>
         <tbody className="text-gray-600">

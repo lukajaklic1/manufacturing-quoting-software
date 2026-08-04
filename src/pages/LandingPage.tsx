@@ -46,7 +46,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white text-gray-900 font-sans">
 
       {/* ── Nav ── */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
             <AppLogo size="sm" />
@@ -101,7 +101,7 @@ export default function LandingPage() {
         {/* App preview */}
         <div className="relative mx-auto max-w-4xl hidden sm:block">
           <div className="rounded-2xl border border-gray-200 shadow-2xl shadow-gray-200/60 overflow-hidden">
-            <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-2">
+            <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-2">
               <div className="flex gap-1.5">
                 <div className="w-3 h-3 rounded-full bg-red-400" />
                 <div className="w-3 h-3 rounded-full bg-yellow-400" />
@@ -152,7 +152,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pain Section ── */}
-      <section className="bg-gray-50 border-y border-gray-100 py-24">
+      <section className="bg-gray-50 border-y border-gray-200 py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{isSl ? 'Zakaj Toolingdesk' : 'Why Toolingdesk'}</p>
@@ -199,7 +199,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── How it works ── */}
-      <section id="how-it-works" className="bg-gray-50 border-y border-gray-100 py-24">
+      <section id="how-it-works" className="bg-gray-50 border-y border-gray-200 py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3">{l.howTitle}</p>
@@ -258,7 +258,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section id="faq" className="bg-gray-50 border-t border-gray-100 py-24">
+      <section id="faq" className="bg-gray-50 border-t border-gray-200 py-24">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-14">
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">{l.faqHeading}</h2>
@@ -311,7 +311,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-gray-100 py-10">
+      <footer className="border-t border-gray-200 py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-0 justify-between">
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
             <AppLogo size="sm" />

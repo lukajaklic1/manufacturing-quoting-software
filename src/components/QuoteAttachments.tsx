@@ -277,7 +277,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
             {!readonly && (
               <>
                 <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" id="header-upload" />
-                <label htmlFor="header-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-50 text-gray-400'}`}>
+                <label htmlFor="header-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-50 text-gray-400'}`}>
                   <Upload className="w-4 h-4" />
                   Naloži datoteke
                 </label>
@@ -317,7 +317,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                         </div>
                       ) : isCad ? (
                         <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                          <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                          <div className="w-5 h-5 border-2 border-gray-200 border-t-blue-400 rounded-full animate-spin" />
                         </div>
                       ) : isPdf && loadingThumbs.has(att.id) ? (
                         <div className="w-full h-full bg-red-50 flex items-center justify-center">
@@ -489,7 +489,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Ni datotek</div>
           ) : !selectedUrl ? (
             <div className="w-full h-full flex items-center justify-center">
-              <div className="w-7 h-7 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+              <div className="w-7 h-7 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
             </div>
           ) : selFt === 'cad' ? (
             <CadViewer url={selectedUrl} fileName={selectedAtt.file_name} onCapture={bakeSelected} />
@@ -527,7 +527,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
             {!readonly && (
               <div className="ml-auto">
                 <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" id="inline-upload" />
-                <label htmlFor="inline-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-40 text-gray-400'}`}>
+                <label htmlFor="inline-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-40 text-gray-400'}`}>
                   <Upload className="w-4 h-4" /> Naloži datoteke
                 </label>
               </div>
@@ -543,7 +543,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
               const isSel = selectedAtt?.id === att.id
               return (
                 <div key={att.id} onClick={() => selectAtt(att)}
-                  className={`flex flex-col rounded-lg border-2 overflow-hidden cursor-pointer transition-all group ${isSel ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'}`}>
+                  className={`flex flex-col rounded-lg border-2 overflow-hidden cursor-pointer transition-all group ${isSel ? 'border-blue-500' : 'border-gray-200 hover:border-gray-200'}`}>
                   <div className="w-full h-24 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                     {thumbs[att.id] ? (
                       <img src={thumbs[att.id]} alt="" className="w-full h-full object-contain bg-white" />
@@ -561,7 +561,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
                       </div>
                     ) : ft === 'cad' ? (
                       <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                        <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-gray-200 border-t-blue-400 rounded-full animate-spin" />
                       </div>
                     ) : ft === 'pdf' && loadingThumbs.has(att.id) ? (
                       <div className="w-full h-full bg-red-50 flex items-center justify-center">

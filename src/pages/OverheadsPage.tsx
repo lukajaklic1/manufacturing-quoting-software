@@ -134,7 +134,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6">
       <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-      <hr className="border-gray-100 my-5" />
+      <hr className="border-gray-200 my-5" />
       {children}
     </div>
   )

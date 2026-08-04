@@ -159,7 +159,7 @@ export default function SuperAdminPage() {
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
+                  <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="text-left px-4 py-3 font-medium text-gray-500">Podjetje</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-500">Registracija</th>
                     <th className="text-center px-4 py-3 font-medium text-gray-500">Uporabniki</th>
@@ -202,7 +202,7 @@ export default function SuperAdminPage() {
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
+                  <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="text-left px-4 py-3 font-medium text-gray-500">Uporabnik</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-500">E-pošta</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-500">Podjetje</th>

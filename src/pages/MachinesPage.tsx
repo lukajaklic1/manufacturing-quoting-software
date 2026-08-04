@@ -71,10 +71,10 @@ export default function MachinesPage() {
         <div className="relative max-w-xs w-full">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={`${s.machineName} / ${s.machineModel}`}
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <select value={catFilter} onChange={e => { setCatFilter(e.target.value); setPage(1) }}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
           <option value="all">{t.common.all} · {s.category}</option>
           {Object.entries(s.cat).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
         </select>
@@ -87,7 +87,7 @@ export default function MachinesPage() {
           <div className="flex flex-col items-center justify-center h-40 text-center"><Factory className="w-9 h-9 text-gray-200 mb-2" /><p className="text-sm text-gray-400">{s.noMachines}</p></div>
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[560px]">
-            <thead className="bg-gray-50 border-b border-gray-100"><tr>
+            <thead className="bg-gray-50 border-b border-gray-200"><tr>
               {[s.machineName, s.machineModel, s.category, s.ratePerHour, t.common.status, s.updatedAt, ''].map((h, i) => (
                 <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
               ))}

@@ -65,7 +65,7 @@ export default function OnboardingPage() {
                 <div className="flex flex-col gap-1 mb-6">
                   <label className="text-sm font-medium text-gray-700">{o.companyName}</label>
                   <input type="text" required value={companyName} onChange={e => setCompanyName(e.target.value)}
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Acme d.o.o." />
                 </div>
                 <button type="button" disabled={!companyName.trim()} onClick={() => setStep('profile')}
@@ -88,20 +88,20 @@ export default function OnboardingPage() {
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-medium text-gray-700">{o.firstName}</label>
                     <input type="text" required value={firstName} onChange={e => setFirstName(e.target.value)}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Janez" />
                   </div>
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-medium text-gray-700">{o.lastName}</label>
                     <input type="text" required value={lastName} onChange={e => setLastName(e.target.value)}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Novak" />
                   </div>
                 </div>
                 {error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4 font-mono">{error}</p>}
                 <div className="flex gap-3">
                   <button type="button" onClick={() => setStep('company')}
-                    className="flex-1 bg-white text-gray-700 border border-gray-300 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 transition-colors">
+                    className="flex-1 bg-white text-gray-700 border border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 transition-colors">
                     {o.back}
                   </button>
                   <button type="submit" disabled={loading}

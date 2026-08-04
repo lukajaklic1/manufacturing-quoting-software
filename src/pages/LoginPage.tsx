@@ -41,7 +41,7 @@ export default function LoginPage() {
               <label className="text-sm font-medium text-gray-700">{a.email}</label>
               <input type="email" required autoComplete="email"
                 value={email} onChange={e => setEmail(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="you@company.com" />
             </div>
             <div className="flex flex-col gap-1">
@@ -51,7 +51,7 @@ export default function LoginPage() {
               </div>
               <input type="password" required autoComplete="current-password"
                 value={password} onChange={e => setPassword(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••" />
             </div>
 
