@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, HardHat, Search } from 'lucide-react'
+import { Plus, Pencil, Trash2, HardHat, Search, CalendarDays } from 'lucide-react'
 import { format } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -100,7 +100,7 @@ export default function LaborListPage() {
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}>{format(new Date(l.updated_at), 'd. M. yyyy')}</span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}><CalendarDays className="w-3 h-3 text-gray-500 shrink-0" />{format(new Date(l.updated_at), 'd. M. yyyy')}</span>
                       {l.editor && <PersonBadge name={`${l.editor.first_name} ${l.editor.last_name}`} />}
                     </div>
                   </td>
