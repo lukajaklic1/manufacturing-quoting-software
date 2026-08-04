@@ -4,7 +4,7 @@ export const translations = {
   en: {
     // Nav
     nav: {
-      dashboard: 'Dashboard',
+      dashboard: 'Reports',
       quotes: 'Quotes',
       customers: 'Customers',
       materials: 'Materials',
@@ -1007,7 +1007,7 @@ export const translations = {
   sl: {
     // Nav
     nav: {
-      dashboard: 'Nadzorna plošča',
+      dashboard: 'Poročila',
       quotes: 'Ponudbe',
       customers: 'Stranke',
       materials: 'Materiali',

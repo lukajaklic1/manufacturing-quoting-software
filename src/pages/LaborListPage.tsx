@@ -82,7 +82,7 @@ export default function LaborListPage() {
                 <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
               ))}
             </tr></thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-200">
               {paginated.map(l => (
                 <tr key={l.id} className={`hover:bg-gray-50 ${canEdit ? 'cursor-pointer' : ''}`} onClick={() => canEdit && navigate(`/labor/${l.id}/edit`)}>
                   <td className="px-4 py-2.5 font-medium text-gray-900">{l.name}</td>

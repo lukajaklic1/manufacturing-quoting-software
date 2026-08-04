@@ -314,7 +314,7 @@ export default function DashboardPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-200">
               {paginatedCustomers.map(c => (
                 <tr key={c.customer_id} className="hover:bg-gray-50">
                   <td className="px-6 py-3 text-gray-900 font-medium">{c.customer_name}</td>

@@ -149,7 +149,7 @@ export default function CustomersPage() {
                 <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
               ))}
             </tr></thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-200">
               {paginated.map(c => (
                 <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-medium text-gray-900">{c.name}{c.vat_number && <span className="ml-2 text-xs text-gray-400 font-normal">{c.vat_number}</span>}</td>

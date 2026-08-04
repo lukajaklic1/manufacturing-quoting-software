@@ -129,7 +129,7 @@ export default function MaterialsPage() {
                 <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
               ))}
             </tr></thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-200">
               {paginated.map(m => (
                 <tr key={m.id} className={`hover:bg-gray-50 ${canEdit ? 'cursor-pointer' : ''}`} onClick={() => canEdit && openEdit(m)}>
                   <td className="px-4 py-2.5 font-medium text-gray-900">{m.name}</td>

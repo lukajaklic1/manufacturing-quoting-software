@@ -604,7 +604,7 @@ export default function CalculationPage() {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-200">
                   <ResRow label={s.totalMaterial} cells={qtyResults.map(({ t }) => money(t.total_raw_materials + t.total_purchased_parts))} />
                   <ResRow label={s.totalProcesses} cells={qtyResults.map(({ t }) => money(t.total_processes + t.total_tooling))} />
                   <ResRow label={s.packaging} cells={qtyResults.map(({ t }) => money(t.total_packaging))} />

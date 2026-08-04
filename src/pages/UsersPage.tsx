@@ -257,7 +257,7 @@ export default function UsersPage() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-200">
               {paginated.map(item => {
                 const u = 'is_admin' in item && 'first_name' in item && 'last_name' in item && 'email' in item && 'job_title' in item && !('status' in item) ? (item as AppUser) : null
                 const invite = u ? null : (item as UserInvitation)

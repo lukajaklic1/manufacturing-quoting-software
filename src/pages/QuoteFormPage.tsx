@@ -427,7 +427,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
               <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
             ))}
           </tr></thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-gray-200">
             {pieces.map((p, idx) => (
               <tr key={p.key} className="hover:bg-gray-50 cursor-pointer" onClick={() => readOnly ? (p.id && navigate(`/quotes/${id}/items/${p.id}?ro=1`)) : calculate(p.key)}>
                 <td className="px-4 py-2 w-14">
