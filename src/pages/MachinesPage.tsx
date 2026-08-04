@@ -12,6 +12,7 @@ import { effectiveMachineRate } from '../lib/machineRate'
 import { usedMachineIds } from '../lib/usageCheck'
 import { countMachines } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
+import { PersonBadge } from '../components/ui/PersonBadge'
 import { FilterSelect } from '../components/ui/FilterSelect'
 import { format } from 'date-fns'
 import type { Machine } from '../types/database'
@@ -103,8 +104,8 @@ export default function MachinesPage() {
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${m.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>{m.is_active ? t.common.active : t.common.inactive}</span>
                   </td>
                   <td className="px-4 py-2.5 text-gray-500">
-                    <div>{format(new Date(m.updated_at), 'd. M. yyyy')}</div>
-                    {m.editor && <div className="text-xs text-gray-400">{m.editor.first_name} {m.editor.last_name}</div>}
+                    <div className="text-xs mb-1">{format(new Date(m.updated_at), 'd. M. yyyy')}</div>
+                    {m.editor && <PersonBadge name={`${m.editor.first_name} ${m.editor.last_name}`} />}
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>
                     <div className="flex gap-1 justify-end">

@@ -10,6 +10,7 @@ import Pagination from '../components/ui/Pagination'
 import { countQuotes } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
 import { FilterSelect } from '../components/ui/FilterSelect'
+import { PersonBadge } from '../components/ui/PersonBadge'
 import type { Quote, QuoteStatus } from '../types/database'
 import { format } from 'date-fns'
 
@@ -176,7 +177,7 @@ export default function QuotesPage() {
               {paged.map(q => (
                 <tr key={q.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate(canEdit && q.status === 'draft' ? `/quotes/${q.id}/edit` : `/quotes/${q.id}`)}>
                   <td className="px-4 py-3 font-mono text-gray-700">{q.quote_number}</td>
-                  <td className="px-4 py-3 text-gray-900">{q.customers?.name ?? '—'}</td>
+                  <td className="px-4 py-3">{q.customers?.name ? <PersonBadge name={q.customers.name} /> : <span className="text-gray-400">—</span>}</td>
                   <td className="px-4 py-3">
                     <div className="text-gray-900">{q.contact_person || '—'}</div>
                     {q.contact_email && <div className="text-xs text-gray-400">{q.contact_email}</div>}
@@ -259,7 +260,7 @@ function AssigneeCell({ quoteId, assigneeId, assignee, users, canEdit, noAssigne
   const label = assignee ? `${assignee.first_name} ${assignee.last_name}` : null
 
   if (!canEdit) {
-    return <span className="text-sm text-gray-500">{label ?? '—'}</span>
+    return label ? <PersonBadge name={label} /> : <span className="text-gray-400">—</span>
   }
 
   return (
@@ -267,9 +268,13 @@ function AssigneeCell({ quoteId, assigneeId, assignee, users, canEdit, noAssigne
       <button
         onClick={() => setOpen(o => !o)}
         disabled={saving}
-        className={`flex items-center gap-1 text-sm rounded-lg px-2 py-1 transition-colors ${label ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-400 hover:bg-gray-100'}`}>
-        {saving ? <span className="w-3 h-3 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" /> : null}
-        <span className="max-w-[120px] truncate">{label ?? noAssigneeLabel}</span>
+        className="flex items-center gap-1 rounded-lg hover:bg-gray-100 transition-colors p-0.5">
+        {saving
+          ? <span className="w-3 h-3 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-2" />
+          : label
+            ? <PersonBadge name={label} />
+            : <span className="text-xs text-gray-400 px-2 py-0.5">{noAssigneeLabel}</span>
+        }
         <ChevronDown className="w-3 h-3 shrink-0 text-gray-400" />
       </button>
       {open && (

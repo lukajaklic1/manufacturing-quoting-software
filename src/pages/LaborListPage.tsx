@@ -9,6 +9,7 @@ import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { PageHeader } from '../components/ui/PageHeader'
+import { PersonBadge } from '../components/ui/PersonBadge'
 import { FilterSelect } from '../components/ui/FilterSelect'
 import Pagination from '../components/ui/Pagination'
 import { effectiveLaborRate } from '../lib/laborRate'
@@ -99,7 +100,7 @@ export default function LaborListPage() {
                   </td>
                   <td className="px-4 py-2.5 text-gray-500">
                     <div>{format(new Date(l.updated_at), 'd. M. yyyy')}</div>
-                    {l.editor && <div className="text-xs text-gray-400">{l.editor.first_name} {l.editor.last_name}</div>}
+                    {l.editor && <PersonBadge name={`${l.editor.first_name} ${l.editor.last_name}`} />}
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>
                     <div className="flex gap-1 justify-end">
