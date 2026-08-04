@@ -38,13 +38,17 @@ export default function Sidebar({ onClose }: SidebarProps) {
     onClose?.()
   }
 
+  const initials = company?.name
+    ? company.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    : '?'
+
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen shrink-0">
+    <aside className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col h-screen shrink-0">
       {/* Logo + mobile close */}
-      <div className="px-5 py-5 border-b border-gray-100 flex items-center justify-between">
+      <div className="px-4 py-4 border-b border-gray-200 flex items-center justify-between">
         <AppLogo size="md" />
         {onClose && (
-          <button onClick={onClose} className="lg:hidden p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+          <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-4 h-4" />
           </button>
         )}
@@ -52,9 +56,13 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
       {/* Company badge */}
       {company && (
-        <div className="px-4 py-3 border-b border-gray-100">
-          <p className="text-xs text-gray-400 mb-0.5">{t.common.company}</p>
-          <p className="text-sm font-medium text-gray-800 truncate">{company.name}</p>
+        <div className="px-3 py-3 border-b border-gray-200">
+          <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-gray-100 cursor-default transition-colors">
+            <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+              {initials}
+            </div>
+            <p className="text-sm font-medium text-gray-900 truncate">{company.name}</p>
+          </div>
         </div>
       )}
 
@@ -68,33 +76,33 @@ export default function Sidebar({ onClose }: SidebarProps) {
             className={({ isActive }) => cn(
               'flex items-center gap-2.5 px-3 py-1.5 rounded-md mb-0.5 text-sm font-medium transition-colors',
               isActive
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900',
+                ? 'bg-gray-200 text-gray-900'
+                : 'text-gray-900 hover:bg-gray-100',
             )}
           >
-            <Icon className="w-4 h-4 shrink-0" />
+            <Icon className="w-4 h-4 shrink-0 text-gray-500" />
             {t.nav[key]}
           </NavLink>
         ))}
       </nav>
 
       {/* Bottom */}
-      <div className="border-t border-gray-100 p-2">
+      <div className="border-t border-gray-200 p-2">
         <NavLink
           to="/settings"
           onClick={handleNavClick}
           className={({ isActive }) => cn(
             'flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors mb-0.5',
-            isActive ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900',
+            isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-900 hover:bg-gray-100',
           )}
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-4 h-4 text-gray-500" />
           {t.nav.settings}
         </NavLink>
 
         {/* Language switcher */}
         <div className="flex items-center gap-2 px-3 py-2 mb-1">
-          <span className="text-xs text-gray-400 shrink-0">{t.language.label}:</span>
+          <span className="text-xs text-gray-500 shrink-0">{t.language.label}:</span>
           <div className="flex gap-1">
             {(['en', 'sl'] as const).map(l => (
               <button
@@ -102,7 +110,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
                 onClick={() => setLang(l)}
                 className={cn(
                   'px-2 py-0.5 rounded text-xs font-medium transition-colors',
-                  lang === l ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100',
+                  lang === l ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100',
                 )}
               >
                 {l === 'en' ? 'EN' : 'SL'}
@@ -112,15 +120,15 @@ export default function Sidebar({ onClose }: SidebarProps) {
         </div>
 
         <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold shrink-0">
+          <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-semibold shrink-0">
             {profile ? `${profile.first_name[0]}${profile.last_name[0]}` : '?'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-gray-800 truncate">
+            <p className="text-xs font-medium text-gray-900 truncate">
               {profile ? `${profile.first_name} ${profile.last_name}` : '—'}
             </p>
           </div>
-          <button onClick={handleSignOut} className="text-gray-400 hover:text-gray-600 transition-colors" title={t.nav.signOut}>
+          <button onClick={handleSignOut} className="text-gray-500 hover:text-gray-900 transition-colors" title={t.nav.signOut}>
             <LogOut className="w-4 h-4" />
           </button>
         </div>
