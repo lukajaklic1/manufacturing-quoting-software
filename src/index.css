@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 /* Disabled inputs in read-only review: clearly gray, no hover effects */
 fieldset:disabled input,
 fieldset:disabled select,
