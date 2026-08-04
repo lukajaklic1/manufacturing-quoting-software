@@ -66,7 +66,7 @@ export default function LaborListPage() {
           className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
         {loading ? (
           <div className="flex items-center justify-center h-40"><div className="animate-spin rounded-full h-7 w-7 border-b-2 border-blue-600" /></div>
         ) : filtered.length === 0 ? (
@@ -75,7 +75,7 @@ export default function LaborListPage() {
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[500px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
               {[s.operatorTitle, s.annualCost, s.ratePerHour, t.common.status, s.updatedAt, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-400">{h}</th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">

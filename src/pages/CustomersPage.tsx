@@ -130,7 +130,7 @@ export default function CustomersPage() {
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
         {loading ? (
           <div className="flex items-center justify-center h-48"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
         ) : filtered.length === 0 ? (
@@ -142,7 +142,7 @@ export default function CustomersPage() {
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[820px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
               {[s.companyName, s.contact, t.common.email, t.common.phone, s.paymentTerms, s.quotesCount, t.common.status, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-400">{h}</th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">

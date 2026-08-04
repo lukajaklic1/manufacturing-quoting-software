@@ -128,7 +128,7 @@ export default function SettingsPage() {
 
 function Section({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
       <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
         <div className="p-2 bg-blue-50 rounded-lg"><Icon className="w-4 h-4 text-blue-600" /></div>
         <h2 className="text-sm font-semibold text-gray-900">{title}</h2>

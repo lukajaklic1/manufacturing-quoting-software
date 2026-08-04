@@ -424,7 +424,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         <table className="w-full text-sm min-w-[720px]">
           <thead className="bg-gray-50 border-b border-gray-200"><tr>
             {['', s.partName, s.partNumber, s.quantity, s.sellingPrice, ''].map((h, i) => (
-              <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+              <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-400">{h}</th>
             ))}
           </tr></thead>
           <tbody className="divide-y divide-gray-200">

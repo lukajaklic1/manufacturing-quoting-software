@@ -136,7 +136,7 @@ export default function SuperAdminUsersPage() {
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">

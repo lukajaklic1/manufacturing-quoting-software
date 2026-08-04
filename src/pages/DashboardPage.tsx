@@ -273,42 +273,42 @@ export default function DashboardPage() {
 
       {/* Top Customers */}
       {sortedCustomers.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200"><h2 className="text-sm font-semibold text-gray-900">{s.topCustomers}</h2></div>
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('customer_name')}>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('customer_name')}>
                   <div className="flex items-center gap-1">
                     {s.stranka}
                     <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'customer_name' ? '#1f2937' : '#d1d5db', transform: sortKey === 'customer_name' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_value')}>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_value')}>
                   <div className="flex items-center justify-end gap-1">
                     {s.poslanaVrednost}
                     <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'sent_value' ? '#1f2937' : '#d1d5db', transform: sortKey === 'sent_value' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_value')}>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_value')}>
                   <div className="flex items-center justify-end gap-1">
                     {s.realiziranaVrednost}
                     <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'realized_value' ? '#1f2937' : '#d1d5db', transform: sortKey === 'realized_value' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
-                <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_count')}>
+                <th className="text-center px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_count')}>
                   <div className="flex items-center justify-center gap-1">
                     {s.sentCount}
                     <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'sent_count' ? '#1f2937' : '#d1d5db', transform: sortKey === 'sent_count' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
-                <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_count')}>
+                <th className="text-center px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_count')}>
                   <div className="flex items-center justify-center gap-1">
                     {s.realizedCount}
                     <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'realized_count' ? '#1f2937' : '#d1d5db', transform: sortKey === 'realized_count' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
                   </div>
                 </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('win_rate')}>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('win_rate')}>
                   <div className="flex items-center justify-end gap-1">
                     {s.winRate2}
                     <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'win_rate' ? '#1f2937' : '#d1d5db', transform: sortKey === 'win_rate' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
