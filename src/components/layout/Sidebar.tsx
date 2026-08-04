@@ -76,7 +76,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
             className={({ isActive }) => cn(
               'flex items-center gap-2.5 px-3 py-1.5 rounded-md mb-0.5 text-sm font-medium transition-colors',
               isActive
-                ? 'bg-gray-200 text-gray-900'
+                ? 'bg-[#f1f1f1] text-gray-900'
                 : 'text-gray-900 hover:bg-gray-100',
             )}
           >
@@ -93,7 +93,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           onClick={handleNavClick}
           className={({ isActive }) => cn(
             'flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors mb-0.5',
-            isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-900 hover:bg-gray-100',
+            isActive ? 'bg-[#f1f1f1] text-gray-900' : 'text-gray-900 hover:bg-gray-100',
           )}
         >
           <Settings className="w-4 h-4 text-gray-500" />
