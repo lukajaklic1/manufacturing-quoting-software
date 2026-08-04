@@ -144,17 +144,17 @@ export default function QuotesPage() {
         <div className="relative">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
-            className="pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48" />
+            className="pl-9 pr-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48" />
         </div>
         <CustomerCombo options={customerOptions} value={customerFilter} onChange={v => { setCustomerFilter(v); setPage(1) }}
           allLabel={`${s.customer}: ${t.common.all}`} placeholder={s.customer} />
         <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value as QuoteStatus | 'all'); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="all">{t.common.status}: {t.common.all}</option>
           {STATUSES.map(st => <option key={st} value={st}>{s.status[st]}</option>)}
         </select>
         <select value={assigneeFilter} onChange={e => { setAssigneeFilter(e.target.value); setPage(1) }}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="all">{s.assignee}: {lang === 'sl' ? 'Vsi' : 'All'}</option>
           <option value="unassigned">{s.noAssignee}</option>
           {companyUsers.map(u => <option key={u.id} value={u.id}>{u.first_name} {u.last_name}</option>)}
@@ -173,7 +173,7 @@ export default function QuotesPage() {
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[920px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
               {[s.quoteNumber, s.customer, s.contactPerson, s.pieces, t.common.status, s.annualValue, t.common.created, s.assignee, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-400">{h}</th>
+                <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500">{h}</th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">
@@ -322,7 +322,7 @@ function CustomerCombo({ options, value, onChange, allLabel, placeholder }: {
         onChange={e => { setQuery(e.target.value); setOpen(true) }}
         onFocus={() => setOpen(true)}
         placeholder={value === 'all' ? `${placeholder}…` : selectedLabel}
-        className="w-full pl-9 pr-8 py-2 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        className="w-full pl-9 pr-8 py-1.5 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
       {value !== 'all' && !open && (
         <button onClick={() => pick('all')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"><X className="w-3.5 h-3.5" /></button>
       )}

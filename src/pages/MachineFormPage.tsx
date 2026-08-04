@@ -116,7 +116,7 @@ export default function MachineFormPage() {
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">{s.category}</label>
               <select value={m.category ?? ''} onChange={e => setM(v => ({ ...v, category: (e.target.value || null) as MachineCategory | null }))}
-                className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                 <option value="">—</option>
                 {CATEGORIES.map(c => <option key={c} value={c}>{s.cat[c]}</option>)}
               </select>

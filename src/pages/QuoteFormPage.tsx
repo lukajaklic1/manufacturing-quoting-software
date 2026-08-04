@@ -387,7 +387,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
                   setCustomerId(cid)
                   const c = customers.find(x => x.id === cid)
                   if (c) { setContactPerson(c.contact_person ?? ''); setContactEmail(c.email ?? ''); setContactPhone(c.phone ?? ''); setPaymentTerms(c.payment_terms ?? ''); setParity(c.parity ?? '') }
-                }} className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                }} className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                   <option value="">{t.common.select}</option>
                   {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
@@ -424,7 +424,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         <table className="w-full text-sm min-w-[720px]">
           <thead className="bg-gray-50 border-b border-gray-200"><tr>
             {['', s.partName, s.partNumber, s.quantity, s.sellingPrice, ''].map((h, i) => (
-              <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-400">{h}</th>
+              <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">{h}</th>
             ))}
           </tr></thead>
           <tbody className="divide-y divide-gray-200">

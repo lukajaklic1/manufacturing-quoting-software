@@ -117,7 +117,7 @@ export default function SuperAdminUsersPage() {
         <select
           value={roleFilter}
           onChange={e => { setRoleFilter(e.target.value); resetPage() }}
-          className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         >
           <option value="all">Vse vloge</option>
           <option value="super_admin">Super admin</option>
@@ -128,7 +128,7 @@ export default function SuperAdminUsersPage() {
         <select
           value={statusFilter}
           onChange={e => { setStatusFilter(e.target.value); resetPage() }}
-          className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         >
           <option value="all">Vsi statusi</option>
           <option value="active">Aktivni</option>
@@ -230,7 +230,7 @@ function ComboFilter({ options, value, onChange, placeholder, allLabel }: {
         onChange={e => { setQuery(e.target.value); setOpen(true) }}
         onFocus={() => setOpen(true)}
         placeholder={value === 'all' ? `${placeholder}…` : selectedLabel}
-        className="pl-9 pr-8 py-2 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
+        className="pl-9 pr-8 py-1.5 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
       />
       {value !== 'all' && !open && (
         <button onClick={() => pick('all')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">

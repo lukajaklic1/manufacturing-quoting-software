@@ -63,7 +63,7 @@ export default function LaborListPage() {
       <div className="relative mb-4 max-w-xs">
         <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
         <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={s.operatorTitle}
-          className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
       <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
@@ -75,7 +75,7 @@ export default function LaborListPage() {
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[500px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
               {[s.operatorTitle, s.annualCost, s.ratePerHour, t.common.status, s.updatedAt, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-400">{h}</th>
+                <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">{h}</th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">

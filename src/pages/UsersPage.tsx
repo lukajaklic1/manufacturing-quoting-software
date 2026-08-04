@@ -249,7 +249,7 @@ export default function UsersPage() {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 {[t.common.name, t.common.email, s.jobTitle, s.role, t.common.status, ''].map((h, i) => (
-                  <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-400">{h}</th>
+                  <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500">{h}</th>
                 ))}
               </tr>
             </thead>

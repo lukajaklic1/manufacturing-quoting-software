@@ -4,6 +4,8 @@
 
 * {
   font-family: 'Inter', sans-serif;
+  font-feature-settings: 'ss01' 0, 'zero' 0;
+  font-variant-numeric: normal;
 }
 
 /* Disabled inputs in read-only review: clearly gray, no hover effects */
