@@ -268,7 +268,7 @@ function AssigneeCell({ quoteId, assigneeId, assignee, users, canEdit, noAssigne
       <button
         onClick={() => setOpen(o => !o)}
         disabled={saving}
-        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-gray-200 text-sm font-medium text-gray-900 hover:bg-gray-100 transition-colors whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}>
+        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-gray-200 text-sm font-medium text-gray-500 hover:bg-gray-100 transition-colors whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}>
         {saving
           ? <span className="w-3 h-3 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
           : label
