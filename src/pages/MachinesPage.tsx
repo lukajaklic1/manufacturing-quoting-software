@@ -32,10 +32,12 @@ export default function MachinesPage() {
   const [used, setUsed] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [catFilter, setCatFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(1)
 
   const filtered = rows.filter(m =>
     (catFilter === 'all' || m.category === catFilter) &&
+    (statusFilter === 'all' || (statusFilter === 'active' ? m.is_active : !m.is_active)) &&
     (!search || m.name.toLowerCase().includes(search.toLowerCase()) || (m.model ?? '').toLowerCase().includes(search.toLowerCase())))
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
@@ -73,6 +75,9 @@ export default function MachinesPage() {
         <FilterSelect label={s.category} value={catFilter === 'all' ? '' : catFilter} allLabel={t.common.all}
           options={Object.entries(s.cat).map(([k, label]) => ({ value: k, label: label as string }))}
           onChange={v => { setCatFilter(v || 'all'); setPage(1) }} />
+        <FilterSelect label={t.common.status} value={statusFilter === 'all' ? '' : statusFilter} allLabel={t.common.all}
+          options={[{ value: 'active', label: t.common.active }, { value: 'inactive', label: t.common.inactive }]}
+          onChange={v => { setStatusFilter((v || 'all') as typeof statusFilter); setPage(1) }} />
       </div>
 
       <div className="-mx-4 border-t border-b border-gray-200">

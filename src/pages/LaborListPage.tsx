@@ -9,6 +9,7 @@ import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { PageHeader } from '../components/ui/PageHeader'
+import { FilterSelect } from '../components/ui/FilterSelect'
 import Pagination from '../components/ui/Pagination'
 import { effectiveLaborRate } from '../lib/laborRate'
 import { usedLaborIds } from '../lib/usageCheck'
@@ -30,9 +31,13 @@ export default function LaborListPage() {
   const [toDelete, setToDelete] = useState<LaborRate | null>(null)
   const [used, setUsed] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(1)
 
-  const filtered = rows.filter(l => !search || l.name.toLowerCase().includes(search.toLowerCase()))
+  const filtered = rows.filter(l =>
+    (!search || l.name.toLowerCase().includes(search.toLowerCase())) &&
+    (statusFilter === 'all' || (statusFilter === 'active' ? l.is_active : !l.is_active))
+  )
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   useEffect(() => { if (company) load() }, [company])
@@ -60,10 +65,15 @@ export default function LaborListPage() {
       <PageHeader title={t.nav.labor} icon={HardHat} count={rows.length} action={canEdit && <Button onClick={() => navigate('/labor/new')} className="gap-2"><Plus className="w-4 h-4" />{s.addLabor}</Button>} />
       <div className="p-4">
 
-      <div className="relative mb-4 max-w-xs">
-        <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={s.operatorTitle}
-          className="w-full pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="relative max-w-xs">
+          <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={s.operatorTitle}
+            className="w-full pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <FilterSelect label={t.common.status} value={statusFilter === 'all' ? '' : statusFilter} allLabel={t.common.all}
+          options={[{ value: 'active', label: t.common.active }, { value: 'inactive', label: t.common.inactive }]}
+          onChange={v => { setStatusFilter((v || 'all') as typeof statusFilter); setPage(1) }} />
       </div>
 
       <div className="-mx-4 border-t border-b border-gray-200">
