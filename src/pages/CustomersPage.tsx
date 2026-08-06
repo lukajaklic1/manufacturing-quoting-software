@@ -162,7 +162,7 @@ export default function CustomersPage() {
                   <td className="px-4 py-3 text-gray-600">{c.payment_terms ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600">{counts[c.id] ?? 0}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-md text-sm font-medium" style={(c.status ?? 'active') === 'active' ? { backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' } : { backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>
+                    <span className="px-2 py-0.5 rounded-md text-xs font-medium" style={(c.status ?? 'active') === 'active' ? { backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' } : { backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>
                       {(c.status ?? 'active') === 'active' ? t.common.activeF : t.common.inactiveF}
                     </span>
                   </td>

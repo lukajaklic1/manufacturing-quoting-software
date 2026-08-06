@@ -103,7 +103,7 @@ export default function LaborListPage() {
                   <td className="px-4 py-2.5 text-gray-600">{money(l.annual_cost)}</td>
                   <td className="px-4 py-2.5 text-gray-700">{money(effectiveLaborRate(l))} /h</td>
                   <td className="px-4 py-2.5">
-                    <span className="px-2 py-0.5 rounded-md text-sm font-medium" style={l.is_active ? { backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' } : { backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>{l.is_active ? t.common.active : t.common.inactive}</span>
+                    <span className="px-2 py-0.5 rounded-md text-xs font-medium" style={l.is_active ? { backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' } : { backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>{l.is_active ? t.common.active : t.common.inactive}</span>
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 flex-wrap">

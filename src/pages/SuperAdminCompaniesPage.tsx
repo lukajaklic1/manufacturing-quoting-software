@@ -128,7 +128,7 @@ export default function SuperAdminCompaniesPage() {
                 <td className="px-5 py-3.5 text-gray-500">{fmt(c.created_at)}</td>
                 <td className="px-5 py-3.5 text-center text-gray-600">{pluralUsers(c.user_count ?? 0)}</td>
                 <td className="px-5 py-3.5 text-center">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium ${
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
                     c.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
                   }`}>
                     {c.is_active ? 'Aktivno' : 'Deaktivirano'}

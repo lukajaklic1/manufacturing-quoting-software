@@ -161,16 +161,16 @@ export default function SuperAdminUsersPage() {
                 <td className="px-5 py-3.5 text-gray-600">{u.company_name}</td>
                 <td className="px-5 py-3.5 text-center">
                   {u.is_super_admin ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-700">Super admin</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">Super admin</span>
                   ) : u.is_admin ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-purple-100 text-purple-700">Admin</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700">Admin</span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-gray-100 text-gray-500">Uporabnik</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-500">Uporabnik</span>
                   )}
                 </td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(u.created_at)}</td>
                 <td className="px-5 py-3.5 text-center">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium ${
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
                     u.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
                   }`}>
                     {u.is_active ? 'Aktiven' : 'Deaktiviran'}

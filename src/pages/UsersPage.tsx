@@ -269,14 +269,14 @@ export default function UsersPage() {
                     <td className="px-4 py-3 text-gray-600">{u.email}</td>
                     <td className="px-4 py-3 text-gray-600">{u.job_title ?? '—'}</td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-0.5 rounded-md text-sm font-medium" style={u.is_admin ? { backgroundColor: '#e5eeff', border: '1px solid #d6e5ff', color: '#215bcf' } : { backgroundColor: '#f5f5f5', border: '1px solid #eeeff1', color: '#5e5e5e' }}>
+                      <span className="px-2 py-0.5 rounded-md text-xs font-medium" style={u.is_admin ? { backgroundColor: '#e5eeff', border: '1px solid #d6e5ff', color: '#215bcf' } : { backgroundColor: '#f5f5f5', border: '1px solid #eeeff1', color: '#5e5e5e' }}>
                         {u.is_admin ? s.admin : s.member}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       {u.is_active
-                        ? <span className="px-2 py-0.5 rounded-md text-sm font-medium" style={{ backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' }}>{t.common.active}</span>
-                        : <span className="px-2 py-0.5 rounded-md text-sm font-medium" style={{ backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>{s.inactive}</span>}
+                        ? <span className="px-2 py-0.5 rounded-md text-xs font-medium" style={{ backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' }}>{t.common.active}</span>
+                        : <span className="px-2 py-0.5 rounded-md text-xs font-medium" style={{ backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>{s.inactive}</span>}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 justify-end">
@@ -305,12 +305,12 @@ export default function UsersPage() {
                     <td className="px-4 py-3 text-gray-600">{invite.email}</td>
                     <td className="px-4 py-3 text-gray-600">{invite.job_title ?? '—'}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded-md text-sm font-medium ${invite.is_admin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${invite.is_admin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
                         {invite.is_admin ? s.admin : s.member}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-0.5 rounded-md text-sm font-medium" style={{ backgroundColor: '#fff3cc', border: '1px solid #ffe5a0', color: '#874d00' }}>{s.invited}</span>
+                      <span className="px-2 py-0.5 rounded-md text-xs font-medium" style={{ backgroundColor: '#fff3cc', border: '1px solid #ffe5a0', color: '#874d00' }}>{s.invited}</span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 justify-end">
