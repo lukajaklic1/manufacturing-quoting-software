@@ -40,10 +40,6 @@ export default function Sidebar({ onClose }: SidebarProps) {
     onClose?.()
   }
 
-  const initials = company?.name
-    ? company.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
-    : '?'
-
   return (
     <aside className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col h-screen shrink-0">
       {/* App logo â€" same height as PageHeader (h-[57px]) */}

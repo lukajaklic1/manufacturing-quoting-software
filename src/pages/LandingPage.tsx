@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { useEffect, useState, useRef, RefObject } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import type { RefObject } from 'react'
 import { ArrowRight, Check, ChevronDown, Zap, Calculator, TrendingUp, FileText, BarChart2, Settings, Factory, Box, Star, ChevronRight } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'

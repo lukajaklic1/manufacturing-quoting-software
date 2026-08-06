@@ -13,7 +13,6 @@ import Input from '../components/ui/Input'
 import NumberInput from '../components/ui/NumberInput'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Pagination from '../components/ui/Pagination'
-import { countMaterials } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
 import { FilterSelect } from '../components/ui/FilterSelect'
 import { PersonBadge } from '../components/ui/PersonBadge'
@@ -28,7 +27,7 @@ const empty: Form = { name: '', category: '', density: null, price_per_kg: null,
 export default function MaterialsPage() {
   const { company, hasPerm, loading: permLoading } = useCompany()
   const canEdit = hasPerm('materials', 'create')
-  const { t, lang } = useLanguage()
+  const { t } = useLanguage()
   const s = t.qp
   type Row = Material & { editor: { first_name: string; last_name: string } | null }
   const [rows, setRows] = useState<Row[]>([])

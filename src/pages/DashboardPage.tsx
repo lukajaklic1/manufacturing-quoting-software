@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { PageHeader } from '../components/ui/PageHeader'
 import { LayoutDashboard, TrendingUp, Trophy, FileText, CheckCircle2, Search, X, CalendarDays } from 'lucide-react'
 import { SortIcon } from '../components/ui/SortIcon'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -50,7 +50,6 @@ export default function DashboardPage() {
   const [trends, setTrends] = useState<TrendData[]>([])
   const [customers, setCustomers] = useState<CustomerStat[]>([])
   const [loading, setLoading] = useState(true)
-  const [statusDist, setStatusDist] = useState<{ status: string; count: number }[]>([])
   const [period, setPeriod] = useState<1 | 3 | 6 | 12>(3)
   const [sortKey, setSortKey] = useState<SortKey>('sent_value')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
@@ -72,19 +71,14 @@ export default function DashboardPage() {
   async function load() {
     if (!company) return
     setLoading(true)
-    const [{ data: st }, { data: tr }, { data: cu }, { data: qs }] = await Promise.all([
+    const [{ data: st }, { data: tr }, { data: cu }] = await Promise.all([
       (supabase as any).rpc('get_quote_dashboard_stats', { p_company_id: company.id, p_customer_id: filterCustomerId, p_assignee_id: assigneeFilter || null }),
       (supabase as any).rpc('get_quote_trends', { p_company_id: company.id, p_months: period, p_customer_id: filterCustomerId, p_assignee_id: assigneeFilter || null }),
       (supabase as any).rpc('get_customer_stats', { p_company_id: company.id, p_assignee_id: assigneeFilter || null }),
-      supabase.from('quotes').select('status').eq('company_id', company.id),
     ])
     setStats(st as Stats)
     setTrends(((tr as TrendData[]) || []).sort((a, b) => a.period.localeCompare(b.period)))
     setCustomers((cu as CustomerStat[]) || [])
-    // Build status distribution
-    const counts: Record<string, number> = {}
-    for (const q of (qs as { status: string }[]) ?? []) counts[q.status] = (counts[q.status] ?? 0) + 1
-    setStatusDist(Object.entries(counts).map(([status, count]) => ({ status, count })))
     setLoading(false)
   }
 
@@ -108,15 +102,6 @@ export default function DashboardPage() {
   const totalSentCount = trends.reduce((s, t) => s + (t.sent_count || 0), 0)
   const totalRealizedCount = trends.reduce((s, t) => s + (t.realized_count || 0), 0)
 
-  const STATUS_COLORS: Record<string, string> = {
-    won: '#00d17e', lost: '#ff5454', sent: '#3b82f6', issued: '#a78bfa', draft: '#d1d5db',
-  }
-  const STATUS_LABELS_SL: Record<string, string> = {
-    won: 'Dobljene', lost: 'Izgubljene', sent: 'Poslane', issued: 'Izdane', draft: 'Osnutki',
-  }
-  const STATUS_LABELS_EN: Record<string, string> = {
-    won: 'Won', lost: 'Lost', sent: 'Sent', issued: 'Issued', draft: 'Draft',
-  }
 
   const formatPeriod = (date: string) => {
     if (!date.includes('-')) return date

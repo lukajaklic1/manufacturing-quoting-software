@@ -10,7 +10,6 @@ import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Pagination from '../components/ui/Pagination'
 import { effectiveMachineRate } from '../lib/machineRate'
 import { usedMachineIds } from '../lib/usageCheck'
-import { countMachines } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
 import { PersonBadge } from '../components/ui/PersonBadge'
 import { FilterSelect } from '../components/ui/FilterSelect'
@@ -22,7 +21,7 @@ const PAGE_SIZE = 20
 export default function MachinesPage() {
   const { company, hasPerm, loading: permLoading } = useCompany()
   const canEdit = hasPerm('machine_rates', 'create')
-  const { t, lang } = useLanguage()
+  const { t } = useLanguage()
   const s = t.qp
   const navigate = useNavigate()
   const cur = company?.currency ?? 'EUR'

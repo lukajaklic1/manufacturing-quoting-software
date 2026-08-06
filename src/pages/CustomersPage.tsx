@@ -11,7 +11,6 @@ import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import Pagination from '../components/ui/Pagination'
-import { countCustomers } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
 import { FilterSelect } from '../components/ui/FilterSelect'
 import { PersonBadge } from '../components/ui/PersonBadge'
@@ -32,7 +31,7 @@ const PAGE_SIZE = 20
 export default function CustomersPage() {
   const { company, hasPerm, loading: permLoading } = useCompany()
   const canEdit = hasPerm('customers', 'create')
-  const { t, lang } = useLanguage()
+  const { t } = useLanguage()
   const s = t.qp
   const [rows, setRows] = useState<Customer[]>([])
   const [counts, setCounts] = useState<Record<string, number>>({})

@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { Plus, Eye, Pencil, FileText, Search, Check, X, Box, ChevronDown, MoreVertical } from 'lucide-react'
+import { Plus, FileText, Search, Check, X, Box, ChevronDown, MoreVertical } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { getThumbByPath } from '../lib/thumbs'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
 import Button from '../components/ui/Button'
 import Pagination from '../components/ui/Pagination'
-import { countQuotes } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
 import { FilterSelect } from '../components/ui/FilterSelect'
 import { PersonBadge } from '../components/ui/PersonBadge'
@@ -37,7 +36,7 @@ interface Row extends Quote { customers: { name: string } | null; assignee: { fi
 export default function QuotesPage() {
   const { company, hasPerm, loading: permLoading } = useCompany()
   const canEdit = hasPerm('quotes', 'create')
-  const { t, lang } = useLanguage()
+  const { t } = useLanguage()
   const s = t.qp
   const navigate = useNavigate()
   const [rows, setRows] = useState<Row[]>([])

@@ -9,7 +9,6 @@ import Modal from '../components/ui/Modal'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Pagination from '../components/ui/Pagination'
-import { countUsers } from '../utils/pluralize'
 import { PageHeader } from '../components/ui/PageHeader'
 import type { User as AppUser, UserPermission, UserInvitation } from '../types/database'
 
@@ -72,7 +71,7 @@ function PermMatrix({ perms, onToggle, labels }: { perms: PermMap; onToggle: (m:
 
 export default function UsersPage() {
   const { company, isAdmin, loading } = useCompany()
-  const { t, lang } = useLanguage()
+  const { t } = useLanguage()
   const s = t.settings
   const [users, setUsers] = useState<AppUser[]>([])
   const [permsByUser, setPermsByUser] = useState<Record<string, PermMap>>({})

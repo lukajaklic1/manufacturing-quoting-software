@@ -14,7 +14,6 @@ import { FilterSelect } from '../components/ui/FilterSelect'
 import Pagination from '../components/ui/Pagination'
 import { effectiveLaborRate } from '../lib/laborRate'
 import { usedLaborIds } from '../lib/usageCheck'
-import { countWorkers } from '../utils/pluralize'
 import type { LaborRate } from '../types/database'
 
 const PAGE_SIZE = 20
@@ -22,7 +21,7 @@ const PAGE_SIZE = 20
 export default function LaborListPage() {
   const { company, hasPerm, loading: permLoading } = useCompany()
   const canEdit = hasPerm('labor_rates', 'create')
-  const { t, lang } = useLanguage()
+  const { t } = useLanguage()
   const s = t.qp
   const navigate = useNavigate()
   const cur = company?.currency ?? 'EUR'
