@@ -94,8 +94,8 @@ export default function LaborListPage() {
                 <tr key={l.id} className={`hover:bg-gray-50 ${canEdit ? 'cursor-pointer' : ''}`} onClick={() => canEdit && navigate(`/labor/${l.id}/edit`)}>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-                        <HardHat className="w-3.5 h-3.5 text-blue-500" />
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#e5eeff', border: '1px solid #d6e5ff' }}>
+                        <HardHat className="w-3.5 h-3.5" style={{ color: '#215bcf' }} />
                       </div>
                       <span className="font-medium text-gray-900">{l.name}</span>
                     </div>
@@ -103,7 +103,7 @@ export default function LaborListPage() {
                   <td className="px-4 py-2.5 text-gray-600">{money(l.annual_cost)}</td>
                   <td className="px-4 py-2.5 text-gray-700">{money(effectiveLaborRate(l))} /h</td>
                   <td className="px-4 py-2.5">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${l.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>{l.is_active ? t.common.active : t.common.inactive}</span>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={l.is_active ? { backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' } : { backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>{l.is_active ? t.common.active : t.common.inactive}</span>
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 flex-wrap">

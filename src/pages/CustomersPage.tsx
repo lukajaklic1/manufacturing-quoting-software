@@ -150,8 +150,8 @@ export default function CustomersPage() {
                 <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-                        <Building2 className="w-3.5 h-3.5 text-blue-500" />
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#e5eeff', border: '1px solid #d6e5ff' }}>
+                        <Building2 className="w-3.5 h-3.5" style={{ color: '#215bcf' }} />
                       </div>
                       <span className="font-medium text-gray-900">{c.name}{c.vat_number && <span className="ml-2 text-xs text-gray-400 font-normal">{c.vat_number}</span>}</span>
                     </div>
@@ -162,7 +162,7 @@ export default function CustomersPage() {
                   <td className="px-4 py-3 text-gray-600">{c.payment_terms ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600">{counts[c.id] ?? 0}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${(c.status ?? 'active') === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={(c.status ?? 'active') === 'active' ? { backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' } : { backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>
                       {(c.status ?? 'active') === 'active' ? t.common.activeF : t.common.inactiveF}
                     </span>
                   </td>

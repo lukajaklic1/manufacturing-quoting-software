@@ -258,18 +258,25 @@ export default function UsersPage() {
                 const invite = u ? null : (item as UserInvitation)
                 return u ? (
                   <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">{u.first_name} {u.last_name}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#e5eeff', border: '1px solid #d6e5ff' }}>
+                          <UserCog className="w-3.5 h-3.5" style={{ color: '#215bcf' }} />
+                        </div>
+                        <span className="font-medium text-gray-900">{u.first_name} {u.last_name}</span>
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-gray-600">{u.email}</td>
                     <td className="px-4 py-3 text-gray-600">{u.job_title ?? '—'}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_admin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={u.is_admin ? { backgroundColor: '#e5eeff', border: '1px solid #d6e5ff', color: '#215bcf' } : { backgroundColor: '#f5f5f5', border: '1px solid #eeeff1', color: '#5e5e5e' }}>
                         {u.is_admin ? s.admin : s.member}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       {u.is_active
-                        ? <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{t.common.active}</span>
-                        : <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">{s.inactive}</span>}
+                        ? <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' }}>{t.common.active}</span>
+                        : <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>{s.inactive}</span>}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 justify-end">
@@ -287,7 +294,14 @@ export default function UsersPage() {
                   </tr>
                 ) : invite ? (
                   <tr key={invite.id} className="hover:bg-gray-50 transition-colors bg-amber-50/30">
-                    <td className="px-4 py-3 text-gray-500 flex items-center gap-2"><Mail className="w-3.5 h-3.5" />{invite.first_name} {invite.last_name}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#fff3cc', border: '1px solid #ffe5a0' }}>
+                          <Mail className="w-3.5 h-3.5" style={{ color: '#874d00' }} />
+                        </div>
+                        <span className="text-gray-500">{invite.first_name} {invite.last_name}</span>
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-gray-600">{invite.email}</td>
                     <td className="px-4 py-3 text-gray-600">{invite.job_title ?? '—'}</td>
                     <td className="px-4 py-3">
@@ -296,7 +310,7 @@ export default function UsersPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">{s.invited}</span>
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#fff3cc', border: '1px solid #ffe5a0', color: '#874d00' }}>{s.invited}</span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 justify-end">

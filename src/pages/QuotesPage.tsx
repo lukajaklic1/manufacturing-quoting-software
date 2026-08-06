@@ -20,16 +20,16 @@ interface CompanyUser { id: string; first_name: string; last_name: string }
 const PAGE_SIZE = 20
 const STATUSES: QuoteStatus[] = ['draft', 'issued', 'sent', 'won', 'lost']
 
-const STATUS_STYLE: Record<QuoteStatus, string> = {
-  draft: 'bg-gray-100 text-gray-600',
-  issued: 'bg-indigo-100 text-indigo-700',
-  sent: 'bg-blue-100 text-blue-700',
-  accepted: 'bg-green-100 text-green-700',
-  rejected: 'bg-orange-100 text-orange-700',
-  expired: 'bg-amber-100 text-amber-700',
-  won: 'bg-green-100 text-green-700',
-  lost: 'bg-orange-100 text-orange-700',
-  frozen: 'bg-purple-100 text-purple-700',
+const STATUS_STYLE: Record<QuoteStatus, { bg: string; border: string; color: string }> = {
+  draft:    { bg: '#fff3cc', border: '#ffe5a0', color: '#874d00' },
+  issued:   { bg: '#e5eeff', border: '#d6e5ff', color: '#215bcf' },
+  sent:     { bg: '#e5eeff', border: '#d6e5ff', color: '#215bcf' },
+  accepted: { bg: '#e0fced', border: '#d4f8e6', color: '#098259' },
+  rejected: { bg: '#feeee1', border: '#fee0c8', color: '#9e3f00' },
+  expired:  { bg: '#fff3cc', border: '#ffe5a0', color: '#874d00' },
+  won:      { bg: '#e0fced', border: '#d4f8e6', color: '#098259' },
+  lost:     { bg: '#feeee1', border: '#fee0c8', color: '#9e3f00' },
+  frozen:   { bg: '#e5eeff', border: '#d6e5ff', color: '#215bcf' },
 }
 
 interface Row extends Quote { customers: { name: string } | null; assignee: { first_name: string; last_name: string } | null }
@@ -176,7 +176,14 @@ export default function QuotesPage() {
             <tbody className="divide-y divide-gray-200">
               {paged.map(q => (
                 <tr key={q.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate(canEdit && q.status === 'draft' ? `/quotes/${q.id}/edit` : `/quotes/${q.id}`)}>
-                  <td className="px-4 py-3 font-mono text-gray-700">{q.quote_number}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#e5eeff', border: '1px solid #d6e5ff' }}>
+                        <FileText className="w-3.5 h-3.5" style={{ color: '#215bcf' }} />
+                      </div>
+                      <span className="font-mono text-gray-700">{q.quote_number}</span>
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-gray-900">{q.customers?.name ?? '—'}</td>
                   <td className="px-4 py-3">
                     <div className="text-gray-900">{q.contact_person || '—'}</div>
@@ -195,7 +202,7 @@ export default function QuotesPage() {
                       {(partCounts[q.id] ?? 0) > 3 && <span className="text-xs text-gray-400 ml-0.5">+{(partCounts[q.id] ?? 0) - 3}</span>}
                     </div>
                   </td>
-                  <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLE[q.status]}`}>{s.status[q.status]}</span></td>
+                  <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: STATUS_STYLE[q.status].bg, border: `1px solid ${STATUS_STYLE[q.status].border}`, color: STATUS_STYLE[q.status].color }}>{s.status[q.status]}</span></td>
                   <td className="px-4 py-3 text-gray-700">{(annual[q.id] ?? 0).toLocaleString('de-DE', { style: 'currency', currency: company?.currency ?? 'EUR' })}</td>
                   <td className="px-4 py-3 text-gray-500">{format(new Date(q.created_at), 'd. M. yyyy')}</td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
