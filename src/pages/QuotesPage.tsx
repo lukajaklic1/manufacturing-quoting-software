@@ -195,7 +195,7 @@ export default function QuotesPage() {
                         <span className="min-w-[1.25rem] h-5 px-1 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium flex items-center justify-center shrink-0">{partCounts[q.id]}</span>
                       )}
                       {(partSlots[q.id] ?? []).map((url, idx) => (
-                        <div key={idx} className="w-11 h-11 rounded-lg overflow-hidden flex items-center justify-center shrink-0" style={{ border: '1px solid #d6e5ff', backgroundColor: '#e5eeff' }}>
+                        <div key={idx} className="w-11 h-11 rounded-lg overflow-hidden flex items-center justify-center shrink-0" style={{ border: '1px solid #d6e5ff', backgroundColor: '#f4f7ff' }}>
                           {url ? <img src={url} alt="" className="w-full h-full object-contain opacity-60" /> : <Box className="w-5 h-5" style={{ color: '#d6e5ff' }} />}
                         </div>
                       ))}
