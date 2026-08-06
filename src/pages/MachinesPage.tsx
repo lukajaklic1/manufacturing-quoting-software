@@ -96,7 +96,14 @@ export default function MachinesPage() {
             <tbody className="divide-y divide-gray-200">
               {paginated.map(m => (
                 <tr key={m.id} className={`hover:bg-gray-50 ${canEdit ? 'cursor-pointer' : ''}`} onClick={() => canEdit && navigate(`/machines/${m.id}/edit`)}>
-                  <td className="px-4 py-2.5 font-medium text-gray-900">{m.name}</td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                        <Factory className="w-3.5 h-3.5 text-blue-500" />
+                      </div>
+                      <span className="font-medium text-gray-900">{m.name}</span>
+                    </div>
+                  </td>
                   <td className="px-4 py-2.5 text-gray-600">{m.model || '—'}</td>
                   <td className="px-4 py-2.5 text-gray-600">{m.category ? s.cat[m.category] : '—'}</td>
                   <td className="px-4 py-2.5 text-gray-700">{rate(m)} /h</td>

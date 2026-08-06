@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, Users, Search } from 'lucide-react'
+import { Plus, Pencil, Trash2, Users, Search, CalendarDays, Building2 } from 'lucide-react'
+import { format } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -140,14 +141,21 @@ export default function CustomersPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[820px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
-              {[s.companyName, s.contact, t.common.email, t.common.phone, s.paymentTerms, s.quotesCount, t.common.status, ''].map((h, i) => (
+              {[s.companyName, s.contact, t.common.email, t.common.phone, s.paymentTerms, s.quotesCount, t.common.status, s.updatedAt, ''].map((h, i) => (
                 <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500">{h}</th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">
               {paginated.map(c => (
                 <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900">{c.name}{c.vat_number && <span className="ml-2 text-xs text-gray-400 font-normal">{c.vat_number}</span>}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                        <Building2 className="w-3.5 h-3.5 text-blue-500" />
+                      </div>
+                      <span className="font-medium text-gray-900">{c.name}{c.vat_number && <span className="ml-2 text-xs text-gray-400 font-normal">{c.vat_number}</span>}</span>
+                    </div>
+                  </td>
                   <td className="px-4 py-3">{c.contact_person ? <PersonBadge name={c.contact_person} /> : <span className="text-gray-400">—</span>}</td>
                   <td className="px-4 py-3 text-gray-600">{c.email ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600">{c.phone ?? '—'}</td>
@@ -157,6 +165,9 @@ export default function CustomersPage() {
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${(c.status ?? 'active') === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                       {(c.status ?? 'active') === 'active' ? t.common.activeF : t.common.inactiveF}
                     </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}><CalendarDays className="w-3 h-3 text-gray-500 shrink-0" />{format(new Date(c.updated_at), 'd. M. yyyy')}</span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 justify-end">

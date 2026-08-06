@@ -92,7 +92,14 @@ export default function LaborListPage() {
             <tbody className="divide-y divide-gray-200">
               {paginated.map(l => (
                 <tr key={l.id} className={`hover:bg-gray-50 ${canEdit ? 'cursor-pointer' : ''}`} onClick={() => canEdit && navigate(`/labor/${l.id}/edit`)}>
-                  <td className="px-4 py-2.5 font-medium text-gray-900">{l.name}</td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                        <HardHat className="w-3.5 h-3.5 text-blue-500" />
+                      </div>
+                      <span className="font-medium text-gray-900">{l.name}</span>
+                    </div>
+                  </td>
                   <td className="px-4 py-2.5 text-gray-600">{money(l.annual_cost)}</td>
                   <td className="px-4 py-2.5 text-gray-700">{money(effectiveLaborRate(l))} /h</td>
                   <td className="px-4 py-2.5">
