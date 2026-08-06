@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+﻿﻿import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '../../lib/cn'
 import { useLanguage } from '../../hooks/useLanguage'
 
@@ -32,14 +32,14 @@ export default function Pagination({ total, page, pageSize, onChange }: Paginati
 
   return (
     <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-      <p className="text-xs text-gray-400">
-        {t.common.showing} <span className="font-medium text-gray-600">{from}–{to}</span> {t.common.of} <span className="font-medium text-gray-600">{total}</span>
+      <p className="text-xs font-medium text-gray-500">
+        {t.common.showing} <span className="text-gray-900">{from}–{to}</span> {t.common.of} <span className="text-gray-900">{total}</span>
       </p>
       <div className="flex items-center gap-1">
         <button
-          onClick={() => onChange(page - 1)}
+          onClick={() => { onChange(page - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           disabled={page === 1}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-[#f6f6f6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -49,12 +49,12 @@ export default function Pagination({ total, page, pageSize, onChange }: Paginati
           : (
             <button
               key={p}
-              onClick={() => onChange(p as number)}
+              onClick={() => { onChange(p as number); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
               className={cn(
                 'w-8 h-8 rounded-lg text-xs font-medium transition-colors',
                 p === page
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-100',
+                  : 'text-gray-600 hover:bg-[#f6f6f6]',
               )}
             >
               {p}
@@ -63,9 +63,9 @@ export default function Pagination({ total, page, pageSize, onChange }: Paginati
         )}
 
         <button
-          onClick={() => onChange(page + 1)}
+          onClick={() => { onChange(page + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           disabled={page === totalPages}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-[#f6f6f6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

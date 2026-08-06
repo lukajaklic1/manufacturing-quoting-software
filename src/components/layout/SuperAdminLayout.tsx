@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { NavLink, Navigate } from 'react-router-dom'
 import { LayoutDashboard, Building2, Users, LogOut } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase'
 import AppLogo from '../ui/AppLogo'
 
 const NAV = [
-  { to: '/super-admin', icon: LayoutDashboard, label: 'Nadzorna plošča', end: true },
+  { to: '/super-admin', icon: LayoutDashboard, label: 'Nadzorna ploĹˇÄŤa', end: true },
   { to: '/super-admin/companies', icon: Building2, label: 'Podjetja' },
   { to: '/super-admin/users', icon: Users, label: 'Uporabniki' },
 ]
@@ -53,8 +53,8 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
               className={({ isActive }) =>
                 `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'text-gray-600 hover:bg-[#f6f6f6] hover:text-gray-900'
                 }`
               }
             >
@@ -67,7 +67,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         <div className="px-3 py-4 border-t border-gray-200">
           <button
             onClick={signOut}
-            className="flex items-center gap-2.5 px-3 py-2 w-full rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-2.5 px-3 py-2 w-full rounded-lg text-sm font-medium text-gray-500 hover:bg-[#f6f6f6] hover:text-gray-900 transition-colors"
           >
             <LogOut size={16} />
             Odjava

@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Layers } from 'lucide-react'
+import { Layers, Calculator, Factory, Building2, type LucideIcon } from 'lucide-react'
+import { format } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
 import { toast } from '../components/ui/Toast'
 import Button from '../components/ui/Button'
 import { PageHeader } from '../components/ui/PageHeader'
+import { PersonBadge } from '../components/ui/PersonBadge'
 import NumberInput from '../components/ui/NumberInput'
 import { computeOverhead } from '../lib/overhead'
 import { currencySymbol } from '../lib/currency'
 import type { Company } from '../types/database'
 
 export default function OverheadsPage() {
-  const { company, loading, refetch, hasPerm } = useCompany()
+  const { company, profile, loading, refetch, hasPerm } = useCompany()
   const canEdit = hasPerm('overheads', 'create')
+  const [editorName, setEditorName] = useState<string | null>(null)
   const { t } = useLanguage()
   const s = t.qp
   const cur = company?.currency ?? 'EUR'
@@ -24,7 +27,14 @@ export default function OverheadsPage() {
   const [form, setForm] = useState<Partial<Company>>({})
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => { if (company) setForm(company) }, [company])
+  useEffect(() => {
+    if (!company) return
+    setForm(company)
+    if (company.oh_updated_by) {
+      supabase.from('users').select('first_name, last_name').eq('id', company.oh_updated_by).single()
+        .then(({ data }) => { if (data) setEditorName(`${data.first_name} ${data.last_name}`) })
+    }
+  }, [company])
 
   const r = computeOverhead(form)
   const num = (k: keyof Company) => Number(form[k]) || 0
@@ -57,6 +67,7 @@ export default function OverheadsPage() {
       overhead_logistics_pct: rr.logisticsPct, overhead_rd_pct: rr.rdPct,
       overhead_profit_pct: form.overhead_profit_pct ?? 15,
       updated_at: new Date().toISOString(),
+      oh_updated_by: profile?.id ?? null,
     }).eq('id', company.id)
     setSaving(false)
     if (error) { toast.error(error.message); return }
@@ -68,12 +79,26 @@ export default function OverheadsPage() {
 
   return (
     <div>
-      <PageHeader title={t.nav.overheads} icon={Layers} action={canEdit && <Button loading={saving} onClick={save}>{t.common.save}</Button>} />
+      <PageHeader title={t.nav.overheads} icon={Layers} />
+
+      {/* Subtitle bar */}
+      <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center justify-between gap-3">
+        <div className="flex items-baseline gap-2 min-w-0">
+          <span className="text-base font-semibold text-gray-900 shrink-0">{t.nav.overheads}</span>
+          <span className="text-sm text-gray-500 truncate">{s.overheadCalcHint}</span>
+        </div>
+        {company?.updated_at && (
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-sm text-gray-400">{t.common.lastUpdated}: {format(new Date(company.updated_at), 'd. M. yyyy')}</span>
+            {editorName && <PersonBadge name={editorName} />}
+          </div>
+        )}
+      </div>
+
       <div className="p-4 lg:p-8 max-w-4xl mx-auto">
-      <p className="text-xs text-gray-400 mb-6">{s.overheadCalcHint}</p>
       <div className="flex flex-col gap-6"><fieldset disabled={!canEdit} className="contents">
         {/* Bases first */}
-        <Section title={s.bases}>
+        <Section icon={Layers} title={s.bases}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
             <NumberInput label={s.baseMaterialDirect} unit={`${sym} ${s.units.perYear}`} {...numf('oh_base_material')} />
             <NumberInput label={s.baseMfgDirect} unit={`${sym} ${s.units.perYear}`} {...numf('oh_base_manufacturing')} />
@@ -82,7 +107,7 @@ export default function OverheadsPage() {
         </Section>
 
         {/* Cost centres — procurement & production */}
-        <Section title={s.ccGroupProd}>
+        <Section icon={Factory} title={s.ccGroupProd}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
             <NumberInput label={s.ccMaterial} unit={`${sym} ${s.units.perYear}`} {...numf('oh_cc_material')} />
             <NumberInput label={s.ccManufacturing} unit={`${sym} ${s.units.perYear}`} {...numf('oh_cc_manufacturing')} />
@@ -94,7 +119,7 @@ export default function OverheadsPage() {
         </Section>
 
         {/* Cost centres — general overhead (on the intermediate base) */}
-        <Section title={s.ccGroupGeneral}>
+        <Section icon={Building2} title={s.ccGroupGeneral}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
             <NumberInput label={s.ccSga} unit={`${sym} ${s.units.perYear}`} {...numf('oh_cc_sga')} />
             <NumberInput label={s.ccLogistics} unit={`${sym} ${s.units.perYear}`} {...numf('oh_cc_logistics')} />
@@ -107,7 +132,7 @@ export default function OverheadsPage() {
         </Section>
 
         {/* Computed rates */}
-        <Section title={s.computedRatesTitle}>
+        <Section icon={Calculator} title={s.computedRatesTitle}>
           <div className="flex flex-col gap-2">
             <ResultBar label={s.materialOh} value={`${r.materialPct} %`} />
             <ResultBar label={s.mfgOh} value={`${r.mfgPct} %`} />
@@ -121,6 +146,7 @@ export default function OverheadsPage() {
             <ResultBar label={s.marginPerYear} value={money(annualMargin)} />
           </div>
           <div className="mt-4"><ResultBar label={s.totalAnnualRevenue} value={money(annualRevenue)} highlight /></div>
+          {canEdit && <div className="mt-6 flex justify-end"><Button loading={saving} onClick={save}>{t.common.save}</Button></div>}
         </Section>
       </fieldset></div>
     </div>
@@ -128,12 +154,14 @@ export default function OverheadsPage() {
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ icon: Icon, title, children }: { icon: LucideIcon; title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6">
-      <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-      <hr className="border-gray-200 my-5" />
-      {children}
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
+        <div className="p-2 bg-blue-50 rounded-lg"><Icon className="w-4 h-4 text-blue-600" /></div>
+        <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
+      </div>
+      <div className="p-6">{children}</div>
     </div>
   )
 }
@@ -142,7 +170,7 @@ function ResultBar({ label, value, highlight }: { label: string; value: string; 
   return (
     <div className={`flex items-center justify-between rounded-lg px-4 py-3 ${highlight ? 'bg-blue-50' : 'bg-gray-50'}`}>
       <span className="text-sm text-gray-500">{label}</span>
-      <span className={`text-base font-bold ${highlight ? 'text-blue-700' : 'text-gray-900'}`}>{value}</span>
+      <span className={`text-base font-bold ${highlight ? 'text-blue-600' : 'text-gray-900'}`}>{value}</span>
     </div>
   )
 }

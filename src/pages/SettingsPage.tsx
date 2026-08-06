@@ -71,7 +71,7 @@ export default function SettingsPage() {
         <Section icon={Receipt} title={s.quoteSettings}>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">{t.settings.currency}</label>
+              <label className="text-xs font-medium text-[#7f7f7f]">{t.settings.currency}</label>
               <select value={form.currency ?? 'EUR'} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}
                 className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                 {CURRENCIES.map(c => <option key={c} value={c}>{currencySymbol(c)} · {c}</option>)}
@@ -100,7 +100,7 @@ export default function SettingsPage() {
           <p className="text-xs text-gray-400 mb-4">{s.quoteTermsHint}</p>
           <div className="flex flex-col gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">{s.quoteTermsSl}</label>
+              <label className="block text-xs font-medium text-gray-400 mb-1">{s.quoteTermsSl}</label>
               <textarea
                 rows={6}
                 value={form.quote_terms ?? ''}
@@ -109,7 +109,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">{s.quoteTermsEn}</label>
+              <label className="block text-xs font-medium text-gray-400 mb-1">{s.quoteTermsEn}</label>
               <textarea
                 rows={6}
                 value={form.quote_terms_en ?? ''}
@@ -128,7 +128,7 @@ export default function SettingsPage() {
 
 function Section({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
   return (
-    <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
         <div className="p-2 bg-blue-50 rounded-lg"><Icon className="w-4 h-4 text-blue-600" /></div>
         <h2 className="text-sm font-semibold text-gray-900">{title}</h2>

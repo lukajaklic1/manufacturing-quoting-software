@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
+﻿import type { LucideIcon } from 'lucide-react'
 import { PanelLeft } from 'lucide-react'
 import { useSidebarCollapse } from '../layout/AppLayout'
 
@@ -18,7 +18,7 @@ export function PageHeader({ title, icon: Icon, count, action }: PageHeaderProps
         {collapsed && (
           <button
             onClick={toggle}
-            className="hidden lg:flex p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="hidden lg:flex p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-[#f6f6f6] transition-colors"
             title="Show sidebar"
           >
             <PanelLeft className="w-[18px] h-[18px]" />

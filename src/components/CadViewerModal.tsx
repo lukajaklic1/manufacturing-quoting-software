@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+﻿import { useRef, useState, useEffect } from 'react'
 import { X, RotateCcw } from 'lucide-react'
 
 interface CadViewerModalProps {
@@ -42,7 +42,7 @@ export default function CadViewerModal({ url, fileName, onClose }: CadViewerModa
       <div className="bg-white rounded-lg w-11/12 h-5/6 flex flex-col">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="font-bold text-lg">{fileName}</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+          <button onClick={onClose} className="p-1 hover:bg-[#f6f6f6] rounded">
             <X className="w-6 h-6" />
           </button>
         </div>

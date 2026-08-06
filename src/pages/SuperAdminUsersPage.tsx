@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+?import { useEffect, useRef, useState } from 'react'
 import { Power, PowerOff, Search, X, Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from '../components/ui/Toast'
@@ -48,7 +48,7 @@ export default function SuperAdminUsersPage() {
     if (usrs && comps) {
       const nameMap: Record<string, string> = {}
       for (const c of comps) nameMap[c.id] = c.name
-      setUsers(usrs.map(u => ({ ...u, company_name: nameMap[u.company_id] || 'â€”' })))
+      setUsers(usrs.map(u => ({ ...u, company_name: nameMap[u.company_id] || 'â€"' })))
     }
     setLoading(false)
   }
@@ -155,22 +155,22 @@ export default function SuperAdminUsersPage() {
             ) : paged.length === 0 ? (
               <tr><td colSpan={7} className="px-5 py-12 text-center text-gray-400">Ni rezultatov</td></tr>
             ) : paged.map(u => (
-              <tr key={u.id} className="border-t border-gray-200 hover:bg-gray-50">
+              <tr key={u.id} className="border-t border-gray-200 hover:bg-[#fbfbfb]">
                 <td className="px-5 py-3.5 font-medium text-gray-900">{u.first_name} {u.last_name}</td>
                 <td className="px-5 py-3.5 text-gray-500">{u.email}</td>
                 <td className="px-5 py-3.5 text-gray-600">{u.company_name}</td>
                 <td className="px-5 py-3.5 text-center">
                   {u.is_super_admin ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Super admin</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-700">Super admin</span>
                   ) : u.is_admin ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Admin</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-purple-100 text-purple-700">Admin</span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Uporabnik</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-gray-100 text-gray-500">Uporabnik</span>
                   )}
                 </td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(u.created_at)}</td>
                 <td className="px-5 py-3.5 text-center">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium ${
                     u.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
                   }`}>
                     {u.is_active ? 'Aktiven' : 'Deaktiviran'}
@@ -240,12 +240,12 @@ function ComboFilter({ options, value, onChange, placeholder, allLabel }: {
       {open && (
         <div className="absolute z-20 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
           <div className="max-h-60 overflow-y-auto py-1">
-            <button onClick={() => pick('all')} className="flex items-center w-full px-3 py-2 text-sm text-left hover:bg-gray-50">
+            <button onClick={() => pick('all')} className="flex items-center w-full px-3 py-2 text-sm text-left hover:bg-[#f6f6f6]">
               <span className="flex-1 text-gray-500">{allLabel}</span>
               {value === 'all' && <Check className="w-4 h-4 text-blue-600" />}
             </button>
             {filtered.map(([id, name]) => (
-              <button key={id} onClick={() => pick(id)} className="flex items-center w-full px-3 py-2 text-sm text-left hover:bg-gray-50">
+              <button key={id} onClick={() => pick(id)} className="flex items-center w-full px-3 py-2 text-sm text-left hover:bg-[#f6f6f6]">
                 <span className="flex-1 text-gray-900 truncate">{name}</span>
                 {value === id && <Check className="w-4 h-4 text-blue-600 shrink-0" />}
               </button>

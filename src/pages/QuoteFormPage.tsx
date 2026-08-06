@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+﻿﻿import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, Navigate } from 'react-router-dom'
+import { format } from 'date-fns'
 import { ChevronLeft, Plus, Trash2, Boxes, Pencil, Eye, Download, Send, Check, X } from 'lucide-react'
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer'
 import OfferPdf from '../components/OfferPdf'
@@ -15,6 +16,8 @@ import { buildSnapshot } from '../lib/offerSnapshot'
 import { computeTotals } from '../hooks/useCalculator'
 import { getThumbByPath } from '../lib/thumbs'
 import type { Customer, Quote, QuoteItem, Calculation, QuoteAttachment, QuoteStatus, OfferSnapshot } from '../types/database'
+import { QuoteStatusBadge } from '../components/ui/QuoteStatusBadge'
+import Pagination from '../components/ui/Pagination'
 
 interface PieceRow { key: string; id?: string; part_name: string; part_number: string; quantity: number; thumb_path?: string | null }
 
@@ -23,11 +26,6 @@ const CAD3D = ['step', 'stp', 'iges', 'igs', 'stl', 'obj', 'ply', '3ds', '3dm', 
 function fext(n: string) { return n.toLowerCase().split('.').pop() ?? '' }
 function isCad3D(n: string) { return CAD3D.includes(fext(n)) }
 
-const STATUS_STYLE: Record<QuoteStatus, string> = {
-  draft: 'bg-gray-100 text-gray-600', issued: 'bg-indigo-100 text-indigo-700', sent: 'bg-blue-100 text-blue-700',
-  accepted: 'bg-green-100 text-green-700', rejected: 'bg-orange-100 text-orange-700', expired: 'bg-amber-100 text-amber-700',
-  won: 'bg-green-100 text-green-700', lost: 'bg-orange-100 text-orange-700', frozen: 'bg-purple-100 text-purple-700',
-}
 
 let keyc = 0
 const nk = () => `p${++keyc}`
@@ -65,12 +63,14 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
   const [notes, setNotes] = useState('')
   const [pieces, setPieces] = useState<PieceRow[]>([{ key: nk(), part_name: '', part_number: '', quantity: 1 }])
   const [removedIds, setRemovedIds] = useState<string[]>([])
-  const [prices, setPrices] = useState<Record<string, { sell: number; annual: number; quantities?: number[]; allPrices?: number[] }>>({}) // item id → totals
+  const [prices, setPrices] = useState<Record<string, { sell: number; annual: number; quantities?: number[]; allPrices?: number[] }>>({}) // item id â†' totals
   const [attachments, setAttachments] = useState<QuoteAttachment[]>([])
   const [pieceToDelete, setPieceToDelete] = useState<string | null>(null)
   const [deleteQuoteOpen, setDeleteQuoteOpen] = useState(false)
   const [pieceThumbs, setPieceThumbs] = useState<Record<string, string>>({})
-  // pieceId → cadAttachmentId that currently provides the thumbnail
+  const [piecePage, setPiecePage] = useState(1)
+  const PIECE_PAGE_SIZE = 20
+  // pieceId â†' cadAttachmentId that currently provides the thumbnail
   const pieceThumbSourceRef = useRef<Record<string, string>>({})
 
   useEffect(() => { if (company) init() }, [company, id])
@@ -122,10 +122,10 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           continue
         }
 
-        // Source CAD unchanged — skip
+        // Source CAD unchanged â€" skip
         if (pieceThumbs[p.id] && pieceThumbSourceRef.current[p.id] === cad.id) continue
 
-        // Source CAD changed — clear stale piece thumb_path so we don't reload old image
+        // Source CAD changed â€" clear stale piece thumb_path so we don't reload old image
         if (pieceThumbSourceRef.current[p.id] && pieceThumbSourceRef.current[p.id] !== cad.id) {
           if (!cancelled) setPieceThumbs(prev => { const n = { ...prev }; delete n[p.id!]; return n })
           if (p.thumb_path) { clearPieceThumb(p.id); p.thumb_path = null }
@@ -200,7 +200,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     })
   }
 
-  // Persist quote + pieces; returns quoteId + map key→itemId. Preserves existing calculations.
+  // Persist quote + pieces; returns quoteId + map keyâ†'itemId. Preserves existing calculations.
   async function persist(): Promise<{ quoteId: string; ids: Record<string, string> } | null> {
     if (!company || !customerId) { toast.error(s.fillCustomerTitle); return null }
     const cname = customers.find(c => c.id === customerId)?.name ?? ''
@@ -256,7 +256,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     else navigate(`/quotes/${res.quoteId}/edit`, { replace: true })
   }
 
-  // Issue the offer: save, validate, freeze a snapshot, set status → issued, go to read-only review.
+  // Issue the offer: save, validate, freeze a snapshot, set status â†' issued, go to read-only review.
   async function issue() {
     if (!company) return
     setSaving(true)
@@ -321,14 +321,19 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
 
   return (
     <div className="p-4 lg:p-6">
-      <button onClick={() => navigate('/quotes')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-4"><ChevronLeft className="w-4 h-4" />{s.quotes}</button>
-      <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900 flex items-center gap-2">
-          {readOnly ? s.reviewTitle : (editMode ? s.editQuote : s.newQuote)}
-          {quoteNumber && <span className="font-mono text-gray-400">{quoteNumber}</span>}
-          {readOnly && <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLE[status]}`}>{s.status[status]}</span>}
-        </h1>
-        <div className="flex gap-2">
+      {/* Top nav bar */}
+      <div className="flex items-center gap-2 mb-4">
+        <button onClick={() => navigate('/quotes')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800"><ChevronLeft className="w-4 h-4" />{s.quotes}</button>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 mb-5">
+        <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900">
+            {readOnly ? s.reviewTitle : (editMode ? s.editQuote : s.newQuote)}
+          </h1>
+          {quoteNumber && <span className="font-mono text-sm" style={{ color: '#7f7f7f' }} spellCheck={false}>{quoteNumber}</span>}
+          {readOnly && <QuoteStatusBadge status={status} label={s.status[status]} />}
+        </div>
+        <div className="flex flex-wrap gap-2">
           {!readOnly && <>
             {isSaved && status === 'draft' && <Button variant="secondary" onClick={() => setDeleteQuoteOpen(true)} disabled={saving} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
             {!isSaved && <Button variant="secondary" onClick={() => navigate('/quotes')} disabled={saving}>{t.common.back}</Button>}
@@ -341,19 +346,19 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           </>}
           {readOnly && <>
             {hasPerm('quotes', 'create') && (status === 'draft' || status === 'issued' || status === 'sent') &&
-              <Button variant="secondary" onClick={() => { window.location.href = `/quotes/${id}/edit` }} className="gap-2"><Pencil className="w-4 h-4" />{s.editOffer}</Button>}
+              <Button variant="secondary" onClick={() => { window.location.href = `/quotes/${id}/edit` }} className="gap-1.5"><Pencil className="w-3.5 h-3.5" />{s.editOffer}</Button>}
             {hasPerm('quotes', 'create') && status === 'draft' &&
-              <Button loading={saving} onClick={issue} disabled={!customerId} className="gap-2">{s.issueOffer}</Button>}
+              <Button loading={saving} onClick={issue} disabled={!customerId} className="gap-1.5">{s.issueOffer}</Button>}
             {status !== 'draft' && snapshot && <PDFDownloadLink document={<OfferPdf snap={snapshot} lang={lang} />} fileName={`Ponudba_${quoteNumber}.pdf`}>
-              <Button variant="secondary" className="gap-2"><Download className="w-4 h-4" />{s.downloadPdf}</Button>
+              <Button variant="secondary" className="gap-1.5"><Download className="w-3.5 h-3.5" />{s.downloadPdf}</Button>
             </PDFDownloadLink>}
-            {hasPerm('quotes', 'create') && status === 'issued' && <Button onClick={() => changeStatus('sent')} className="gap-2"><Send className="w-4 h-4" />{s.markSentLabel}</Button>}
+            {hasPerm('quotes', 'create') && status === 'issued' && <Button onClick={() => changeStatus('sent')} className="gap-1.5"><Send className="w-3.5 h-3.5" />{s.markSentLabel}</Button>}
             {hasPerm('quotes', 'create') && status === 'sent' && <>
-              <Button onClick={() => setConfirm('won')} className="gap-2"><Check className="w-4 h-4" />{s.markAccepted}</Button>
-              <Button variant="secondary" onClick={() => setConfirm('lost')} className="gap-2"><X className="w-4 h-4" />{s.markRejected}</Button>
+              <Button onClick={() => setConfirm('won')} className="gap-1.5"><Check className="w-3.5 h-3.5" />{s.markAccepted}</Button>
+              <Button variant="secondary" onClick={() => setConfirm('lost')} className="gap-1.5"><X className="w-3.5 h-3.5" />{s.markRejected}</Button>
             </>}
             {(status === 'won' || status === 'lost') && isAdmin &&
-              <Button variant="secondary" onClick={() => changeStatus('sent')} className="gap-2">{s.adminRevert}</Button>}
+              <Button variant="secondary" onClick={() => changeStatus('sent')} className="gap-1.5">{s.adminRevert}</Button>}
           </>}
         </div>
       </div>
@@ -366,13 +371,13 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         <div className="flex items-center gap-1 border-b border-gray-200 mb-5">
           {([['overview', s.tabOverview], ['pdf', s.tabPdf]] as const).map(([k, label]) => (
             <button key={k} onClick={() => setTab(k)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${tab === k ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>{label}</button>
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${tab === k ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>{label}</button>
           ))}
         </div>
       )}
 
       {tab === 'overview' ? (
-      <>{/* Top: quote data (left) + attachments (right) — frozen in read-only review */}
+      <>{/* Top: quote data (left) + attachments (right) â€" frozen in read-only review */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
         {/* LEFT COLUMN - Quote Form */}
         <div className={readOnly ? 'pointer-events-none select-none' : ''}>
@@ -381,7 +386,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">{s.customer}</label>
+                <label className="text-xs font-medium text-[#7f7f7f]">{s.customer}</label>
                 <select value={customerId} onChange={e => {
                   const cid = e.target.value
                   setCustomerId(cid)
@@ -397,12 +402,15 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
               <Input id="q-phone" label={t.common.phone} value={contactPhone} onChange={e => setContactPhone(e.target.value)} />
               <Input id="q-payment" label={s.paymentTerms} value={paymentTerms} onChange={e => setPaymentTerms(e.target.value)} />
               <Input id="q-parity" label={s.parity} value={parity} onChange={e => setParity(e.target.value)} />
-              <Input id="q-valid" label={s.validUntil} type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} />
-              <Input id="q-lead" label={s.leadTime} placeholder={s.leadTimeHint} value={leadTime} onChange={e => setLeadTime(e.target.value)} />
+              <Input id="q-valid" label={s.validUntil}
+                type={readOnly ? 'text' : 'date'}
+                value={readOnly ? (validUntil ? format(new Date(validUntil), 'd. M. yyyy') : '') : validUntil}
+                onChange={e => setValidUntil(e.target.value)} />
+              <Input id="q-lead" label={s.leadTime} placeholder={readOnly ? '' : s.leadTimeHint} value={leadTime} onChange={e => setLeadTime(e.target.value)} />
               <div className="sm:col-span-2 flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">{s.notes}</label>
+                <label className="text-xs font-medium text-[#7f7f7f]">{s.notes}</label>
                 <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed" />
               </div>
             </div>
           </div>
@@ -428,17 +436,17 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
             ))}
           </tr></thead>
           <tbody className="divide-y divide-gray-200">
-            {pieces.map((p, idx) => (
-              <tr key={p.key} className="hover:bg-gray-50 cursor-pointer" onClick={() => readOnly ? (p.id && navigate(`/quotes/${id}/items/${p.id}?ro=1`)) : calculate(p.key)}>
+            {pieces.slice((piecePage - 1) * PIECE_PAGE_SIZE, piecePage * PIECE_PAGE_SIZE).map((p, idx) => (
+              <tr key={p.key} className="hover:bg-[#fbfbfb] cursor-pointer" onClick={() => readOnly ? (p.id && navigate(`/quotes/${id}/items/${p.id}?ro=1`)) : calculate(p.key)}>
                 <td className="px-4 py-2 w-14">
                   <div className="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center text-gray-300 overflow-hidden">
                     {p.id && pieceThumbs[p.id] ? <img src={pieceThumbs[p.id]} alt="" className="w-full h-full object-contain" /> : <Boxes className="w-5 h-5" />}
                   </div>
                 </td>
                 <td className="px-2 py-2 text-sm font-medium text-gray-900">{p.part_name || `#${idx + 1}`}</td>
-                <td className="px-2 py-2 w-32 text-sm text-gray-600">{p.part_number || '—'}</td>
-                <td className="px-2 py-2 w-40 text-sm text-gray-700">{p.id && prices[p.id]?.quantities?.filter(q => q > 0).length ? prices[p.id].quantities!.filter(q => q > 0).map(q => q.toLocaleString('de-DE')).join(', ') + ' ' + u.piece : p.quantity.toLocaleString('de-DE') + ' ' + u.piece}</td>
-                <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">{p.id && prices[p.id] ? money(prices[p.id].sell) : '—'}</td>
+                <td className="px-2 py-2 w-32 text-sm text-gray-600">{p.part_number || 'â€"'}</td>
+                <td className="px-2 py-2 w-56 text-sm text-gray-700 whitespace-nowrap">{p.id && prices[p.id]?.quantities?.filter(q => q > 0).length ? prices[p.id].quantities!.filter(q => q > 0).map(q => q.toLocaleString('de-DE')).join(', ') + ' ' + u.piece : p.quantity.toLocaleString('de-DE') + ' ' + u.piece}</td>
+                <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">{p.id && prices[p.id] ? money(prices[p.id].sell) : 'â€"'}</td>
                 <td className="px-4 py-2" onClick={e => e.stopPropagation()}>
                   <div className="flex gap-1 justify-end">
                     {readOnly
@@ -454,12 +462,13 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
           </tbody>
         </table>
       </div>
+      <Pagination total={pieces.length} page={piecePage} pageSize={PIECE_PAGE_SIZE} onChange={setPiecePage} />
 
       {/* Totals */}
       <div className="bg-white rounded-xl border border-gray-200 p-5 flex flex-wrap items-center justify-end gap-8">
         <div className="text-right">
-          <p className="text-xs text-gray-400">{s.totalTurnover}</p>
-          <p className="text-2xl font-bold text-blue-700">{money(grand.turnover)}</p>
+          <p className="text-xs text-gray-500">{s.totalTurnover}</p>
+          <p className="text-2xl font-bold text-blue-600">{money(grand.turnover)}</p>
         </div>
       </div>
 

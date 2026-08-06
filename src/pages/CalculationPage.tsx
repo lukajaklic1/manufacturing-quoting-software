@@ -197,12 +197,12 @@ export default function CalculationPage() {
               <Input id="pnum" label={s.partNumber} value={c.part_number} onChange={e => patch({ part_number: e.target.value })} />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-500">{s.quantity}</label>
+              <label className="text-xs font-medium text-gray-400">{s.quantity}</label>
               <div className="grid grid-cols-3 gap-2 mt-1">
                 {[0, 1, 2].map(i => (
                   <NumberInput key={i} unit={u.piece} value={c.quantities[i] ?? 0}
                     onValue={v => { const q = [...c.quantities]; q[i] = v ?? 0; patch({ quantities: q }) }}
-                    className="rounded-md border-gray-200 px-2 py-1 text-sm" />
+                    className="rounded-md border-gray-200 px-2 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-400" />
                 ))}
               </div>
             </div>
@@ -230,18 +230,18 @@ export default function CalculationPage() {
                       ) : (<>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-gray-500">{s.shape}</label>
+                          <label className="text-xs font-medium text-gray-400">{s.shape}</label>
                           <select value={r.shape} onChange={e => set({ shape: e.target.value as MaterialShape })}
-                            className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400">
                             {(['sheet', 'round_bar', 'rect_bar', 'round_tube', 'square_tube', 'other'] as MaterialShape[]).map(sh => <option key={sh} value={sh}>{s.shapes[sh]}</option>)}
                           </select>
                         </div>
                         <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-gray-500">{s.selectMaterial}</label>
+                          <label className="text-xs font-medium text-gray-400">{s.selectMaterial}</label>
                           <select value={r.material_id ?? ''} onChange={e => {
                             const mat = materials.find(m => m.id === e.target.value)
                             set(mat ? { material_id: mat.id, name: mat.name, density: mat.density, price_per_kg: mat.price_per_kg } : { material_id: null })
-                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400">
                             <option value="">—</option>
                             {materials.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                           </select>
@@ -312,15 +312,15 @@ export default function CalculationPage() {
                         </div>
                       ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-500">{s.purchasedName}</label>
+                        <label className="text-xs font-medium text-gray-400">{s.purchasedName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
-                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                          <label className="text-xs font-medium text-gray-500">{s.supplier}</label>
+                          <label className="text-xs font-medium text-gray-400">{s.supplier}</label>
                           <input value={r.supplier} onChange={e => set({ supplier: e.target.value })}
-                            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                         </div>
                         <Mini label={s.qtyPerPiece} value={r.qty_per_piece} onValue={v => set({ qty_per_piece: v ?? 0 })} />
                         <Mini label={`${s.pricePerUnit} (${sym})`} value={r.price_per_unit} onValue={v => set({ price_per_unit: v ?? 0 })} decimals={2} />
@@ -380,14 +380,14 @@ export default function CalculationPage() {
                       ) : (<>
                       {/* Operation name dropdown */}
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-500">{s.operationName}</label>
+                        <label className="text-xs font-medium text-gray-400">{s.operationName}</label>
                         {(() => {
                           const allLists = [translations.en.qp.operationList as unknown as string[], translations.sl.qp.operationList as unknown as string[]]
                           const opIdx = r.name ? allLists.reduce<number>((found, list) => found >= 0 ? found : list.indexOf(r.name), -1) : -1
                           return (
                             <select value={opIdx >= 0 ? String(opIdx) : (r.name ? '__custom' : '')}
                               onChange={e => { const idx = parseInt(e.target.value); if (!isNaN(idx)) set({ name: s.operationList[idx] }) }}
-                              className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                              className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400">
                               <option value="">—</option>
                               {s.operationList.map((op, idx) => <option key={idx} value={String(idx)}>{op}</option>)}
                               {r.name && opIdx === -1 && <option value="__custom">{r.name}</option>}
@@ -399,11 +399,11 @@ export default function CalculationPage() {
                       {/* Machine + its hourly rate */}
                       <div className="flex items-end gap-2">
                         <div className="flex flex-col gap-1 flex-1 min-w-0">
-                          <label className="text-xs font-medium text-gray-500">{s.machine}</label>
+                          <label className="text-xs font-medium text-gray-400">{s.machine}</label>
                           <select value={r.machine_id ?? ''} onChange={e => {
                             const m = machines.find(x => x.id === e.target.value)
                             set(m ? { machine_id: m.id, machine_rate: machineRate(m) } : { machine_id: null, machine_rate: 0 })
-                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400">
                             <option value="">—</option>
                             {machines.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                           </select>
@@ -420,11 +420,11 @@ export default function CalculationPage() {
                       {/* Operator: who + how many + rate (one row) */}
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
                         <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                          <label className="text-xs font-medium text-gray-500">{s.operator}</label>
+                          <label className="text-xs font-medium text-gray-400">{s.operator}</label>
                           <select value={r.operator_id ?? ''} onChange={e => {
                             const l = labor.find(x => x.id === e.target.value)
                             set(l ? { operator_id: l.id, operator_rate: laborRate(l) } : { operator_id: null, operator_rate: 0 })
-                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400">
                             <option value="">—</option>
                             {labor.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                           </select>
@@ -439,11 +439,11 @@ export default function CalculationPage() {
                         <Mini label={`${s.setupCost} (${u.min})`} value={r.setup_min} onValue={v => set({ setup_min: v ?? 0 })} decimals={2} />
                         <Mini label={s.technologists} value={r.setup_qty ?? 1} onValue={v => set({ setup_qty: v ?? 0 })} />
                         <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-gray-500">{s.technologist}</label>
+                          <label className="text-xs font-medium text-gray-400">{s.technologist}</label>
                           <select value={r.setup_id ?? ''} onChange={e => {
                             const l = labor.find(x => x.id === e.target.value)
                             set(l ? { setup_id: l.id, setup_rate: laborRate(l) } : { setup_id: null, setup_rate: 0 })
-                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                          }} className="rounded-md border border-gray-200 px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400">
                             <option value="">—</option>
                             {labor.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                           </select>
@@ -501,9 +501,9 @@ export default function CalculationPage() {
                         </div>
                       ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-500">{s.toolName}</label>
+                        <label className="text-xs font-medium text-gray-400">{s.toolName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
-                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <Mini label={`${s.toolCost} (${sym})`} value={r.tool_cost} onValue={v => set({ tool_cost: v ?? 0 })} decimals={2} />
@@ -543,9 +543,9 @@ export default function CalculationPage() {
                         </div>
                       ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-500">{s.packagingName}</label>
+                        <label className="text-xs font-medium text-gray-400">{s.packagingName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
-                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                          className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <Mini label={`${s.costPerPieceShort} (${sym})`} value={r.price_per_unit} onValue={v => set({ price_per_unit: v ?? 0 })} decimals={2} />
@@ -598,7 +598,7 @@ export default function CalculationPage() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-400 uppercase tracking-wide">{s.quantity}</th>
+                    <th className="px-4 py-2.5"></th>
                     {qtyResults.map(({ q }, i) => (
                       <th key={i} className="text-right px-4 py-2.5 text-sm font-bold text-gray-900 whitespace-nowrap">{q.toLocaleString('de-DE')} {u.piece}</th>
                     ))}
@@ -649,20 +649,28 @@ function OhRow({ label, pct, onPct, value }: { label: string; pct: number; onPct
   return (
     <div className="flex items-center gap-3">
       <span className="text-gray-600 flex-1">{label}</span>
-      <div className="w-20 shrink-0"><NumberInput unit="%" value={pct} onValue={v => onPct(v ?? 0)} className="rounded-md border-gray-200 px-2 py-1 text-sm" /></div>
+      <div className="flex shrink-0 items-center rounded-md border border-gray-200 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 disabled:opacity-50">
+        <input
+          type="text" inputMode="decimal"
+          value={pct.toLocaleString('de-DE', { maximumFractionDigits: 4 })}
+          onChange={e => { const v = parseFloat(e.target.value.replace(/\./g, '').replace(',', '.')); onPct(isNaN(v) ? 0 : v) }}
+          className="w-14 rounded-l-md px-2 py-1 text-sm bg-white focus:outline-none disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+        />
+        <span className="px-2 py-1 text-sm text-gray-400 bg-gray-50 rounded-r-md border-l border-gray-200 select-none">%</span>
+      </div>
       <span className="w-24 shrink-0 text-right font-medium text-gray-800">{value}</span>
     </div>
   )
 }
 function Mini({ label, unit, value, onValue, decimals }: { label: string; unit?: string; value: number; onValue: (v: number | null) => void; decimals?: number }) {
-  return <div className="flex flex-col gap-1"><label className="text-xs font-medium text-gray-500">{label}</label><NumberInput unit={unit} value={value} onValue={onValue} decimals={decimals} className="rounded-md border-gray-200 px-2 py-1 text-sm bg-white" /></div>
+  return <div className="flex flex-col gap-1"><label className="text-xs font-medium text-gray-400">{label}</label><NumberInput unit={unit} value={value} onValue={onValue} decimals={decimals} className="rounded-md border-gray-200 px-2 py-1 text-sm bg-white" /></div>
 }
 function ResRow({ label, cells, strong }: { label: string; cells: string[]; strong?: boolean }) {
   return (
     <tr>
-      <td className="px-4 py-2 text-xs text-gray-500">{label}</td>
+      <td className="px-4 py-2.5 text-sm text-gray-500">{label}</td>
       {cells.map((v, i) => (
-        <td key={i} className={`px-4 py-2 text-right whitespace-nowrap ${strong ? 'text-base font-bold text-gray-900' : 'text-sm font-medium text-gray-700'}`}>{v}</td>
+        <td key={i} className={`px-4 py-2.5 text-right whitespace-nowrap ${strong ? 'text-base font-bold text-gray-900' : 'text-sm font-medium text-[#7f7f7f]'}`}>{v}</td>
       ))}
     </tr>
   )

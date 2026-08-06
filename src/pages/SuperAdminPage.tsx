@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿﻿import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Building2, Users, TrendingUp, Power, PowerOff, RefreshCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
@@ -72,7 +72,7 @@ export default function SuperAdminPage() {
     if (usersRes.data && companiesRes.data) {
       const nameMap: Record<string, string> = {}
       for (const c of companiesRes.data as Company[]) nameMap[c.id] = c.name
-      setUsers((usersRes.data as UserRow[]).map(u => ({ ...u, company_name: nameMap[u.company_id] || '—' })))
+      setUsers((usersRes.data as UserRow[]).map(u => ({ ...u, company_name: nameMap[u.company_id] || 'â€"' })))
     }
 
     setLoading(false)
@@ -106,7 +106,7 @@ export default function SuperAdminPage() {
         </div>
         <Button variant="secondary" onClick={loadAll} disabled={loading}>
           <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
-          Osveži
+          OsveĹľi
         </Button>
       </div>
 
@@ -169,7 +169,7 @@ export default function SuperAdminPage() {
                 </thead>
                 <tbody>
                   {companies.map(c => (
-                    <tr key={c.id} className="border-t border-gray-50 hover:bg-gray-50">
+                    <tr key={c.id} className="border-t border-gray-50 hover:bg-[#fbfbfb]">
                       <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
                       <td className="px-4 py-3 text-gray-500">{formatDate(c.created_at)}</td>
                       <td className="px-4 py-3 text-center text-gray-600">{c.user_count}</td>
@@ -204,14 +204,14 @@ export default function SuperAdminPage() {
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="text-left px-4 py-3 font-medium text-gray-500">Uporabnik</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-500">E-pošta</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-500">E-poĹˇta</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-500">Podjetje</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-500">Registracija</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map(u => (
-                    <tr key={u.id} className="border-t border-gray-50 hover:bg-gray-50">
+                    <tr key={u.id} className="border-t border-gray-50 hover:bg-[#fbfbfb]">
                       <td className="px-4 py-3 font-medium text-gray-900">
                         {u.first_name} {u.last_name}
                         {u.is_super_admin && (

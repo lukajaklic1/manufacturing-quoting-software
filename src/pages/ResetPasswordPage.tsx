@@ -15,23 +15,15 @@ export default function ResetPasswordPage() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    // Listen specifically for PASSWORD_RECOVERY event
-    // This fires when user arrives via the reset email link
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setReady(true)
-      }
+      if (event === 'PASSWORD_RECOVERY') setReady(true)
     })
-
-    // Also check if we already have a recovery session (page reload case)
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) setReady(true)
     })
-
     return () => subscription.unsubscribe()
   }, [])
 
-  // Safety: if no recovery token after 3s, show error
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!ready) setError(a.resetLinkInvalid)
@@ -48,29 +40,25 @@ export default function ResetPasswordPage() {
     const { error } = await supabase.auth.updateUser({ password })
     setLoading(false)
     if (error) { setError(error.message); return }
-    // Sign out so user must log in fresh with new password
     await supabase.auth.signOut()
     navigate('/login')
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="flex justify-center mb-8">
-          <AppLogo size="lg" showName={false} />
-        </div>
+    <div className="min-h-screen bg-white flex flex-col">
+      <div className="flex justify-center pt-10">
+        <AppLogo size="md" showName={true} />
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-1">{a.setNewPassword}</h1>
-            <p className="text-sm text-gray-500">{a.setNewPasswordDesc}</p>
-          </div>
+      <div className="flex-1 flex flex-col items-center justify-center px-4 -mt-10">
+        <div className="w-full max-w-sm">
+          <h1 className="text-2xl font-semibold text-gray-900 text-center mb-2">{a.setNewPassword}</h1>
+          <p className="text-sm text-gray-400 text-center mb-8">{a.setNewPasswordDesc}</p>
 
           {!ready && error ? (
             <div className="text-center">
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">{error}</p>
-              <button onClick={() => navigate('/forgot-password')}
-                className="text-sm text-blue-600 hover:underline font-medium">
+              <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-4">{error}</p>
+              <button onClick={() => navigate('/forgot-password')} className="text-sm text-blue-600 hover:underline font-medium">
                 {a.sendResetLink}
               </button>
             </div>
@@ -81,21 +69,23 @@ export default function ResetPasswordPage() {
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">{a.newPassword}</label>
+                <label className="text-xs font-medium text-gray-400">{lang === 'sl' ? 'Novo geslo' : 'New password'}</label>
                 <input type="password" required autoComplete="new-password"
                   value={password} onChange={e => setPassword(e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="••••••••" />
+                  placeholder={lang === 'sl' ? 'Vsaj 8 znakov' : 'Min. 8 characters'}
+                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-300 transition-colors"
+                />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">{a.confirmPassword}</label>
+                <label className="text-xs font-medium text-gray-400">{a.confirmPassword}</label>
                 <input type="password" required autoComplete="new-password"
                   value={confirm} onChange={e => setConfirm(e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="••••••••" />
+                  placeholder="••••••••"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-300 transition-colors"
+                />
               </div>
 
-              {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+              {error && <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>}
 
               <button type="submit" disabled={loading}
                 className="w-full bg-blue-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors mt-1">
@@ -104,16 +94,16 @@ export default function ResetPasswordPage() {
             </form>
           )}
         </div>
+      </div>
 
-        <div className="flex justify-end mt-4 px-1">
-          <div className="flex gap-1">
-            {(['en', 'sl'] as const).map(l => (
-              <button key={l} onClick={() => setLang(l)}
-                className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${lang === l ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}>
-                {l.toUpperCase()}
-              </button>
-            ))}
-          </div>
+      <div className="flex justify-center pb-5">
+        <div className="flex gap-1">
+          {(['en', 'sl'] as const).map(l => (
+            <button key={l} onClick={() => setLang(l)}
+              className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${lang === l ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}>
+              {l.toUpperCase()}
+            </button>
+          ))}
         </div>
       </div>
     </div>

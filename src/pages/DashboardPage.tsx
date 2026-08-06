@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { PageHeader } from '../components/ui/PageHeader'
-import { LayoutDashboard } from 'lucide-react'
-import { TrendingUp, Trophy, FileText, CheckCircle2, ArrowUpDown } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { LayoutDashboard, TrendingUp, Trophy, FileText, CheckCircle2, Search, X, CalendarDays } from 'lucide-react'
+import { SortIcon } from '../components/ui/SortIcon'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
+import { FilterSelect } from '../components/ui/FilterSelect'
 
 interface Stats {
   pipeline_value: number
@@ -43,310 +44,298 @@ export default function DashboardPage() {
   const s = t.qp
   const cur = company?.currency ?? 'EUR'
   const money = (n: number) => (n ?? 0).toLocaleString('de-DE', { style: 'currency', currency: cur, maximumFractionDigits: 0 })
+  const moneyK = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1)}k €` : `${n.toFixed(0)} €`
 
   const [stats, setStats] = useState<Stats | null>(null)
   const [trends, setTrends] = useState<TrendData[]>([])
   const [customers, setCustomers] = useState<CustomerStat[]>([])
   const [loading, setLoading] = useState(true)
-  const [period, setPeriod] = useState<1 | 3 | 6 | 12>(1)
+  const [statusDist, setStatusDist] = useState<{ status: string; count: number }[]>([])
+  const [period, setPeriod] = useState<1 | 3 | 6 | 12>(3)
   const [sortKey, setSortKey] = useState<SortKey>('sent_value')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [filterCustomerId, setFilterCustomerId] = useState<string | null>(null)
+  const [assigneeFilter, setAssigneeFilter] = useState<string>('')
+  const [companyUsers, setCompanyUsers] = useState<{ id: string; first_name: string; last_name: string }[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [searchText, setSearchText] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
-  useEffect(() => { if (company) load() }, [company, period, filterCustomerId])
+  useEffect(() => {
+    if (company) {
+      load()
+      supabase.from('users').select('id, first_name, last_name').eq('company_id', company.id).eq('is_active', true).order('first_name')
+        .then(({ data }) => { if (data) setCompanyUsers(data) })
+    }
+  }, [company, period, filterCustomerId, assigneeFilter])
 
   async function load() {
     if (!company) return
     setLoading(true)
-    const [{ data: stats }, { data: trends }, { data: customers }] = await Promise.all([
-      (supabase as any).rpc('get_quote_dashboard_stats', { p_company_id: company.id, p_customer_id: filterCustomerId }),
-      (supabase as any).rpc('get_quote_trends', { p_company_id: company.id, p_months: period, p_customer_id: filterCustomerId }),
-      (supabase as any).rpc('get_customer_stats', { p_company_id: company.id }),
+    const [{ data: st }, { data: tr }, { data: cu }, { data: qs }] = await Promise.all([
+      (supabase as any).rpc('get_quote_dashboard_stats', { p_company_id: company.id, p_customer_id: filterCustomerId, p_assignee_id: assigneeFilter || null }),
+      (supabase as any).rpc('get_quote_trends', { p_company_id: company.id, p_months: period, p_customer_id: filterCustomerId, p_assignee_id: assigneeFilter || null }),
+      (supabase as any).rpc('get_customer_stats', { p_company_id: company.id, p_assignee_id: assigneeFilter || null }),
+      supabase.from('quotes').select('status').eq('company_id', company.id),
     ])
-    setStats(stats as Stats)
-    const sortedTrends = ((trends as TrendData[]) || []).sort((a, b) => a.period.localeCompare(b.period))
-    setTrends(sortedTrends)
-    setCustomers((customers as CustomerStat[]) || [])
+    setStats(st as Stats)
+    setTrends(((tr as TrendData[]) || []).sort((a, b) => a.period.localeCompare(b.period)))
+    setCustomers((cu as CustomerStat[]) || [])
+    // Build status distribution
+    const counts: Record<string, number> = {}
+    for (const q of (qs as { status: string }[]) ?? []) counts[q.status] = (counts[q.status] ?? 0) + 1
+    setStatusDist(Object.entries(counts).map(([status, count]) => ({ status, count })))
     setLoading(false)
   }
 
   function handleSort(key: SortKey) {
-    if (sortKey === key) {
-      setSortDir(sortDir === 'desc' ? 'asc' : 'desc')
-    } else {
-      setSortKey(key)
-      setSortDir('desc')
-    }
+    if (sortKey === key) setSortDir(d => d === 'desc' ? 'asc' : 'desc')
+    else { setSortKey(key); setSortDir('desc') }
   }
 
-  function getSortedCustomers() {
-    const sorted = [...customers]
-    sorted.sort((a, b) => {
-      let aVal = a[sortKey]
-      let bVal = b[sortKey]
-
-      if (sortDir === 'asc') {
-        return typeof aVal === 'string' ? aVal.localeCompare(bVal as string) : (aVal as number) - (bVal as number)
-      } else {
-        return typeof aVal === 'string' ? (bVal as string).localeCompare(aVal) : (bVal as number) - (aVal as number)
-      }
-    })
-    return sorted
-  }
-
-  if (loading || !stats) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
-
-  const sortedCustomers = getSortedCustomers()
+  const sortedCustomers = [...customers].sort((a, b) => {
+    const av = a[sortKey], bv = b[sortKey]
+    const mul = sortDir === 'asc' ? 1 : -1
+    return typeof av === 'string' ? av.localeCompare(bv as string) * mul : ((av as number) - (bv as number)) * mul
+  })
   const filteredCustomers = filterCustomerId ? sortedCustomers.filter(c => c.customer_id === filterCustomerId) : sortedCustomers
   const pageSize = 10
-  const totalPages = Math.ceil(filteredCustomers.length / pageSize)
+  const totalPages = Math.max(1, Math.ceil(filteredCustomers.length / pageSize))
   const paginatedCustomers = filteredCustomers.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
-  const totalSentValue = trends.reduce((sum, t) => sum + (t.sent_value || 0), 0)
-  const totalRealizedValue = trends.reduce((sum, t) => sum + (t.realized_value || 0), 0)
-  const totalSentCount = trends.reduce((sum, t) => sum + (t.sent_count || 0), 0)
-  const totalRealizedCount = trends.reduce((sum, t) => sum + (t.realized_count || 0), 0)
+  const totalSentValue = trends.reduce((s, t) => s + (t.sent_value || 0), 0)
+  const totalRealizedValue = trends.reduce((s, t) => s + (t.realized_value || 0), 0)
+  const totalSentCount = trends.reduce((s, t) => s + (t.sent_count || 0), 0)
+  const totalRealizedCount = trends.reduce((s, t) => s + (t.realized_count || 0), 0)
 
-  const cards = [
-    { label: lang === 'en' ? 'Total sent value' : 'Vrednost poslanih ponudb', value: money(totalSentValue), icon: TrendingUp, color: 'text-blue-600 bg-blue-50' },
-    { label: lang === 'en' ? 'Total realized value' : 'Vrednost dobljenih ponudb', value: money(totalRealizedValue), icon: CheckCircle2, color: 'text-green-600 bg-green-50' },
-    { label: lang === 'en' ? 'Sent quotes' : 'Število poslanih ponudb', value: String(totalSentCount), icon: FileText, color: 'text-purple-600 bg-purple-50' },
-    { label: lang === 'en' ? 'Won quotes' : 'Število dobljenih ponudb', value: String(totalRealizedCount), icon: Trophy, color: 'text-amber-600 bg-amber-50' },
+  const STATUS_COLORS: Record<string, string> = {
+    won: '#00d17e', lost: '#ff5454', sent: '#3b82f6', issued: '#a78bfa', draft: '#d1d5db',
+  }
+  const STATUS_LABELS_SL: Record<string, string> = {
+    won: 'Dobljene', lost: 'Izgubljene', sent: 'Poslane', issued: 'Izdane', draft: 'Osnutki',
+  }
+  const STATUS_LABELS_EN: Record<string, string> = {
+    won: 'Won', lost: 'Lost', sent: 'Sent', issued: 'Issued', draft: 'Draft',
+  }
+
+  const formatPeriod = (date: string) => {
+    if (!date.includes('-')) return date
+    const parts = date.split('-')
+    const [y, m, d] = parts
+    return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}/${y.slice(2)}`
+  }
+
+  const sl = lang === 'sl'
+
+  const kpis = [
+    { label: sl ? 'Vrednost poslanih' : 'Sent value', value: money(totalSentValue), icon: TrendingUp, bg: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { label: sl ? 'Vrednost dobljenih' : 'Won value', value: money(totalRealizedValue), icon: CheckCircle2, bg: 'bg-[#e0fced]', iconColor: 'text-[#007d53]' },
+    { label: sl ? 'Poslane ponudbe' : 'Sent quotes', value: String(totalSentCount), icon: FileText, bg: 'bg-blue-50', iconColor: 'text-blue-400' },
+    { label: sl ? 'Dobljene ponudbe' : 'Won quotes', value: String(totalRealizedCount), icon: Trophy, bg: 'bg-[#e0fced]', iconColor: 'text-[#007d53]' },
   ]
+
+  const periods = [
+    { v: 1 as const, sl: '30 dni', en: '30 days' },
+    { v: 3 as const, sl: '3 mesece', en: '3 months' },
+    { v: 6 as const, sl: '6 mesecev', en: '6 months' },
+    { v: 12 as const, sl: '12 mesecev', en: '12 months' },
+  ]
+
+  if (loading || !stats) return (
+    <div className="flex items-center justify-center h-64">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+    </div>
+  )
 
   return (
     <div>
-      <PageHeader
-        title={t.nav.dashboard}
-        icon={LayoutDashboard}
-        action={
-          <div className="flex flex-wrap gap-2">
-            {[
-              { value: 1 as const, labelEn: '30 days', labelSl: '30 dni' },
-              { value: 3 as const, labelEn: '3 months', labelSl: '3 meseci' },
-              { value: 6 as const, labelEn: '6 months', labelSl: '6 mesecev' },
-              { value: 12 as const, labelEn: '12 months', labelSl: '12 mesecev' },
-            ].map(p => (
-              <button key={p.value} onClick={() => setPeriod(p.value)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium ${period === p.value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
-                {lang === 'en' ? p.labelEn : p.labelSl}
-              </button>
-            ))}
-          </div>
-        }
-      />
-      <div className="p-4">
-      <div className="mb-6">
+      <PageHeader title={t.nav.dashboard} icon={LayoutDashboard} />
 
-        {/* Filters */}
-        <div className="relative w-80 flex gap-2">
-          <div className="relative flex-1">
-            <input type="text" placeholder={lang === 'en' ? 'Search customers...' : 'Išči stranke...'}
-              value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setShowDropdown(true); }}
-              onFocus={() => setShowDropdown(true)}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:border-blue-500"
+      {/* Subtitle + filter bar */}
+      <div className="px-4 py-3 border-b border-gray-200 bg-white flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <p className="text-lg font-semibold text-gray-900">{sl ? 'Analitika' : 'Analytics'}</p>
+          <span className="text-sm text-gray-500">{sl ? 'Pregled in analiza vaših ponudb' : 'Overview and analysis of your quotes'}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+
+          {/* Period dropdown */}
+          <FilterSelect
+            label={sl ? 'Obdobje' : 'Period'}
+            value={String(period)}
+            allLabel=""
+            options={periods.map(p => ({ value: String(p.v), label: sl ? p.sl : p.en }))}
+            onChange={v => { if (v) setPeriod(Number(v) as 1 | 3 | 6 | 12) }}
+            icon={CalendarDays}
+          />
+
+
+          {/* Assignee filter */}
+          {companyUsers.length > 0 && (
+            <FilterSelect
+              label={sl ? 'Odgovorna oseba' : 'Assignee'}
+              value={assigneeFilter}
+              allLabel={sl ? 'Vsi' : 'All'}
+              options={companyUsers.map(u => ({ value: u.id, label: `${u.first_name} ${u.last_name}` }))}
+              onChange={v => { setAssigneeFilter(v); setCurrentPage(1) }}
             />
-          {showDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-64 overflow-y-auto">
-              <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                onClick={() => { setFilterCustomerId(null); setSearchText(''); setShowDropdown(false); setCurrentPage(1); }}>
-                {lang === 'en' ? '✓ All customers' : '✓ Vse stranke'}
-              </div>
-              {customers.filter(c => c.customer_name.toLowerCase().includes(searchText.toLowerCase())).map(c => (
-                <div key={c.customer_id} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer border-t border-gray-200"
-                  onClick={() => { setFilterCustomerId(c.customer_id); setSearchText(c.customer_name); setShowDropdown(false); setCurrentPage(1); }}>
-                  {filterCustomerId === c.customer_id && '✓ '}{c.customer_name}
+          )}
+
+          {/* Customer dropdown */}
+          <div className="relative">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              placeholder={sl ? 'Stranka: Vse' : 'Customer: All'}
+              value={searchText}
+              onChange={e => { setSearchText(e.target.value); setShowDropdown(true) }}
+              onFocus={() => setShowDropdown(true)}
+              className="pl-9 pr-8 py-1 border border-gray-200 rounded-lg text-sm bg-white text-gray-900 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-52 transition-colors"
+            />
+            {(searchText || filterCustomerId) && (
+              <button onClick={() => { setSearchText(''); setFilterCustomerId(null); setShowDropdown(false); setCurrentPage(1) }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+            {showDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto min-w-[200px]">
+                <div className="px-3 py-2 text-sm text-gray-600 hover:bg-[#fbfbfb] cursor-pointer"
+                  onClick={() => { setFilterCustomerId(null); setSearchText(''); setShowDropdown(false); setCurrentPage(1) }}>
+                  {sl ? 'Vse stranke' : 'All customers'}
                 </div>
-              ))}
+                {customers.filter(c => c.customer_name.toLowerCase().includes(searchText.toLowerCase())).map(c => (
+                  <div key={c.customer_id}
+                    className={`px-3 py-2 text-sm cursor-pointer border-t border-gray-100 hover:bg-[#fbfbfb] ${filterCustomerId === c.customer_id ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                    onClick={() => { setFilterCustomerId(c.customer_id); setSearchText(c.customer_name); setShowDropdown(false); setCurrentPage(1) }}>
+                    {c.customer_name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+        </div>
+      </div>
+
+      <div className="p-4 space-y-6">
+
+        {/* KPI cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {kpis.map(k => (
+            <div key={k.label} className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 ${k.bg}`}>
+                <k.icon className={`w-4 h-4 ${k.iconColor}`} />
+              </div>
+              <p className="text-xs font-medium text-gray-400">{k.label}</p>
+              <p className="text-2xl font-semibold text-gray-900 mt-0.5 tracking-tight">{k.value}</p>
             </div>
-          )}
-          </div>
-          {(searchText || filterCustomerId) && (
-            <button onClick={() => { setSearchText(''); setFilterCustomerId(null); setShowDropdown(false); setCurrentPage(1); }}
-              className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 whitespace-nowrap">
-              ✕ {lang === 'en' ? 'Clear' : 'Počisti'}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {cards.map(c => (
-          <div key={c.label} className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${c.color}`}><c.icon className="w-5 h-5" /></div>
-            <p className="text-xs text-gray-400">{c.label}</p>
-            <p className="text-2xl font-semibold tracking-tight text-gray-900 mt-0.5">{c.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* 4 Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Chart 1: Sent Count */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">{lang === 'en' ? 'Sent quotes count' : 'Število poslanih ponudb'}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" tickFormatter={(date) => {
-                if (date.includes('-')) {
-                  const parts = date.split('-');
-                  const [y, m, d] = parts;
-                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
-                }
-                return date;
-              }} />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="sent_count" fill="#3b82f6" label={{ position: 'top', fill: '#1f2937', fontSize: 12 }} />
-            </BarChart>
-          </ResponsiveContainer>
+          ))}
         </div>
 
-        {/* Chart 2: Realized Count */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">{lang === 'en' ? 'Realized quotes count' : 'Število dobljenih ponudb'}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" tickFormatter={(date) => {
-                if (date.includes('-')) {
-                  const parts = date.split('-');
-                  const [y, m, d] = parts;
-                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
-                }
-                return date;
-              }} />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="realized_count" fill="#10b981" label={{ position: 'top', fill: '#1f2937', fontSize: 12 }} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {/* Charts */}
+        {trends.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-        {/* Chart 3: Sent Value */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">{lang === 'en' ? 'Sent value' : 'Ponujen znesek'}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" tickFormatter={(date) => {
-                if (date.includes('-')) {
-                  const parts = date.split('-');
-                  const [y, m, d] = parts;
-                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
-                }
-                return date;
-              }} />
-              <YAxis />
-              <Tooltip formatter={(v) => money(v as number)} />
-              <Bar dataKey="sent_value" fill="#8b5cf6" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v: any) => v ? '€' + (v / 1000).toFixed(1) + 'k' : '' }} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+            {/* Values chart */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h2 className="text-sm font-medium text-gray-900 mb-5">{sl ? 'Vrednost ponudb' : 'Quote value'}</h2>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={trends} margin={{ top: 16, right: 8, left: 0, bottom: 0 }} barGap={4}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                  <XAxis dataKey="period" tickFormatter={formatPeriod} tick={{ fontSize: 12, fill: '#5e5e5e' }} axisLine={false} tickLine={false} />
+                  <YAxis tickFormatter={v => moneyK(v)} tick={{ fontSize: 12, fill: '#5e5e5e' }} axisLine={false} tickLine={false} width={60} />
+                  <Tooltip formatter={(v) => money(v as number)} contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 13 }} />
+                  <Legend wrapperStyle={{ fontSize: 12, color: '#6b7280', paddingTop: 8 }} />
+                  <Bar dataKey="sent_value" name={sl ? 'Poslano' : 'Sent'} fill="#bfdbfe" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="realized_value" name={sl ? 'Dobljeno' : 'Won'} fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-        {/* Chart 4: Realized Value */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">{lang === 'en' ? 'Realized value' : 'Znesek dobljenih ponudb'}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trends} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="0" stroke="#f0f0f0" />
-              <XAxis dataKey="period" tickFormatter={(date) => {
-                if (date.includes('-')) {
-                  const parts = date.split('-');
-                  const [y, m, d] = parts;
-                  return parts.length === 3 ? `${d}.${m}.${y.slice(2)}` : `${m}.${y}`;
-                }
-                return date;
-              }} />
-              <YAxis />
-              <Tooltip formatter={(v) => money(v as number)} />
-              <Bar dataKey="realized_value" fill="#06b6d4" label={{ position: 'top', fill: '#1f2937', fontSize: 11, formatter: (v: any) => v ? '€' + (v / 1000).toFixed(1) + 'k' : '' }} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-
-      {/* Top Customers */}
-      {sortedCustomers.length > 0 && (
-        <div className="-mx-4 border-t border-b border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200"><h2 className="text-sm font-semibold text-gray-900">{s.topCustomers}</h2></div>
-          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('customer_name')}>
-                  <div className="flex items-center gap-1">
-                    {s.stranka}
-                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'customer_name' ? '#1f2937' : '#d1d5db', transform: sortKey === 'customer_name' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
-                  </div>
-                </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_value')}>
-                  <div className="flex items-center justify-end gap-1">
-                    {s.poslanaVrednost}
-                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'sent_value' ? '#1f2937' : '#d1d5db', transform: sortKey === 'sent_value' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
-                  </div>
-                </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_value')}>
-                  <div className="flex items-center justify-end gap-1">
-                    {s.realiziranaVrednost}
-                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'realized_value' ? '#1f2937' : '#d1d5db', transform: sortKey === 'realized_value' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
-                  </div>
-                </th>
-                <th className="text-center px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sent_count')}>
-                  <div className="flex items-center justify-center gap-1">
-                    {s.sentCount}
-                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'sent_count' ? '#1f2937' : '#d1d5db', transform: sortKey === 'sent_count' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
-                  </div>
-                </th>
-                <th className="text-center px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('realized_count')}>
-                  <div className="flex items-center justify-center gap-1">
-                    {s.realizedCount}
-                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'realized_count' ? '#1f2937' : '#d1d5db', transform: sortKey === 'realized_count' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
-                  </div>
-                </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 cursor-pointer hover:bg-gray-100" onClick={() => handleSort('win_rate')}>
-                  <div className="flex items-center justify-end gap-1">
-                    {s.winRate2}
-                    <ArrowUpDown className="w-3 h-3" style={{ color: sortKey === 'win_rate' ? '#1f2937' : '#d1d5db', transform: sortKey === 'win_rate' && sortDir === 'desc' ? 'scaleY(-1)' : 'scaleY(1)' }} />
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {paginatedCustomers.map(c => (
-                <tr key={c.customer_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-3 text-gray-900 font-medium">{c.customer_name}</td>
-                  <td className="px-6 py-3 text-right text-gray-600">{money(c.sent_value)}</td>
-                  <td className="px-6 py-3 text-right text-gray-600">{money(c.realized_value)}</td>
-                  <td className="px-6 py-3 text-center text-gray-600">{c.sent_count}</td>
-                  <td className="px-6 py-3 text-center text-green-600 font-medium">{c.realized_count}</td>
-                  <td className="px-6 py-3 text-right text-gray-600">{c.win_rate.toFixed(1)}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table></div>
-          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-            <div className="text-xs text-gray-500">{lang === 'en' ? `Page ${currentPage} of ${totalPages} (${filteredCustomers.length} customers)` : `Stran ${currentPage} od ${totalPages} (${filteredCustomers.length} strank)`}</div>
-            <div className="flex gap-2">
-              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded text-sm ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                ← {lang === 'en' ? 'Previous' : 'Prejšnja'}
-              </button>
-              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                className={`px-3 py-1 rounded text-sm ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                {lang === 'en' ? 'Next' : 'Naslednja'} →
-              </button>
+            {/* Count chart */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h2 className="text-sm font-medium text-gray-900 mb-5">{sl ? 'Število ponudb' : 'Quote count'}</h2>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={trends} margin={{ top: 16, right: 8, left: 0, bottom: 0 }} barGap={4}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                  <XAxis dataKey="period" tickFormatter={formatPeriod} tick={{ fontSize: 12, fill: '#5e5e5e' }} axisLine={false} tickLine={false} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#5e5e5e' }} axisLine={false} tickLine={false} width={32} />
+                  <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 13 }} />
+                  <Legend wrapperStyle={{ fontSize: 12, color: '#6b7280', paddingTop: 8 }} />
+                  <Bar dataKey="sent_count" name={sl ? 'Poslane' : 'Sent'} fill="#bbf7d0" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="realized_count" name={sl ? 'Dobljene' : 'Won'} fill="#00d17e" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+
+        {/* Customer table */}
+        {sortedCustomers.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-sm font-medium text-gray-900">{s.topCustomers}</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[600px]">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    {[
+                      { key: 'customer_name' as SortKey, label: sl ? 'Stranka' : 'Customer', align: 'left' },
+                      { key: 'sent_value' as SortKey, label: sl ? 'Poslana vrednost' : 'Sent value', align: 'right' },
+                      { key: 'realized_value' as SortKey, label: sl ? 'Dobljena vrednost' : 'Won value', align: 'right' },
+                      { key: 'sent_count' as SortKey, label: sl ? 'Poslane' : 'Sent', align: 'center' },
+                      { key: 'realized_count' as SortKey, label: sl ? 'Dobljene' : 'Won', align: 'center' },
+                      { key: 'win_rate' as SortKey, label: sl ? 'Win rate' : 'Win rate', align: 'right' },
+                    ].map(col => (
+                      <th key={col.key}
+                        className={`px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer select-none text-${col.align}`}
+                        onClick={() => handleSort(col.key)}>
+                        <div className={`flex items-center gap-1 ${col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : ''}`}>
+                          {col.label}
+                          <SortIcon active={sortKey === col.key} dir={sortDir} />
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {paginatedCustomers.map(c => (
+                    <tr key={c.customer_id} className="hover:bg-[#fbfbfb]">
+                      <td className="px-6 py-3 font-medium text-gray-900">{c.customer_name}</td>
+                      <td className="px-6 py-3 text-right text-gray-600">{money(c.sent_value)}</td>
+                      <td className="px-6 py-3 text-right text-gray-600">{money(c.realized_value)}</td>
+                      <td className="px-6 py-3 text-center text-gray-600">{c.sent_count}</td>
+                      <td className="px-6 py-3 text-center text-gray-600">{c.realized_count}</td>
+                      <td className="px-6 py-3 text-right text-gray-600">{c.win_rate.toFixed(1)} %</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {totalPages > 1 && (
+              <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
+                <span className="text-xs text-gray-400">
+                  {sl ? `Stran ${currentPage} od ${totalPages}` : `Page ${currentPage} of ${totalPages}`}
+                </span>
+                <div className="flex gap-2">
+                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                    className="px-3 py-1 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-[#f6f6f6] disabled:opacity-40 disabled:cursor-not-allowed">
+                    {sl ? 'Prejšnja' : 'Previous'}
+                  </button>
+                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                    className="px-3 py-1 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-[#f6f6f6] disabled:opacity-40 disabled:cursor-not-allowed">
+                    {sl ? 'Naslednja' : 'Next'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
     </div>
   )
 }

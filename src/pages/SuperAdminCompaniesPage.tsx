@@ -123,12 +123,12 @@ export default function SuperAdminCompaniesPage() {
             ) : paged.length === 0 ? (
               <tr><td colSpan={5} className="px-5 py-12 text-center text-gray-400">Ni rezultatov</td></tr>
             ) : paged.map(c => (
-              <tr key={c.id} className="border-t border-gray-200 hover:bg-gray-50">
+              <tr key={c.id} className="border-t border-gray-200 hover:bg-[#fbfbfb]">
                 <td className="px-5 py-3.5 font-medium text-gray-900">{c.name}</td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(c.created_at)}</td>
                 <td className="px-5 py-3.5 text-center text-gray-600">{pluralUsers(c.user_count ?? 0)}</td>
                 <td className="px-5 py-3.5 text-center">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium ${
                     c.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
                   }`}>
                     {c.is_active ? 'Aktivno' : 'Deaktivirano'}

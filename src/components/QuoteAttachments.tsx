@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+﻿﻿import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../hooks/useLanguage'
 import { Upload, File, Trash2, Download, FileText, LayoutGrid, List, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { ensureThumb, saveThumb } from '../lib/thumbs'
 import { pdfFirstPageThumb } from '../lib/pdfThumb'
+import { countAttachments } from '../utils/pluralize'
 import CadViewer from './CadViewer'
 import PdfViewer from './PdfViewer'
 
@@ -37,15 +38,6 @@ function isImage(filename: string) {
   return imageExts.includes(filename.toLowerCase().split('.').pop() || '')
 }
 
-function fmtAttachmentCount(n: number, lang: string) {
-  if (lang === 'sl') {
-    if (n === 1) return '1 Priloga'
-    if (n === 2) return '2 Prilogi'
-    if (n === 3 || n === 4) return `${n} Priloge`
-    return `${n} Prilog`
-  }
-  return n === 1 ? '1 Attachment' : `${n} Attachments`
-}
 
 export default function QuoteAttachments({ quoteId, companyId, quoteItemId, attachments, onChange, readonly, inline, preview }: QuoteAttachmentsProps) {
   const { lang, t } = useLanguage()
@@ -83,7 +75,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
   }, [attachments])
 
   // As soon as the preloaded signed URL for a PDF is available, render its thumbnail
-  // directly via pdf.js — faster than ensureThumb creating its own signed URL.
+  // directly via pdf.js â€" faster than ensureThumb creating its own signed URL.
   useEffect(() => {
     const pdfsReady = attachments.filter(a =>
       getFileType(a.file_name) === 'pdf' && cadUrls[a.id] && !thumbs[a.id])
@@ -196,7 +188,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     }
   }
 
-  // preview (offer review) shows ALL attachments — quote-level + every item-level.
+  // preview (offer review) shows ALL attachments â€" quote-level + every item-level.
   // inline (quoteItemId set) shows only that item's. edit mode shows quote-level only.
   const filtered = preview
     ? attachments
@@ -220,66 +212,46 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     return (
       <>
       <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-4 h-full">
-        {/* Header - ONE ROW: icon + count + filter pills + view toggle */}
-        <div className="flex items-center gap-3">
-          {/* Left: icon + count text */}
+        {/* Header: one row on desktop, two rows on mobile */}
+        <div className="flex flex-wrap gap-y-2 items-center gap-x-3">
+          {/* Left: icon + count */}
           <div className="flex items-center gap-2">
             <FileText className="w-4 h-4 text-gray-600" />
             <span className="text-sm font-semibold text-gray-700">
-              {fmtAttachmentCount(filtered.length, lang)}
+              {countAttachments(lang, filtered.length)}
             </span>
           </div>
 
-          {/* Center: filter pills (blue border + light blue background) */}
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setFilterType('pdf')}
-              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'pdf' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
-            >
-              {kindLabels.pdf} ({counts.pdf})
-            </button>
-            <button
-              onClick={() => setFilterType('cad')}
-              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'cad' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
-            >
-              {kindLabels.cad} ({counts.cad})
-            </button>
-            <button
-              onClick={() => setFilterType('bom')}
-              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'bom' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
-            >
-              {kindLabels.bom} ({counts.bom})
-            </button>
-            <button
-              onClick={() => setFilterType('other')}
-              className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${filterType === 'other' ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}
-            >
-              {kindLabels.other} ({counts.other})
-            </button>
+          {/* Filter pills — inline on desktop, wraps on mobile */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {(['pdf', 'cad', 'bom', 'other'] as const).map(type => (
+              <button key={type}
+                onClick={() => setFilterType(f => f === type ? 'all' : type)}
+                className={`px-2 py-0.5 rounded-full text-xs font-medium border transition-all ${filterType === type ? 'border-[#3a7df2] bg-[#deeafd] text-[#3a7df2]' : 'border-[#deeafd] bg-[#eff5fe] text-[#3a7df2] hover:border-[#3a7df2]'}`}
+              >
+                {kindLabels[type]} ({counts[type]})
+              </button>
+            ))}
           </div>
 
-          {/* Right: view toggle + big upload button */}
+          {/* Right: view toggle + upload */}
           <div className="ml-auto flex items-center gap-3">
             <div className="flex gap-1 border border-gray-200 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-1 rounded ${viewMode === 'grid' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-              >
+              <button onClick={() => setViewMode('grid')}
+                className={`p-1 rounded ${viewMode === 'grid' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>
                 <LayoutGrid className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-1 rounded ${viewMode === 'list' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-              >
+              <button onClick={() => setViewMode('list')}
+                className={`p-1 rounded ${viewMode === 'list' ? 'bg-gray-200 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>
                 <List className="w-4 h-4" />
               </button>
             </div>
             {!readonly && (
               <>
                 <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" id="header-upload" />
-                <label htmlFor="header-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-50 text-gray-400'}`}>
+                <label htmlFor="header-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-[#f6f6f6]' : 'cursor-not-allowed opacity-50 text-gray-400'}`}>
                   <Upload className="w-4 h-4" />
-                  Naloži datoteke
+                  {t.qp.uploadFiles}
                 </label>
               </>
             )}
@@ -290,7 +262,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-3 gap-3 flex-1 overflow-y-auto auto-rows-min content-start">
             {displayed.length === 0 ? (
-              <p className="text-xs text-gray-400 col-span-3">{lang === 'sl' ? 'Ni datotek' : 'No files'}</p>
+              <p className="text-xs text-gray-400 col-span-3">{t.qp.noFiles}</p>
             ) : (
               displayed.map(att => {
                 const fileType = getFileType(att.file_name)
@@ -379,7 +351,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         ) : (
           <div className="flex-1 overflow-y-auto space-y-2">
             {displayed.length === 0 ? (
-              <p className="text-xs text-gray-400">{lang === 'sl' ? 'Ni datotek' : 'No files'}</p>
+              <p className="text-xs text-gray-400">{t.qp.noFiles}</p>
             ) : (
               displayed.map(att => (
                 <div key={att.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200 text-xs group">
@@ -451,7 +423,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
       other: filtered.filter(a => getFileType(a.file_name) === 'other').length,
     }
 
-    // Select a file → fetch its signed URL so the live viewer renders it directly
+    // Select a file â†' fetch its signed URL so the live viewer renders it directly
     // (interactive, in-window). The render also bakes the thumbnail for grids/lists.
     async function selectAtt(att: any) {
       setSelectedAtt(att)
@@ -483,10 +455,10 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     return (
       <>
       <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full overflow-hidden">
-        {/* Top: large interactive preview — rotate the model directly here. */}
+        {/* Top: large interactive preview â€" rotate the model directly here. */}
         <div className="min-h-0 bg-gray-50 border-b border-gray-200 relative" style={{flex: '0 0 68%'}}>
           {!selectedAtt ? (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Ni datotek</div>
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">{t.qp.noFiles}</div>
           ) : !selectedUrl ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-7 h-7 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
@@ -507,18 +479,18 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
 
         {/* Bottom: header row + thumbnail grid */}
         <div className="flex flex-col gap-3 p-4 border-t border-gray-200">
-          {/* Header row — matches quote-level panel exactly */}
+          {/* Header row â€" matches quote-level panel exactly */}
           <div className="flex items-center gap-3">
             <FileText className="w-4 h-4 text-gray-600 flex-shrink-0" />
             <span className="text-sm font-semibold text-gray-700 flex-shrink-0">
-              {fmtAttachmentCount(filtered.length, lang)}
+              {countAttachments(lang, filtered.length)}
             </span>
             <div className="flex items-center gap-1.5">
               {(['pdf','cad','bom','other'] as const).map((type) => {
                 const labels = kindLabels
                 return (
                   <button key={type} onClick={() => setInlineFilterType(inlineFilterType === type ? 'all' : type)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${inlineFilterType === type ? 'border-blue-500 bg-blue-100 text-blue-700' : 'border-blue-300 bg-blue-50 text-blue-600 hover:border-blue-400'}`}>
+                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${inlineFilterType === type ? 'border-[#3a7df2] bg-[#deeafd] text-[#3a7df2]' : 'border-[#deeafd] bg-[#eff5fe] text-[#3a7df2] hover:border-[#3a7df2]'}`}>
                     {labels[type]} ({inlineCounts[type]})
                   </button>
                 )
@@ -527,8 +499,8 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
             {!readonly && (
               <div className="ml-auto">
                 <input type="file" multiple onChange={handleFileUpload} disabled={uploading || !quoteId} className="hidden" id="inline-upload" />
-                <label htmlFor="inline-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-gray-50' : 'cursor-not-allowed opacity-40 text-gray-400'}`}>
-                  <Upload className="w-4 h-4" /> Naloži datoteke
+                <label htmlFor="inline-upload" className={`flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium ${quoteId ? 'cursor-pointer text-gray-700 hover:border-gray-400 hover:bg-[#f6f6f6]' : 'cursor-not-allowed opacity-40 text-gray-400'}`}>
+                  <Upload className="w-4 h-4" /> NaloĹľi datoteke
                 </label>
               </div>
             )}
@@ -537,7 +509,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
           {/* Thumbnails */}
           <div className="grid grid-cols-3 gap-3">
             {inlineDisplayed.length === 0 ? (
-              <p className="text-xs text-gray-400 col-span-3">Ni datotek</p>
+              <p className="text-xs text-gray-400 col-span-3">{t.qp.noFiles}</p>
             ) : inlineDisplayed.map(att => {
               const ft = getFileType(att.file_name)
               const isSel = selectedAtt?.id === att.id
@@ -600,7 +572,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
         </div>
       </div>
 
-      {/* Full-screen viewer — loads the real CAD/PDF only on click */}
+      {/* Full-screen viewer â€" loads the real CAD/PDF only on click */}
       {previewAtt && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col" onClick={closePreview}>
           <div className="flex items-center justify-between px-6 py-3 bg-gray-900 text-white" onClick={e => e.stopPropagation()}>
@@ -632,7 +604,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
     <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-4">
       {!readonly && (
         <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-gray-700">{quoteItemId ? 'Item Files' : 'Quote Files'}</span>
+          <span className="text-xs font-medium text-[#7f7f7f]">{quoteItemId ? 'Item Files' : 'Quote Files'}</span>
           <div className="flex items-center gap-2">
             <input
               type="file"

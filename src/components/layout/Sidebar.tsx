@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+﻿﻿import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, FileText, Users, UserCog, Settings, LogOut, X, Factory, HardHat, Layers, Box, Building2, PanelLeft,
 } from 'lucide-react'
@@ -46,15 +46,15 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
   return (
     <aside className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col h-screen shrink-0">
-      {/* App logo — same height as PageHeader (h-[57px]) */}
+      {/* App logo â€" same height as PageHeader (h-[57px]) */}
       <div className="h-[57px] px-4 border-b border-gray-200 flex items-center justify-between shrink-0">
         <AppLogo size="sm" />
         <div className="flex items-center gap-1">
-          <button onClick={toggle} className="hidden lg:flex p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors" title="Hide sidebar">
+          <button onClick={toggle} className="hidden lg:flex p-1.5 text-gray-400 hover:text-gray-700 hover:bg-[#f6f6f6] rounded-md transition-colors" title="Hide sidebar">
             <PanelLeft className="w-[18px] h-[18px]" />
           </button>
           {onClose && (
-            <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors shrink-0">
+            <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 hover:text-gray-900 hover:bg-[#f6f6f6] rounded-lg transition-colors shrink-0">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -82,7 +82,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
               'flex items-center gap-2.5 px-3 py-1.5 rounded-lg mb-0.5 text-sm font-medium transition-colors',
               isActive
                 ? 'bg-[#f1f1f1] text-gray-900'
-                : 'text-gray-900 hover:bg-gray-100',
+                : 'text-gray-900 hover:bg-[#f6f6f6]',
             )}
           >
             <Icon className="w-4 h-4 shrink-0 text-gray-500" />
@@ -98,7 +98,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           onClick={handleNavClick}
           className={({ isActive }) => cn(
             'flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors mb-0.5',
-            isActive ? 'bg-[#f1f1f1] text-gray-900' : 'text-gray-900 hover:bg-gray-100',
+            isActive ? 'bg-[#f1f1f1] text-gray-900' : 'text-gray-900 hover:bg-[#f6f6f6]',
           )}
         >
           <Settings className="w-4 h-4 text-gray-500" />
@@ -115,7 +115,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
                 onClick={() => setLang(l)}
                 className={cn(
                   'px-2 py-0.5 rounded text-xs font-medium transition-colors',
-                  lang === l ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100',
+                  lang === l ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-[#f6f6f6]',
                 )}
               >
                 {l === 'en' ? 'EN' : 'SL'}
@@ -130,7 +130,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-gray-900 truncate">
-              {profile ? `${profile.first_name} ${profile.last_name}` : '—'}
+              {profile ? `${profile.first_name} ${profile.last_name}` : 'â€"'}
             </p>
           </div>
           <button onClick={handleSignOut} className="text-gray-500 hover:text-gray-900 transition-colors" title={t.nav.signOut}>

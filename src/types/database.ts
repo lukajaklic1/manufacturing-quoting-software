@@ -34,6 +34,7 @@ export interface Company {
   quote_counter: number
   quote_terms: string | null
   quote_terms_en: string | null
+  oh_updated_by: string | null
   created_at: string
   updated_at: string
 }
@@ -275,6 +276,7 @@ export interface Material {
   color: string | null
   is_active: boolean
   notes: string | null
+  updated_by: string | null
   created_at: string
   updated_at: string
 }

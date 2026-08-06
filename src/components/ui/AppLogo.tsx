@@ -2,17 +2,19 @@ interface AppLogoProps {
   size?: 'sm' | 'md' | 'lg'
   showName?: boolean
   dark?: boolean
+  mono?: boolean
 }
 
-export default function AppLogo({ size = 'md', showName = true, dark = false }: AppLogoProps) {
-  const dim = size === 'sm' ? 30 : size === 'md' ? 38 : 52
+export default function AppLogo({ size = 'md', showName = true, dark = false, mono = false }: AppLogoProps) {
+  const dim = size === 'sm' ? 36 : size === 'md' ? 38 : 52
   const fontSize = size === 'sm' ? 'text-base' : size === 'md' ? 'text-xl' : 'text-2xl'
   const textColor = dark ? 'text-white' : 'text-gray-900'
+  const iconBg = mono ? '#111111' : '#266df0'
 
   return (
     <div className="flex items-center gap-2.5">
       <svg width={dim} height={dim} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="40" height="40" rx="10" fill="#2563eb" />
+        <rect width="40" height="40" rx="10" fill={iconBg} />
 
         {/*
           Abstract isometric box — 3 faces, Airtable style.
