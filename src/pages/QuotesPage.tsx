@@ -229,22 +229,10 @@ export default function QuotesPage() {
                     />
                   </td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
-                    <div className="relative flex justify-end">
-                      <button onClick={() => setOpenMenu(openMenu === q.id ? null : q.id)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                    <div className="flex justify-end">
+                      <button onClick={() => navigate(`/quotes/${q.id}`)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
                         <MoreVertical className="w-4 h-4" />
                       </button>
-                      {openMenu === q.id && (
-                        <div className="absolute right-0 top-8 z-20 w-36 bg-white border border-gray-200 rounded-lg shadow-lg py-1" onClick={e => e.stopPropagation()}>
-                          <button onClick={() => { navigate(`/quotes/${q.id}`); setOpenMenu(null) }} className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
-                            <Eye className="w-3.5 h-3.5 text-gray-400" />{t.common.view}
-                          </button>
-                          {canEdit && q.status === 'draft' && (
-                            <button onClick={() => { navigate(`/quotes/${q.id}/edit`); setOpenMenu(null) }} className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
-                              <Pencil className="w-3.5 h-3.5 text-gray-400" />{t.common.edit}
-                            </button>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </td>
                 </tr>
