@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Pencil, Users, Mail, X, PowerOff, Power, UserCog } from 'lucide-react'
+import { Plus, Users, Mail, X, PowerOff, Power, UserCog, MoreVertical } from 'lucide-react'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -280,7 +280,7 @@ export default function UsersPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 justify-end">
                         <button onClick={() => openEdit(u)} title={s.editPermissions}
-                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
+                          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"><MoreVertical className="w-4 h-4" /></button>
                         {u.id !== primaryAdminId && (
                           <button onClick={() => toggleActive(u)}
                             title={u.is_active ? s.deactivateUser : s.reactivateUser}

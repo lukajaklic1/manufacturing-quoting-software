@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, Factory, Search, CalendarDays } from 'lucide-react'
+import { Plus, Factory, Search, CalendarDays, MoreVertical } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -116,9 +116,8 @@ export default function MachinesPage() {
                     </div>
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>
-                    <div className="flex gap-1 justify-end">
-                      {canEdit && <button onClick={() => navigate(`/machines/${m.id}/edit`)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>}
-                      {canEdit && !used.has(m.id) && <button onClick={() => setToDelete(m)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-3.5 h-3.5" /></button>}
+                    <div className="flex justify-end">
+                      {canEdit && <button onClick={() => navigate(`/machines/${m.id}/edit`)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"><MoreVertical className="w-4 h-4" /></button>}
                     </div>
                   </td>
                 </tr>

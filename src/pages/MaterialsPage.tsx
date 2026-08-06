@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, Box, Search, CalendarDays } from 'lucide-react'
+import { Plus, Box, Search, CalendarDays, MoreVertical } from 'lucide-react'
 import { format } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { usedMaterialIds } from '../lib/usageCheck'
@@ -145,9 +145,8 @@ export default function MaterialsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>
-                    <div className="flex gap-1 justify-end">
-                      {canEdit && <button onClick={() => openEdit(m)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>}
-                      {canEdit && !used.has(m.id) && <button onClick={() => setToDelete(m)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-3.5 h-3.5" /></button>}
+                    <div className="flex justify-end">
+                      {canEdit && <button onClick={() => openEdit(m)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"><MoreVertical className="w-4 h-4" /></button>}
                     </div>
                   </td>
                 </tr>
