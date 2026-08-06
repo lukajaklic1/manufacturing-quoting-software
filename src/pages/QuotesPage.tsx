@@ -99,7 +99,7 @@ export default function QuotesPage() {
     for (const it of itemList) {
       counts[it.quote_id] = (counts[it.quote_id] ?? 0) + 1
       const arr = slotItems[it.quote_id] ?? (slotItems[it.quote_id] = [])
-      if (arr.length < 4) arr.push(it)
+      if (arr.length < 3) arr.push(it)
     }
     setPartCounts(counts)
     const slots: Record<string, (string | null)[]> = {}
@@ -188,11 +188,11 @@ export default function QuotesPage() {
                         <span className="min-w-[1.25rem] h-5 px-1 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium flex items-center justify-center shrink-0">{partCounts[q.id]}</span>
                       )}
                       {(partSlots[q.id] ?? []).map((url, idx) => (
-                        <div key={idx} className="w-11 h-11 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
-                          {url ? <img src={url} alt="" className="w-full h-full object-contain" /> : <Box className="w-5 h-5 text-gray-300" />}
+                        <div key={idx} className="w-11 h-11 rounded-lg border border-blue-200 bg-blue-50 overflow-hidden flex items-center justify-center shrink-0">
+                          {url ? <img src={url} alt="" className="w-full h-full object-contain" style={{ filter: 'blur(1.5px)' }} /> : <Box className="w-5 h-5 text-blue-200" />}
                         </div>
                       ))}
-                      {(partCounts[q.id] ?? 0) > 4 && <span className="text-xs text-gray-400 ml-0.5">+{(partCounts[q.id] ?? 0) - 4}</span>}
+                      {(partCounts[q.id] ?? 0) > 3 && <span className="text-xs text-gray-400 ml-0.5">+{(partCounts[q.id] ?? 0) - 3}</span>}
                     </div>
                   </td>
                   <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLE[q.status]}`}>{s.status[q.status]}</span></td>
