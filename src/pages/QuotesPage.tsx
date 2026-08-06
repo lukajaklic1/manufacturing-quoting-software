@@ -195,8 +195,8 @@ export default function QuotesPage() {
                         <span className="min-w-[1.25rem] h-5 px-1 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium flex items-center justify-center shrink-0">{partCounts[q.id]}</span>
                       )}
                       {(partSlots[q.id] ?? []).map((url, idx) => (
-                        <div key={idx} className="w-11 h-11 rounded-lg border border-blue-200 bg-blue-50 overflow-hidden flex items-center justify-center shrink-0">
-                          {url ? <img src={url} alt="" className="w-full h-full object-contain opacity-60" /> : <Box className="w-5 h-5 text-blue-200" />}
+                        <div key={idx} className="w-11 h-11 rounded-lg overflow-hidden flex items-center justify-center shrink-0" style={{ border: '1.5px solid #d6e5ff', backgroundColor: '#f0f5ff' }}>
+                          {url ? <img src={url} alt="" className="w-full h-full object-contain" style={{ opacity: 0.85 }} /> : <Box className="w-5 h-5" style={{ color: '#d6e5ff' }} />}
                         </div>
                       ))}
                       {(partCounts[q.id] ?? 0) > 3 && <span className="text-xs text-gray-400 ml-0.5">+{(partCounts[q.id] ?? 0) - 3}</span>}
