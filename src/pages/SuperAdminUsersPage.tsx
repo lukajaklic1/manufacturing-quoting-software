@@ -1,4 +1,4 @@
-?import { useEffect, useRef, useState } from 'react'
+ï»¿?import { useEffect, useRef, useState } from 'react'
 import { Power, PowerOff, Search, X, Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from '../components/ui/Toast'
@@ -48,7 +48,7 @@ export default function SuperAdminUsersPage() {
     if (usrs && comps) {
       const nameMap: Record<string, string> = {}
       for (const c of comps) nameMap[c.id] = c.name
-      setUsers(usrs.map(u => ({ ...u, company_name: nameMap[u.company_id] || 'â€"' })))
+      setUsers(usrs.map(u => ({ ...u, company_name: nameMap[u.company_id] || 'ï¿½"' })))
     }
     setLoading(false)
   }
