@@ -1,4 +1,4 @@
-﻿?import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Power, PowerOff, Search, X, Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from '../components/ui/Toast'
