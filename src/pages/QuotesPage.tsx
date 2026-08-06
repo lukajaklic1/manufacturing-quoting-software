@@ -198,7 +198,7 @@ export default function QuotesPage() {
                         <div key={idx} className="relative w-11 h-11 rounded-lg overflow-hidden flex items-center justify-center shrink-0" style={{ border: '1px solid #d6e5ff', backgroundColor: '#e5eeff' }}>
                           {url
                             ? <>
-                                <img src={url} alt="" className="w-full h-full object-contain opacity-70" />
+                                <img src={url} alt="" className="w-full h-full object-contain opacity-85" />
                                 <div className="absolute inset-0 rounded-lg pointer-events-none" style={{ background: 'radial-gradient(circle, transparent 30%, #e5eeff88 75%, #d6e5ffbb 100%)' }} />
                               </>
                             : <Box className="w-5 h-5" style={{ color: '#d6e5ff' }} />}
