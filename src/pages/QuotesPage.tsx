@@ -181,7 +181,7 @@ export default function QuotesPage() {
                       <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#e5eeff', border: '1px solid #d6e5ff' }}>
                         <FileText className="w-3.5 h-3.5" style={{ color: '#215bcf' }} />
                       </div>
-                      <span className="font-mono text-gray-700">{q.quote_number}</span>
+                      <span className="text-gray-700">{q.quote_number}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-gray-900">{q.customers?.name ?? '—'}</td>
@@ -199,7 +199,7 @@ export default function QuotesPage() {
                           {url
                             ? <>
                                 <img src={url} alt="" className="w-full h-full object-contain" />
-                                <div className="absolute inset-0 rounded-lg pointer-events-none" style={{ background: 'radial-gradient(circle, transparent 35%, #d6e5ff99 100%)' }} />
+                                <div className="absolute inset-0 rounded-lg pointer-events-none" style={{ background: 'radial-gradient(circle, transparent 55%, #d6e5ff66 100%)' }} />
                               </>
                             : <Box className="w-5 h-5" style={{ color: '#d6e5ff' }} />}
                         </div>
