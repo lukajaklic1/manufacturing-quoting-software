@@ -337,7 +337,7 @@ function CustomerCombo({ options, value, onChange, allLabel, placeholder }: {
         value={open ? query : selectedLabel}
         onChange={e => { setQuery(e.target.value); setOpen(true) }}
         onFocus={() => setOpen(true)}
-        placeholder={value === 'all' ? `${placeholder}…` : selectedLabel}
+        placeholder={value === 'all' ? placeholder : selectedLabel}
         className="w-full pl-9 pr-8 py-1 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
       {value !== 'all' && !open && (
         <button onClick={() => pick('all')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"><X className="w-3.5 h-3.5" /></button>
