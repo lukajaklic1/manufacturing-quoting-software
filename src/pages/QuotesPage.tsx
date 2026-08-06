@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { Plus, Eye, Pencil, FileText, Search, Check, X, Box, ChevronDown } from 'lucide-react'
+import { Plus, Eye, Pencil, FileText, Search, Check, X, Box, ChevronDown, MoreVertical } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { getThumbByPath } from '../lib/thumbs'
 import { useCompany } from '../hooks/useCompany'
@@ -51,8 +51,15 @@ export default function QuotesPage() {
   const [assigneeFilter, setAssigneeFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [openMenu, setOpenMenu] = useState<string | null>(null)
 
   useEffect(() => { if (company) { load(); loadUsers() } }, [company])
+  useEffect(() => {
+    if (!openMenu) return
+    const close = () => setOpenMenu(null)
+    window.addEventListener('click', close)
+    return () => window.removeEventListener('click', close)
+  }, [openMenu])
 
   async function loadUsers() {
     const { data } = await supabase.from('users').select('id, first_name, last_name').eq('company_id', company!.id).eq('is_active', true).order('first_name')
@@ -198,7 +205,7 @@ export default function QuotesPage() {
                         <div key={idx} className="relative w-11 h-11 rounded-lg overflow-hidden flex items-center justify-center shrink-0" style={{ border: '1px solid #e8efff', backgroundColor: '#f3f6ff' }}>
                           {url
                             ? <>
-                                <img src={url} alt="" className="w-full h-full object-contain opacity-65" />
+                                <img src={url} alt="" className="w-full h-full object-contain opacity-75" />
                                 <div className="absolute inset-0 rounded-lg pointer-events-none" style={{ background: 'radial-gradient(circle, transparent 25%, #f3f6ff55 65%, #e8efffaa 100%)' }} />
                               </>
                             : <Box className="w-5 h-5" style={{ color: '#e8efff' }} />}
@@ -222,10 +229,22 @@ export default function QuotesPage() {
                     />
                   </td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
-                    <div className="flex items-center gap-1 justify-end">
-                      {canEdit && q.status === 'draft'
-                        ? <button onClick={() => navigate(`/quotes/${q.id}/edit`)} title={t.common.edit} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>
-                        : <button onClick={() => navigate(`/quotes/${q.id}`)} title={t.common.view} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Eye className="w-3.5 h-3.5" /></button>}
+                    <div className="relative flex justify-end">
+                      <button onClick={() => setOpenMenu(openMenu === q.id ? null : q.id)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                      {openMenu === q.id && (
+                        <div className="absolute right-0 top-8 z-20 w-36 bg-white border border-gray-200 rounded-lg shadow-lg py-1" onClick={e => e.stopPropagation()}>
+                          <button onClick={() => { navigate(`/quotes/${q.id}`); setOpenMenu(null) }} className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
+                            <Eye className="w-3.5 h-3.5 text-gray-400" />{t.common.view}
+                          </button>
+                          {canEdit && q.status === 'draft' && (
+                            <button onClick={() => { navigate(`/quotes/${q.id}/edit`); setOpenMenu(null) }} className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
+                              <Pencil className="w-3.5 h-3.5 text-gray-400" />{t.common.edit}
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </td>
                 </tr>
