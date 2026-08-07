@@ -1760,13 +1760,13 @@ export default function LandingPage() {
               {l.navSignIn}
             </Link>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-gray-600 text-sm">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-gray-300 text-sm font-medium">
             {(isSl
               ? ['Brezplačna registracija', 'Brez kreditne kartice', 'Takojšen dostop']
               : ['Free to register', 'No credit card required', 'Instant access']
             ).map(item => (
               <div key={item} className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-gray-500" />{item}
+                <Check className="w-3.5 h-3.5 text-blue-400" />{item}
               </div>
             ))}
           </div>
