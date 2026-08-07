@@ -387,7 +387,7 @@ export default function UsersPage() {
           )}
 
           {editForm.is_admin ? (
-            <p className="text-xs text-gray-400">{s.adminAllAccess}</p>
+            <p className="text-sm text-gray-500">{s.adminAllAccess}</p>
           ) : (
             <div className="border-t border-gray-200 pt-3">
               <p className="text-sm font-medium text-gray-700 mb-2">{s.usersAndPermissions}</p>
@@ -395,7 +395,7 @@ export default function UsersPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-1 pt-3 border-t border-gray-100">
+          <div className="flex items-center justify-between mt-1 pt-4 -mx-6 px-6 border-t border-gray-200">
             {editUser?.id !== primaryAdminId ? (
               <button onClick={() => { toggleActive(editUser!); setEditUser(null) }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${editUser?.is_active ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'}`}>
