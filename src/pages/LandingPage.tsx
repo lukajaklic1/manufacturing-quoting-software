@@ -277,7 +277,7 @@ function HeroMockup({ isSl }: { isSl: boolean }) {
     settings:  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
   }
 
-  const urls: Record<MockView,string> = { dashboard:'app.toolingdesk.com/dashboard', quotes:'app.toolingdesk.com/quotes', customers:'app.toolingdesk.com/customers' }
+  const urls: Record<MockView,string> = { dashboard:'toolingdesk.com/dashboard', quotes:'toolingdesk.com/quotes', customers:'toolingdesk.com/customers' }
 
   const thCls = "px-3 py-2 text-[9px] font-medium text-gray-500 text-left whitespace-nowrap"
 
@@ -667,7 +667,7 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
           <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"/><div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]"/><div className="w-2.5 h-2.5 rounded-full bg-[#28c840]"/>
         </div>
         <div className="flex-1 mx-2 bg-white rounded-md h-5 flex items-center px-3 border border-gray-200/60">
-          <span className="text-[10px] text-gray-400">app.toolingdesk.com/{step === 'operators' ? 'operators' : 'machines'}</span>
+          <span className="text-[10px] text-gray-400">toolingdesk.com/{step === 'operators' ? 'operators' : 'machines'}</span>
         </div>
       </div>
 
@@ -888,7 +888,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
           <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"/><div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]"/><div className="w-2.5 h-2.5 rounded-full bg-[#28c840]"/>
         </div>
         <div className="flex-1 mx-2 bg-white rounded-md h-5 flex items-center px-3 border border-gray-200/60">
-          <span className="text-[10px] text-gray-400">app.toolingdesk.com/calculation</span>
+          <span className="text-[10px] text-gray-400">toolingdesk.com/calculation</span>
         </div>
       </div>
 
@@ -1151,7 +1151,7 @@ function DashboardMockup({ isSl }: { isSl: boolean }) {
           <div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" />
         </div>
         <div className="flex-1 mx-2 bg-white rounded-md h-6 flex items-center px-3 border border-gray-200/60">
-          <span className="text-xs text-gray-400">app.toolingdesk.com/dashboard</span>
+          <span className="text-xs text-gray-400">toolingdesk.com/dashboard</span>
         </div>
       </div>
       <div className="bg-white p-5">
