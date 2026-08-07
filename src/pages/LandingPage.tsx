@@ -605,6 +605,251 @@ function HeroMockup({ isSl }: { isSl: boolean }) {
   )
 }
 
+type RatesStep = 'machines' | 'machine_detail' | 'variable' | 'operators'
+
+function RatesMockup({ isSl }: { isSl: boolean }) {
+  const [step, setStep] = useState<RatesStep>('machines')
+  const [fading, setFading] = useState(false)
+
+  useEffect(() => {
+    const steps: RatesStep[] = ['machines', 'machine_detail', 'variable', 'operators']
+    const id = setInterval(() => {
+      setFading(true)
+      setTimeout(() => {
+        setStep(s => { const i = steps.indexOf(s); return steps[(i + 1) % steps.length] })
+        setFading(false)
+      }, 300)
+    }, 3800)
+    return () => clearInterval(id)
+  }, [])
+
+  const sl = isSl
+  const stepLabels: Record<RatesStep, string> = {
+    machines:      sl ? '1 · Stroji'        : '1 · Machines',
+    machine_detail:sl ? '2 · Fiksni stroški': '2 · Fixed costs',
+    variable:      sl ? '3 · Variabilni'    : '3 · Variable costs',
+    operators:     sl ? '4 · Operaterji'    : '4 · Operators',
+  }
+
+  const machines = [
+    { name: '3-osni CNC obdelovalni center', model: 'Haas VF-2',             cat: 'CNC milling',    rate: '17,19 €/h' },
+    { name: '5-osni CNC obdelovalni center', model: 'DMG MORI DMU 65',       cat: 'CNC milling',    rate: '48,46 €/h' },
+    { name: 'CNC stružnica',                 model: 'Doosan Puma 2600SY',    cat: 'CNC turning',    rate: '35,90 €/h' },
+    { name: 'Ploskovni brusilni stroj',      model: 'Okamoto PSG-63DX',      cat: 'Grinding',       rate: '10,71 €/h' },
+    { name: 'Potopna erozija',               model: 'Sodick AG60L',          cat: 'EDM (erosion)',   rate: '21,17 €/h' },
+    { name: 'Žična erozija',                 model: 'Sodick AQ327L',         cat: 'EDM (erosion)',   rate: '22,41 €/h' },
+  ]
+
+  const operators = [
+    { name: 'CAM programer',                      annual: '56.000 €', rate: '41,83 €/h' },
+    { name: 'Kontrolor kakovosti',                annual: '42.000 €', rate: '31,37 €/h' },
+    { name: 'Operater 3-osnega CNC centra',       annual: '38.000 €', rate: '28,38 €/h' },
+    { name: 'Operater 5-osnega CNC centra',       annual: '45.000 €', rate: '33,61 €/h' },
+    { name: 'Operater CNC stružnice',             annual: '40.000 €', rate: '29,88 €/h' },
+    { name: 'Tehnolog',                           annual: '58.000 €', rate: '43,32 €/h' },
+  ]
+
+  const SidebarItem = ({ label, icon, active }: { label: string; icon: string; active?: boolean }) => (
+    <div className={`flex items-center gap-2 px-2 py-1.5 rounded-md mb-0.5 ${active ? 'bg-[#f1f1f1]' : ''}`}>
+      <svg viewBox="0 0 24 24" fill="none" stroke={active ? '#111' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 shrink-0"><path d={icon}/></svg>
+      <span className={`text-[10px] font-medium ${active ? 'text-gray-900' : 'text-gray-500'}`}>{label}</span>
+    </div>
+  )
+
+  const machineActive = step === 'machines' || step === 'machine_detail' || step === 'variable'
+  const operatorActive = step === 'operators'
+
+  return (
+    <div className="rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
+      {/* Browser chrome */}
+      <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-2.5 flex items-center gap-3">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"/><div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]"/><div className="w-2.5 h-2.5 rounded-full bg-[#28c840]"/>
+        </div>
+        <div className="flex-1 mx-2 bg-white rounded-md h-5 flex items-center px-3 border border-gray-200/60">
+          <span className="text-[10px] text-gray-400">app.toolingdesk.com/{step === 'operators' ? 'operators' : 'machines'}</span>
+        </div>
+      </div>
+
+      {/* App shell */}
+      <div className="bg-white flex" style={{ height: 420 }}>
+        {/* Sidebar */}
+        <aside className="w-[148px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full px-2 pt-3">
+          <div className="flex items-center gap-1.5 px-2 mb-3">
+            <div className="w-4 h-4 bg-gray-200 rounded-sm"/>
+            <span className="text-[10px] font-semibold text-gray-700">TCE d.o.o.</span>
+          </div>
+          <SidebarItem label={sl ? 'Ponudbe' : 'Quotes'}         icon="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <SidebarItem label={sl ? 'Stranke' : 'Customers'}      icon="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <SidebarItem label={sl ? 'Material' : 'Materials'}      icon="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+          <SidebarItem label={sl ? 'Stroji' : 'Machines'}         icon="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" active={machineActive}/>
+          <SidebarItem label={sl ? 'Operaterji' : 'Operators'}    icon="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" active={operatorActive}/>
+          <SidebarItem label={sl ? 'Režijski str.' : 'Overhead'}  icon="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </aside>
+
+        {/* Main */}
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          {/* Header */}
+          <div className="border-b border-gray-100 px-4 py-2.5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                <path d={step === 'operators' ? "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" : "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"}/>
+              </svg>
+              <span className="text-[12px] font-semibold text-gray-900">
+                {step === 'operators' ? (sl ? 'Operaterji' : 'Operators') : step === 'machines' ? (sl ? 'Stroji' : 'Machines') : '3-osni CNC obdelovalni center'}
+              </span>
+              {step === 'machines' && <span className="text-[10px] text-gray-400 ml-1">6</span>}
+              {step === 'operators' && <span className="text-[10px] text-gray-400 ml-1">13</span>}
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                {(['machines','machine_detail','variable','operators'] as RatesStep[]).map(s => (
+                  <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${step === s ? 'w-6 bg-gray-900' : 'w-1.5 bg-gray-200'}`}/>
+                ))}
+              </div>
+              <div className="text-[9px] text-gray-400 border border-gray-200 rounded-md px-1.5 py-0.5">{stepLabels[step]}</div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-hidden transition-all duration-300"
+            style={{ opacity: fading ? 0 : 1, transform: fading ? 'translateY(5px)' : 'translateY(0)' }}>
+
+            {/* MACHINES LIST */}
+            {step === 'machines' && (
+              <div className="h-full flex flex-col">
+                <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2">
+                  <div className="border border-gray-200 rounded-md px-2 py-1 flex items-center gap-1.5 flex-1 max-w-[140px]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span className="text-[9px] text-gray-400">Machine name / Model</span>
+                  </div>
+                </div>
+                <div className="grid text-[9px] font-medium text-gray-400 px-4 py-1.5 border-b border-gray-100" style={{gridTemplateColumns:'1fr 90px 90px 70px 60px'}}>
+                  <span>Machine name</span><span>Model</span><span>Category</span><span>Hourly rate</span><span>Status</span>
+                </div>
+                <div className="overflow-hidden flex-1">
+                  {machines.map((m, i) => (
+                    <div key={i} className="grid items-center px-4 py-2 border-b border-gray-50 hover:bg-gray-50 text-[9.5px]" style={{gridTemplateColumns:'1fr 90px 90px 70px 60px'}}>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-4 h-4 rounded bg-blue-50 flex items-center justify-center shrink-0">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                        <span className="text-gray-800 font-medium truncate">{m.name}</span>
+                      </div>
+                      <span className="text-gray-500 truncate">{m.model}</span>
+                      <span className="text-gray-500">{m.cat}</span>
+                      <span className="text-gray-800 font-medium">{m.rate}</span>
+                      <span className="text-[8.5px] font-medium text-green-700 bg-green-50 rounded-full px-1.5 py-0.5 w-fit">Active</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* MACHINE DETAIL — Fixed costs */}
+            {step === 'machine_detail' && (
+              <div className="px-4 py-3 flex flex-col gap-2.5 overflow-hidden h-full">
+                <p className="text-[9.5px] text-gray-400">← {sl ? 'Stroji' : 'Machines'} · {sl ? 'Konfigurirajte stroškovno strukturo stroja.' : 'Configure machine cost structure to calculate the hourly rate.'}</p>
+                {/* Capacity card */}
+                <div className="border border-gray-200 rounded-xl p-3">
+                  <div className="flex items-center gap-1.5 mb-2.5">
+                    <div className="w-4 h-4 rounded-full bg-blue-50 flex items-center justify-center"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Kapaciteta' : 'Capacity'}</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2 mb-2">
+                    {[[sl?'Prod. dni':'Prod. days','240',sl?'dni/leto':'days/yr'],[sl?'Izmene':'Shifts','1',sl?'izm/dan':'shifts/day'],[sl?'Čas/izmena':'Runtime/shift','8',sl?'h/izmena':'h/shift'],[sl?'Izkoriščenost':'Utilization','85','%']].map(([l,v,u])=>(
+                      <div key={l}><p className="text-[8px] text-gray-400 mb-1">{l}</p><div className="border border-gray-200 rounded px-1.5 py-1 flex items-center justify-between"><span className="text-[9.5px] text-gray-800">{v}</span><span className="text-[8px] text-gray-400">{u}</span></div></div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1 bg-gray-50 rounded-lg px-2 py-1.5 flex justify-between"><span className="text-[9px] text-gray-500">{sl?'Razpoložljive ure/leto':'Available hours / yr'}</span><span className="text-[9px] font-semibold text-gray-800">1.920 h</span></div>
+                    <div className="flex-1 bg-blue-50 rounded-lg px-2 py-1.5 flex justify-between"><span className="text-[9px] text-blue-600">{sl?'Neto op. ure/leto':'Net operating hours / yr'}</span><span className="text-[9px] font-bold text-blue-600">1.632 h</span></div>
+                  </div>
+                </div>
+                {/* Fixed costs card */}
+                <div className="border border-gray-200 rounded-xl p-3">
+                  <div className="flex items-center gap-1.5 mb-2.5">
+                    <div className="w-4 h-4 rounded-full bg-blue-50 flex items-center justify-center"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+                    <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Fiksni stroški' : 'Fixed costs'}</span>
+                  </div>
+                  <div className="grid grid-cols-3 text-[8.5px] text-gray-400 mb-1 px-1"><span>{sl?'Postavka':'Item'}</span><span className="text-right">{sl?'Na leto':'Per year'}</span><span className="text-right">{sl?'Na uro':'Per hour'}</span></div>
+                  {[['Depreciation','8.000,00 €','4,90 €'],['Interest','1.350,00 €','0,83 €'],['Insurance','1.275,00 €','0,78 €'],['Space','1.260,00 €','0,77 €']].map(([l,y,h])=>(
+                    <div key={l} className="grid grid-cols-3 text-[9px] px-1 py-0.5 border-t border-gray-50"><span className="text-gray-500">{l}</span><span className="text-right text-gray-700">{y}</span><span className="text-right text-gray-700">{h}</span></div>
+                  ))}
+                  <div className="grid grid-cols-3 text-[9px] px-1 py-1 border-t border-gray-200 mt-0.5"><span className="font-semibold text-gray-900">{sl?'Skupaj fiksni':'Fixed costs'}</span><span className="text-right font-semibold text-gray-900">11.885,00 €</span><span className="text-right font-semibold text-gray-900">7,28 €</span></div>
+                </div>
+              </div>
+            )}
+
+            {/* VARIABLE COSTS + SUMMARY */}
+            {step === 'variable' && (
+              <div className="px-4 py-3 flex flex-col gap-2.5 overflow-hidden h-full">
+                <div className="border border-gray-200 rounded-xl p-3">
+                  <div className="flex items-center gap-1.5 mb-2.5">
+                    <div className="w-4 h-4 rounded-full bg-blue-50 flex items-center justify-center"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                    <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Variabilni stroški' : 'Variable costs'}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                    {[[sl?'Vzdrževanje':'Maintenance','4','%/leto'],[sl?'Moč (prod.)':'Power (prod.)','22','kW'],[sl?'Strošek energije':'Energy cost','0,16','€/kWh'],[sl?'Orodje':'Tooling','6.000','€/leto']].map(([l,v,u])=>(
+                      <div key={l}><p className="text-[8px] text-gray-400 mb-0.5">{l}</p><div className="border border-gray-200 rounded px-1.5 py-1 flex items-center justify-between"><span className="text-[9.5px] text-gray-800">{v}</span><span className="text-[8px] text-gray-400">{u}</span></div></div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-3 text-[8.5px] text-gray-400 mb-1 px-1"><span>{sl?'Postavka':'Item'}</span><span className="text-right">{sl?'Na leto':'Per year'}</span><span className="text-right">{sl?'Na uro':'Per hour'}</span></div>
+                  {[['Maintenance','3.400,00 €','2,08 €'],['Electricity','5.744,64 €','3,52 €'],['Tooling','6.000,00 €','3,68 €'],['Other','1.020,00 €','0,62 €']].map(([l,y,h])=>(
+                    <div key={l} className="grid grid-cols-3 text-[9px] px-1 py-0.5 border-t border-gray-50"><span className="text-gray-500">{l}</span><span className="text-right text-gray-700">{y}</span><span className="text-right text-gray-700">{h}</span></div>
+                  ))}
+                  <div className="grid grid-cols-3 text-[9px] px-1 py-1 border-t border-gray-200 mt-0.5"><span className="font-semibold text-gray-900">{sl?'Skupaj variabilni':'Variable costs'}</span><span className="text-right font-semibold text-gray-900">16.164,64 €</span><span className="text-right font-semibold text-gray-900">9,90 €</span></div>
+                </div>
+                {/* Summary */}
+                <div className="border border-gray-200 rounded-xl p-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <div className="w-4 h-4 rounded-full bg-blue-50 flex items-center justify-center"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                    <span className="text-[10px] font-semibold text-gray-800">Summary</span>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg px-3 py-2 flex items-center justify-between">
+                    <span className="text-[10px] text-blue-700 font-medium">{sl ? 'Urna postavka' : 'Hourly rate'}</span>
+                    <span className="text-[16px] font-bold text-blue-600">17,19 €</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* OPERATORS LIST */}
+            {step === 'operators' && (
+              <div className="h-full flex flex-col">
+                <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2">
+                  <div className="border border-gray-200 rounded-md px-2 py-1 flex items-center gap-1.5 flex-1 max-w-[140px]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span className="text-[9px] text-gray-400">Operator / role</span>
+                  </div>
+                </div>
+                <div className="grid text-[9px] font-medium text-gray-400 px-4 py-1.5 border-b border-gray-100" style={{gridTemplateColumns:'1fr 90px 80px 60px'}}>
+                  <span>Operator / role</span><span className="text-right">Annual cost</span><span className="text-right">Hourly rate</span><span className="text-center">Status</span>
+                </div>
+                <div className="overflow-hidden flex-1">
+                  {operators.map((o, i) => (
+                    <div key={i} className="grid items-center px-4 py-2 border-b border-gray-50 text-[9.5px]" style={{gridTemplateColumns:'1fr 90px 80px 60px'}}>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-4 h-4 rounded bg-blue-50 flex items-center justify-center shrink-0">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <span className="text-gray-800 font-medium truncate">{o.name}</span>
+                      </div>
+                      <span className="text-gray-600 text-right">{o.annual}</span>
+                      <span className="text-gray-800 font-medium text-right">{o.rate}</span>
+                      <div className="flex justify-center"><span className="text-[8.5px] font-medium text-green-700 bg-green-50 rounded-full px-1.5 py-0.5">Active</span></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 type CalcStep = 'material' | 'operation' | 'result' | 'quantities'
 
 function CalcMockup({ isSl }: { isSl: boolean }) {
@@ -1210,6 +1455,41 @@ export default function LandingPage() {
             </FadeUp>
             <FadeUp delay={100}>
               <DashboardMockup isSl={isSl} />
+            </FadeUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ RATES ══ */}
+      <section className="border-t border-gray-100 py-24">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <FadeUp>
+              <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4">
+                {isSl ? 'Urne postavke' : 'Hourly rates'}
+              </p>
+              <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
+                {isSl ? 'Točne urne postavke za vsak stroj in operaterja.' : 'Accurate hourly rates for every machine and operator.'}
+              </h2>
+              <p className="text-gray-500 leading-relaxed mb-8">
+                {isSl
+                  ? 'Vnesite investicijo, kapaciteto, fiksne in variabilne stroške — Toolingdesk samodejno izračuna urno postavko. Enako velja za vsakega operaterja.'
+                  : 'Enter investment, capacity, fixed and variable costs — Toolingdesk automatically calculates the hourly rate. The same applies to every operator.'}
+              </p>
+              <div className="flex flex-col gap-3">
+                {(isSl
+                  ? ['Amortizacija, obresti, zavarovanje in prostor', 'Energija, vzdrževanje, orodje in potrošni material', 'Letni stroški operaterja → urna postavka']
+                  : ['Depreciation, interest, insurance and space costs', 'Energy, maintenance, tooling and consumables', 'Annual operator cost → hourly rate']
+                ).map(item => (
+                  <div key={item} className="flex items-center gap-3">
+                    <Check className="w-4 h-4 text-gray-400 shrink-0" />
+                    <span className="text-gray-700 text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </FadeUp>
+            <FadeUp delay={100}>
+              <RatesMockup isSl={isSl} />
             </FadeUp>
           </div>
         </div>
