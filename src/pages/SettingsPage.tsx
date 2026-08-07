@@ -100,7 +100,7 @@ export default function SettingsPage() {
           <p className="text-xs text-gray-400 mb-4">{s.quoteTermsHint}</p>
           <div className="flex flex-col gap-4">
             <div>
-              <label className="block text-xs font-medium text-label mb-1">{s.quoteTermsSl}</label>
+              <label className="block text-xs font-normal text-label mb-1">{s.quoteTermsSl}</label>
               <textarea
                 rows={6}
                 value={form.quote_terms ?? ''}
@@ -109,7 +109,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-label mb-1">{s.quoteTermsEn}</label>
+              <label className="block text-xs font-normal text-label mb-1">{s.quoteTermsEn}</label>
               <textarea
                 rows={6}
                 value={form.quote_terms_en ?? ''}

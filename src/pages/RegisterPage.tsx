@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-label">{a.email}</label>
+              <label className="text-xs font-normal text-label">{a.email}</label>
               <input
                 type="email" required autoComplete="email"
                 value={email} onChange={e => setEmail(e.target.value)}
@@ -49,7 +49,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-label">{a.password}</label>
+              <label className="text-xs font-normal text-label">{a.password}</label>
               <input
                 type="password" required autoComplete="new-password"
                 value={password} onChange={e => setPassword(e.target.value)}
@@ -58,7 +58,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-label">{a.confirmPassword}</label>
+              <label className="text-xs font-normal text-label">{a.confirmPassword}</label>
               <input
                 type="password" required autoComplete="new-password"
                 value={confirm} onChange={e => setConfirm(e.target.value)}

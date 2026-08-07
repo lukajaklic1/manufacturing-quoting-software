@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-label">{lang === 'sl' ? 'Novo geslo' : 'New password'}</label>
+                <label className="text-xs font-normal text-label">{lang === 'sl' ? 'Novo geslo' : 'New password'}</label>
                 <input type="password" required autoComplete="new-password"
                   value={password} onChange={e => setPassword(e.target.value)}
                   placeholder={lang === 'sl' ? 'Vsaj 8 znakov' : 'Min. 8 characters'}
@@ -77,7 +77,7 @@ export default function ResetPasswordPage() {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-label">{a.confirmPassword}</label>
+                <label className="text-xs font-normal text-label">{a.confirmPassword}</label>
                 <input type="password" required autoComplete="new-password"
                   value={confirm} onChange={e => setConfirm(e.target.value)}
                   placeholder="••••••••"
