@@ -281,13 +281,6 @@ export default function UsersPage() {
                       <div className="flex items-center gap-1 justify-end">
                         <button onClick={() => openEdit(u)} title={s.editPermissions}
                           className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"><MoreVertical className="w-4 h-4" /></button>
-                        {u.id !== primaryAdminId && (
-                          <button onClick={() => toggleActive(u)}
-                            title={u.is_active ? s.deactivateUser : s.reactivateUser}
-                            className={`p-1.5 rounded-lg transition-colors ${u.is_active ? 'text-gray-400 hover:text-red-600 hover:bg-red-50' : 'text-gray-400 hover:text-green-600 hover:bg-green-50'}`}>
-                            {u.is_active ? <PowerOff className="w-3.5 h-3.5" /> : <Power className="w-3.5 h-3.5" />}
-                          </button>
-                        )}
                       </div>
                     </td>
                   </tr>
@@ -402,10 +395,18 @@ export default function UsersPage() {
             </div>
           )}
 
-          <div className="flex gap-3 justify-end mt-1">
-            <Button variant="secondary" onClick={() => setEditUser(null)}>{t.common.cancel}</Button>
-            <Button loading={savingPerms} onClick={saveUser}
-              disabled={!editForm.first_name.trim() || !editForm.last_name.trim()}>{t.common.saveChanges}</Button>
+          <div className="flex items-center justify-between mt-1 pt-3 border-t border-gray-100">
+            {editUser?.id !== primaryAdminId ? (
+              <button onClick={() => { toggleActive(editUser!); setEditUser(null) }}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${editUser?.is_active ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'}`}>
+                {editUser?.is_active ? <><PowerOff className="w-4 h-4" />{s.deactivateUser}</> : <><Power className="w-4 h-4" />{s.reactivateUser}</>}
+              </button>
+            ) : <span />}
+            <div className="flex gap-3">
+              <Button variant="secondary" onClick={() => setEditUser(null)}>{t.common.cancel}</Button>
+              <Button loading={savingPerms} onClick={saveUser}
+                disabled={!editForm.first_name.trim() || !editForm.last_name.trim()}>{t.common.saveChanges}</Button>
+            </div>
           </div>
         </div>
       </Modal>
