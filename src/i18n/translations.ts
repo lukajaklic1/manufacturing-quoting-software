@@ -752,7 +752,7 @@ export const translations = {
       noDepartment: 'No department',
       deactivateUser: 'Deactivate',
       reactivateUser: 'Reactivate',
-      inactive: 'Inactive',
+      inactive: 'Deactivated',
     },
 
     acceptInvite: {
