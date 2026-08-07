@@ -1263,7 +1263,7 @@ export default function LandingPage() {
           </div>
           {/* Right side */}
           <div className="flex items-center gap-2">
-            <div className="hidden sm:flex gap-0.5 mr-1">
+            <div className="flex gap-0.5 mr-1">
               {(['en', 'sl'] as const).map(lng => (
                 <button key={lng} onClick={() => setLang(lng)}
                   className={`px-2 py-1 rounded text-xs font-medium transition-colors ${lang === lng ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-700'}`}>
