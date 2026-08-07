@@ -127,7 +127,7 @@ export default function MachinesPage() {
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}><CalendarDays className="w-3 h-3 text-gray-500 shrink-0" />{format(new Date(m.updated_at), 'd. M. yyyy')}</span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}><CalendarDays className="w-3 h-3 text-gray-500 shrink-0" />{format(new Date(m.editor ? m.updated_at : m.created_at), 'd. M. yyyy')}</span>
                       {m.editor && <PersonBadge name={`${m.editor.first_name} ${m.editor.last_name}`} />}
                     </div>
                   </td>
