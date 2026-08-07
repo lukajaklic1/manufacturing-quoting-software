@@ -1751,13 +1751,13 @@ export default function LandingPage() {
         <FadeUp className="max-w-2xl mx-auto px-6 text-center">
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-5 tracking-tight leading-[1.1]">{l.ctaHeading}</h2>
           <p className="text-gray-400 text-lg mb-10 leading-relaxed">{l.ctaSubtitle}</p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Link to="/register"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-gray-900 font-semibold px-7 py-3.5 rounded-xl hover:bg-gray-100 transition-colors text-base">
               {l.ctaButton} <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link to="/login" className="text-gray-500 hover:text-white font-medium text-sm transition-colors">
-              {l.navSignIn} →
+            <Link to="/login" className="w-full sm:w-auto inline-flex items-center justify-center border border-white/20 text-gray-300 hover:text-white hover:border-white/40 font-medium px-6 py-3.5 rounded-xl transition-colors text-base">
+              {l.navSignIn}
             </Link>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-gray-600 text-sm">
