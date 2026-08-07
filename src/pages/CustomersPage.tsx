@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Plus, Users, Search, CalendarDays, Building2, MoreVertical } from 'lucide-react'
+import { SortIcon } from '../components/ui/SortIcon'
 import { format } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -46,6 +47,9 @@ export default function CustomersPage() {
   const [toDelete, setToDelete] = useState<Customer | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [page, setPage] = useState(1)
+  const [sortKey, setSortKey] = useState<'name' | 'status'>('name')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(s => k === sortKey ? (s === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
   useEffect(() => { if (company) load() }, [company])
 
@@ -107,7 +111,13 @@ export default function CustomersPage() {
     (statusFilter === 'all' || (c.status ?? 'active') === statusFilter) &&
     (!search || c.name.toLowerCase().includes(search.toLowerCase()) ||
       (c.contact_person ?? '').toLowerCase().includes(search.toLowerCase())))
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const sorted = [...filtered].sort((a, b) => {
+    const mul = sortDir === 'asc' ? 1 : -1
+    if (sortKey === 'name') return a.name.localeCompare(b.name) * mul
+    if (sortKey === 'status') return ((a.status ?? 'active') > (b.status ?? 'active') ? 1 : -1) * mul
+    return 0
+  })
+  const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   const field = (key: keyof Form) => ({ value: form[key] as string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, [key]: e.target.value })) })
 
@@ -140,8 +150,11 @@ export default function CustomersPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[820px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
-              {[s.companyName, s.contact, t.common.email, t.common.phone, s.paymentTerms, s.quotesCount, t.common.status, s.updatedAt, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500">{h}</th>
+              {([['name', s.companyName], ['', s.contact], ['', t.common.email], ['', t.common.phone], ['', s.paymentTerms], ['', s.quotesCount], ['status', t.common.status], ['', s.updatedAt], ['', '']] as [string, string][]).map(([key, h], i) => (
+                <th key={i} className={`text-left px-4 py-3 text-xs font-medium text-gray-500 ${key ? 'cursor-pointer select-none hover:text-gray-700' : ''}`}
+                  onClick={() => key && handleSort(key as typeof sortKey)}>
+                  <span className="inline-flex items-center gap-0.5">{h}{key && <SortIcon active={sortKey === key} dir={sortDir} />}</span>
+                </th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">

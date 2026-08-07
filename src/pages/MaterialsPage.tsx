@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Plus, Box, Search, CalendarDays, MoreVertical } from 'lucide-react'
+import { SortIcon } from '../components/ui/SortIcon'
 import { format } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { usedMaterialIds } from '../lib/usageCheck'
@@ -42,6 +43,9 @@ export default function MaterialsPage() {
   const [page, setPage] = useState(1)
   const [catFilter, setCatFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [sortKey, setSortKey] = useState<'name' | 'category' | 'density' | 'price_per_kg' | 'is_active'>('name')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(d => k === sortKey ? (d === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
   useEffect(() => { if (company) load() }, [company])
   async function load() {
@@ -88,7 +92,16 @@ export default function MaterialsPage() {
     (!catFilter || m.category === catFilter) &&
     (statusFilter === 'all' || (statusFilter === 'active' ? m.is_active : !m.is_active))
   )
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const sorted = [...filtered].sort((a, b) => {
+    const mul = sortDir === 'asc' ? 1 : -1
+    if (sortKey === 'name') return a.name.localeCompare(b.name) * mul
+    if (sortKey === 'category') return (a.category ?? '').localeCompare(b.category ?? '') * mul
+    if (sortKey === 'density') return ((a.density ?? 0) - (b.density ?? 0)) * mul
+    if (sortKey === 'price_per_kg') return ((a.price_per_kg ?? 0) - (b.price_per_kg ?? 0)) * mul
+    if (sortKey === 'is_active') return (Number(b.is_active) - Number(a.is_active)) * mul
+    return 0
+  })
+  const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   if (!permLoading && !hasPerm('materials', 'view')) return <Navigate to="/dashboard" replace />
 
@@ -119,8 +132,11 @@ export default function MaterialsPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[560px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
-              {[s.materialName, s.category, s.density, s.pricePerKg, t.common.status, s.updatedAt, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">{h}</th>
+              {([['name', s.materialName], ['category', s.category], ['density', s.density], ['price_per_kg', s.pricePerKg], ['is_active', t.common.status], ['', s.updatedAt], ['', '']] as [string, string][]).map(([key, h], i) => (
+                <th key={i} className={`text-left px-4 py-2.5 text-xs font-medium text-gray-500 ${key ? 'cursor-pointer select-none hover:text-gray-700' : ''}`}
+                  onClick={() => key && handleSort(key as typeof sortKey)}>
+                  <span className="inline-flex items-center gap-0.5">{h}{key && <SortIcon active={sortKey === key} dir={sortDir} />}</span>
+                </th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">

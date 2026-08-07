@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Plus, Users, Mail, X, PowerOff, Power, UserCog, MoreVertical } from 'lucide-react'
+import { SortIcon } from '../components/ui/SortIcon'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -78,6 +79,9 @@ export default function UsersPage() {
   const [invites, setInvites] = useState<UserInvitation[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [page, setPage] = useState(1)
+  const [sortKey, setSortKey] = useState<'name' | 'role' | 'status'>('name')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(d => k === sortKey ? (d === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
   // Permission-matrix labels — modules = our app sections, actions = view / create-edit
   const moduleLabel: Record<string, string> = {
@@ -224,7 +228,14 @@ export default function UsersPage() {
     load()
   }
 
-  const allRows = [...users, ...invites]
+  const sortedUsers = [...users].sort((a, b) => {
+    const mul = sortDir === 'asc' ? 1 : -1
+    if (sortKey === 'name') return `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`) * mul
+    if (sortKey === 'role') return (Number(b.is_admin) - Number(a.is_admin)) * mul
+    if (sortKey === 'status') return (Number(b.is_active) - Number(a.is_active)) * mul
+    return 0
+  })
+  const allRows = [...sortedUsers, ...invites]
   const paginated = allRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
@@ -246,8 +257,11 @@ export default function UsersPage() {
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[700px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                {[t.common.name, t.common.email, s.jobTitle, s.role, t.common.status, ''].map((h, i) => (
-                  <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500">{h}</th>
+                {([['name', t.common.name], ['', t.common.email], ['', s.jobTitle], ['role', s.role], ['status', t.common.status], ['', '']] as [string, string][]).map(([key, h], i) => (
+                  <th key={i} className={`text-left px-4 py-3 text-xs font-medium text-gray-500 ${key ? 'cursor-pointer select-none hover:text-gray-700' : ''}`}
+                    onClick={() => key && handleSort(key as typeof sortKey)}>
+                    <span className="inline-flex items-center gap-0.5">{h}{key && <SortIcon active={sortKey === key} dir={sortDir} />}</span>
+                  </th>
                 ))}
               </tr>
             </thead>

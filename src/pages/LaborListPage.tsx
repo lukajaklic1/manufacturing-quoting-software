@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { Plus, HardHat, Search, CalendarDays, MoreVertical } from 'lucide-react'
+import { SortIcon } from '../components/ui/SortIcon'
 import { format } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -33,12 +34,23 @@ export default function LaborListPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(1)
+  const [sortKey, setSortKey] = useState<'name' | 'annual_cost' | 'rate' | 'is_active'>('name')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(d => k === sortKey ? (d === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
   const filtered = rows.filter(l =>
     (!search || l.name.toLowerCase().includes(search.toLowerCase())) &&
     (statusFilter === 'all' || (statusFilter === 'active' ? l.is_active : !l.is_active))
   )
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const sorted = [...filtered].sort((a, b) => {
+    const mul = sortDir === 'asc' ? 1 : -1
+    if (sortKey === 'name') return a.name.localeCompare(b.name) * mul
+    if (sortKey === 'annual_cost') return (a.annual_cost - b.annual_cost) * mul
+    if (sortKey === 'rate') return (effectiveLaborRate(a) - effectiveLaborRate(b)) * mul
+    if (sortKey === 'is_active') return (Number(b.is_active) - Number(a.is_active)) * mul
+    return 0
+  })
+  const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   useEffect(() => { if (company) load() }, [company])
   async function load() {
@@ -84,8 +96,11 @@ export default function LaborListPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[500px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
-              {[s.operatorTitle, s.annualCost, s.ratePerHour, t.common.status, s.updatedAt, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">{h}</th>
+              {([['name', s.operatorTitle], ['annual_cost', s.annualCost], ['rate', s.ratePerHour], ['is_active', t.common.status], ['', s.updatedAt], ['', '']] as [string, string][]).map(([key, h], i) => (
+                <th key={i} className={`text-left px-4 py-2.5 text-xs font-medium text-gray-500 ${key ? 'cursor-pointer select-none hover:text-gray-700' : ''}`}
+                  onClick={() => key && handleSort(key as typeof sortKey)}>
+                  <span className="inline-flex items-center gap-0.5">{h}{key && <SortIcon active={sortKey === key} dir={sortDir} />}</span>
+                </th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">

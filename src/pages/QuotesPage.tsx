@@ -8,6 +8,7 @@ import { useLanguage } from '../hooks/useLanguage'
 import Button from '../components/ui/Button'
 import Pagination from '../components/ui/Pagination'
 import { PageHeader } from '../components/ui/PageHeader'
+import { SortIcon } from '../components/ui/SortIcon'
 import { FilterSelect } from '../components/ui/FilterSelect'
 import { PersonBadge } from '../components/ui/PersonBadge'
 import type { Quote, QuoteStatus } from '../types/database'
@@ -51,6 +52,9 @@ export default function QuotesPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+  const [sortKey, setSortKey] = useState<'quote_number' | 'customer' | 'status' | 'value' | 'created_at'>('created_at')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(d => k === sortKey ? (d === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
   useEffect(() => { if (company) { load(); loadUsers() } }, [company])
   useEffect(() => {
@@ -139,7 +143,16 @@ export default function QuotesPage() {
     )
   })
 
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const sortedFiltered = [...filtered].sort((a, b) => {
+    const mul = sortDir === 'asc' ? 1 : -1
+    if (sortKey === 'quote_number') return a.quote_number.localeCompare(b.quote_number) * mul
+    if (sortKey === 'customer') return (a.customers?.name ?? '').localeCompare(b.customers?.name ?? '') * mul
+    if (sortKey === 'status') return a.status.localeCompare(b.status) * mul
+    if (sortKey === 'value') return ((annual[a.id] ?? 0) - (annual[b.id] ?? 0)) * mul
+    if (sortKey === 'created_at') return a.created_at.localeCompare(b.created_at) * mul
+    return 0
+  })
+  const paged = sortedFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   if (!permLoading && !hasPerm('quotes', 'view')) return <Navigate to="/dashboard" replace />
 
@@ -175,8 +188,11 @@ export default function QuotesPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[920px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
-              {[s.quoteNumber, s.customer, s.contactPerson, s.pieces, t.common.status, s.annualValue, t.common.created, s.assignee, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-3 text-xs font-medium text-gray-500">{h}</th>
+              {([['quote_number', s.quoteNumber], ['customer', s.customer], ['', s.contactPerson], ['', s.pieces], ['status', t.common.status], ['value', s.annualValue], ['created_at', t.common.created], ['', s.assignee], ['', '']] as [string, string][]).map(([key, h], i) => (
+                <th key={i} className={`text-left px-4 py-3 text-xs font-medium text-gray-500 ${key ? 'cursor-pointer select-none hover:text-gray-700' : ''}`}
+                  onClick={() => key && handleSort(key as typeof sortKey)}>
+                  <span className="inline-flex items-center gap-0.5">{h}{key && <SortIcon active={sortKey === key} dir={sortDir} />}</span>
+                </th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">

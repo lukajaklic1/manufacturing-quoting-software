@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { Plus, Factory, Search, CalendarDays, MoreVertical } from 'lucide-react'
+import { SortIcon } from '../components/ui/SortIcon'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
 import { useLanguage } from '../hooks/useLanguage'
@@ -34,12 +35,24 @@ export default function MachinesPage() {
   const [catFilter, setCatFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(1)
+  const [sortKey, setSortKey] = useState<'name' | 'model' | 'category' | 'rate' | 'is_active'>('name')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(d => k === sortKey ? (d === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
   const filtered = rows.filter(m =>
     (catFilter === 'all' || m.category === catFilter) &&
     (statusFilter === 'all' || (statusFilter === 'active' ? m.is_active : !m.is_active)) &&
     (!search || m.name.toLowerCase().includes(search.toLowerCase()) || (m.model ?? '').toLowerCase().includes(search.toLowerCase())))
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const sorted = [...filtered].sort((a, b) => {
+    const mul = sortDir === 'asc' ? 1 : -1
+    if (sortKey === 'name') return a.name.localeCompare(b.name) * mul
+    if (sortKey === 'model') return (a.model ?? '').localeCompare(b.model ?? '') * mul
+    if (sortKey === 'category') return (a.category ?? '').localeCompare(b.category ?? '') * mul
+    if (sortKey === 'rate') return (effectiveMachineRate(a) - effectiveMachineRate(b)) * mul
+    if (sortKey === 'is_active') return (Number(b.is_active) - Number(a.is_active)) * mul
+    return 0
+  })
+  const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   useEffect(() => { if (company) load() }, [company])
   async function load() {
@@ -88,8 +101,11 @@ export default function MachinesPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[560px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
-              {[s.machineName, s.machineModel, s.category, s.ratePerHour, t.common.status, s.updatedAt, ''].map((h, i) => (
-                <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">{h}</th>
+              {([['name', s.machineName], ['model', s.machineModel], ['category', s.category], ['rate', s.ratePerHour], ['is_active', t.common.status], ['', s.updatedAt], ['', '']] as [string, string][]).map(([key, h], i) => (
+                <th key={i} className={`text-left px-4 py-2.5 text-xs font-medium text-gray-500 ${key ? 'cursor-pointer select-none hover:text-gray-700' : ''}`}
+                  onClick={() => key && handleSort(key as typeof sortKey)}>
+                  <span className="inline-flex items-center gap-0.5">{h}{key && <SortIcon active={sortKey === key} dir={sortDir} />}</span>
+                </th>
               ))}
             </tr></thead>
             <tbody className="divide-y divide-gray-200">
