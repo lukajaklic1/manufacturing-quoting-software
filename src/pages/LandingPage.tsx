@@ -282,7 +282,10 @@ function HeroMockup({ isSl }: { isSl: boolean }) {
   const thCls = "px-3 py-2 text-[9px] font-medium text-gray-500 text-left whitespace-nowrap"
 
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
+    <div className="relative w-full rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
+      {/* Bottom fade overlay */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 z-10"
+        style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.97))' }}/>
       {/* Browser chrome */}
       <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-2.5 flex items-center gap-3">
         <div className="flex gap-1.5">
@@ -797,7 +800,7 @@ export default function LandingPage() {
         <div aria-hidden="true" className="pointer-events-none absolute -top-32 -right-64 w-[600px] h-[600px] rounded-full"
           style={{ background: 'radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.11) 0%, rgba(99,102,241,0.05) 45%, transparent 72%)', transform: 'rotate(-20deg)', filter: 'blur(40px)', zIndex: 0 }}/>
         {/* Secondary blob — left, slightly stronger for balance */}
-        <div aria-hidden="true" className="pointer-events-none absolute top-24 -left-24 w-[500px] h-[500px] rounded-full"
+        <div aria-hidden="true" className="pointer-events-none absolute top-56 -left-24 w-[500px] h-[500px] rounded-full"
           style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.13) 0%, transparent 65%)', filter: 'blur(36px)', zIndex: 0 }}/>
         <div className="relative" style={{ zIndex: 1 }}>
         {/* Announcement pill */}
