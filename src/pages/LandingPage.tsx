@@ -1104,8 +1104,6 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     </div>
                   </div>
 
-                  {/* RUN COST divider */}
-                  <div className="mb-2 pb-1 border-b border-gray-200 text-[9px] font-semibold text-gray-400 uppercase tracking-widest">{sl ? 'Strošek teka' : 'Run cost'}</div>
 
                   {/* Cycle min + pcs/cycle */}
                   <div className="grid grid-cols-3 gap-2 mb-2">
