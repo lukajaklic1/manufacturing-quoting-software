@@ -1205,7 +1205,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
 
             {step === 'result' && (
               <div className="flex flex-col gap-2.5">
-                <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Rezultat kalkulacije' : 'Calculation result'}</p>
+                <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Režija' : 'Overheads'}</p>
                 <div className="border border-gray-200 rounded-xl overflow-hidden text-[10px]">
                   {([
                     [sl ? 'Neposredni stroški' : 'Direct costs', '54,54 €', true],

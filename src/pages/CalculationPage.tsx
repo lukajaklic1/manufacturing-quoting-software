@@ -593,7 +593,7 @@ export default function CalculationPage() {
 
           {/* Results per quantity */}
           <div>
-            <h4 className="text-[15px] font-bold text-gray-800 flex items-center gap-2 mb-3 px-0.5 pb-2 border-b border-gray-200">{s.overhead}</h4>
+            <h4 className="text-[15px] font-bold text-gray-800 flex items-center gap-2 mb-3 px-0.5 pb-2 border-b border-gray-200">{s.calcResults}</h4>
             <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
