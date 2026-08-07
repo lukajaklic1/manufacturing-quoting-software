@@ -58,8 +58,17 @@ export default function MachinesPage() {
   async function load() {
     if (!company) return
     setLoading(true)
-    const { data } = await supabase.from('machines').select('*, editor:users!updated_by(first_name, last_name), creator:users!created_by(first_name, last_name)').eq('company_id', company.id).order('name')
-    setRows((data as Row[]) ?? [])
+    const [{ data: machs }, { data: companyUsers }] = await Promise.all([
+      supabase.from('machines').select('*').eq('company_id', company.id).order('name'),
+      supabase.from('users').select('id, first_name, last_name').eq('company_id', company.id),
+    ])
+    const userMap: Record<string, { first_name: string; last_name: string }> = {}
+    for (const u of companyUsers ?? []) userMap[u.id] = { first_name: u.first_name, last_name: u.last_name }
+    setRows(((machs ?? []) as Machine[]).map(m => ({
+      ...m,
+      editor: m.updated_by ? (userMap[m.updated_by] ?? null) : null,
+      creator: m.created_by ? (userMap[m.created_by] ?? null) : null,
+    })) as Row[])
     setUsed(await usedMachineIds())
     setLoading(false)
   }

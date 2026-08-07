@@ -56,8 +56,17 @@ export default function LaborListPage() {
   async function load() {
     if (!company) return
     setLoading(true)
-    const { data } = await supabase.from('labor_rates').select('*, editor:users!updated_by(first_name, last_name), creator:users!created_by(first_name, last_name)').eq('company_id', company.id).order('name')
-    setRows((data as Row[]) ?? [])
+    const [{ data: labor }, { data: companyUsers }] = await Promise.all([
+      supabase.from('labor_rates').select('*').eq('company_id', company.id).order('name'),
+      supabase.from('users').select('id, first_name, last_name').eq('company_id', company.id),
+    ])
+    const userMap: Record<string, { first_name: string; last_name: string }> = {}
+    for (const u of companyUsers ?? []) userMap[u.id] = { first_name: u.first_name, last_name: u.last_name }
+    setRows(((labor ?? []) as LaborRate[]).map(l => ({
+      ...l,
+      editor: l.updated_by ? (userMap[l.updated_by] ?? null) : null,
+      creator: l.created_by ? (userMap[l.created_by] ?? null) : null,
+    })) as Row[])
     setUsed(await usedLaborIds())
     setLoading(false)
   }
