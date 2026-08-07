@@ -1774,7 +1774,7 @@ export default function LandingPage() {
       </section>
 
       {/* ══ FOOTER ══ */}
-      <footer className="bg-gray-950 border-t border-white/[0.07]">
+      <footer className="bg-gray-900 border-t border-white/[0.07]">
         <div className="max-w-[1440px] mx-auto px-6 py-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-0 justify-between">
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
             className="flex items-center gap-2 group">
