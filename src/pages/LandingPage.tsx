@@ -44,17 +44,16 @@ function SideNavItem({ label, icon, active }: { label: string; icon: React.React
   )
 }
 
-function HeroMockup({ isSl }: { isSl: boolean }) {
+function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { isSl: boolean; views?: MockView[] }) {
   const sl = isSl
-  const [view, setView] = useState<MockView>('dashboard')
+  const [view, setView] = useState<MockView>(views[0])
   const [fading, setFading] = useState(false)
 
   useEffect(() => {
-    const CYCLE: MockView[] = ['dashboard', 'quotes', 'customers']
     let idx = 0
     const timer = setInterval(() => {
       setFading(true)
-      setTimeout(() => { idx = (idx + 1) % 3; setView(CYCLE[idx]); setFading(false) }, 320)
+      setTimeout(() => { idx = (idx + 1) % views.length; setView(views[idx]); setFading(false) }, 320)
     }, 4800)
     return () => clearInterval(timer)
   }, [])
@@ -1456,7 +1455,7 @@ export default function LandingPage() {
             <FadeUp delay={100}>
               <div className="overflow-hidden rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,.10)]" style={{ maxHeight: 460 }}>
                 <div style={{ width: 900 }}>
-                  <HeroMockup isSl={isSl} />
+                  <HeroMockup isSl={isSl} views={['dashboard', 'quotes']} />
                 </div>
               </div>
             </FadeUp>
