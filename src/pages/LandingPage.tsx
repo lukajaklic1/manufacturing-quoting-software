@@ -1747,7 +1747,7 @@ export default function LandingPage() {
       </section>
 
       {/* ══ CTA ══ */}
-      <section className="border-t border-gray-100 py-24 bg-gray-900">
+      <section className="py-24 bg-gray-900">
         <FadeUp className="max-w-2xl mx-auto px-6 text-center">
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-5 tracking-tight leading-[1.1]">{l.ctaHeading}</h2>
           <p className="text-gray-400 text-lg mb-10 leading-relaxed">{l.ctaSubtitle}</p>
