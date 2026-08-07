@@ -1372,8 +1372,10 @@ export default function LandingPage() {
         </div>
 
         {/* Product mockup — Attio style, centered, wide */}
-        <div className="animate-fade-up max-w-[1340px] mx-auto" style={{ animationDelay: '0.38s' }}>
-          <HeroMockup isSl={isSl} />
+        <div className="animate-fade-up max-w-[1340px] mx-auto overflow-hidden rounded-2xl" style={{ animationDelay: '0.38s' }}>
+          <div className="min-w-[700px]">
+            <HeroMockup isSl={isSl} />
+          </div>
         </div>
         </div>{/* end relative z-1 */}
       </section>
