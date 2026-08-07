@@ -1766,7 +1766,7 @@ export default function LandingPage() {
               : ['Free to register', 'No credit card required', 'Instant access']
             ).map(item => (
               <div key={item} className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-blue-400" />{item}
+                <Check className="w-3.5 h-3.5 text-gray-300" />{item}
               </div>
             ))}
           </div>
