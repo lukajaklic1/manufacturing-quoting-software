@@ -795,7 +795,7 @@ export default function LandingPage() {
       <section className="pt-20 pb-0 text-center px-6 overflow-hidden relative">
         {/* Blue gradient blob — top-right, diagonal, fades into white */}
         <div aria-hidden="true" className="pointer-events-none absolute -top-32 -right-48 w-[700px] h-[700px] rounded-full"
-          style={{ background: 'radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.22) 0%, rgba(99,102,241,0.10) 45%, transparent 72%)', transform: 'rotate(-20deg)', filter: 'blur(40px)', zIndex: 0 }}/>
+          style={{ background: 'radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.14) 0%, rgba(99,102,241,0.06) 45%, transparent 72%)', transform: 'rotate(-20deg)', filter: 'blur(40px)', zIndex: 0 }}/>
         {/* Secondary smaller blob — bottom-left for balance */}
         <div aria-hidden="true" className="pointer-events-none absolute top-48 -left-32 w-[400px] h-[400px] rounded-full"
           style={{ background: 'radial-gradient(ellipse at 30% 60%, rgba(99,102,241,0.10) 0%, transparent 65%)', filter: 'blur(32px)', zIndex: 0 }}/>
