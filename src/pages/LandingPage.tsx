@@ -1329,10 +1329,10 @@ export default function LandingPage() {
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
           {/* Blue gradient blob — top-right */}
           <div className="absolute -top-32 -right-64 w-[280px] h-[280px] md:w-[600px] md:h-[600px] rounded-full"
-            style={{ background: 'radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.09) 0%, rgba(99,102,241,0.04) 45%, transparent 72%)', transform: 'rotate(-20deg)', filter: 'blur(40px)' }}/>
+            style={{ background: 'radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.18) 0%, rgba(99,102,241,0.09) 45%, transparent 72%)', transform: 'rotate(-20deg)', filter: 'blur(40px)' }}/>
           {/* Secondary blob — left */}
           <div className="absolute top-56 -left-24 w-[240px] h-[240px] md:w-[500px] md:h-[500px] rounded-full"
-            style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.09) 0%, transparent 65%)', filter: 'blur(36px)' }}/>
+            style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.17) 0%, transparent 65%)', filter: 'blur(36px)' }}/>
         </div>
         <div className="relative" style={{ zIndex: 1 }}>
         {/* Announcement pill */}
