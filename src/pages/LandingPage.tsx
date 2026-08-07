@@ -282,9 +282,6 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
 
   return (
     <div className="relative w-full rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
-      {/* Bottom fade overlay */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 z-10"
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.97))' }}/>
       {/* Browser chrome */}
       <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-2.5 flex items-center gap-3">
         <div className="flex gap-1.5">
@@ -1372,7 +1369,7 @@ export default function LandingPage() {
         </div>
 
         {/* Product mockup — Attio style, centered, wide */}
-        <div className="animate-fade-up max-w-[1340px] mx-auto overflow-hidden rounded-2xl" style={{ animationDelay: '0.38s' }}>
+        <div className="animate-fade-up max-w-[1340px] mx-auto" style={{ animationDelay: '0.38s' }}>
           <div className="min-w-[700px]">
             <HeroMockup isSl={isSl} />
           </div>
