@@ -383,19 +383,23 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         <div className={readOnly ? 'pointer-events-none select-none' : ''}>
           <fieldset disabled={readOnly}>
           {/* Quote header */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className={`bg-white rounded-xl border p-6 ${readOnly ? 'border-[#eeeff1]' : 'border-gray-200'}`}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-medium text-[#7f7f7f]">{s.customer}</label>
-                <select value={customerId} onChange={e => {
-                  const cid = e.target.value
-                  setCustomerId(cid)
-                  const c = customers.find(x => x.id === cid)
-                  if (c) { setContactPerson(c.contact_person ?? ''); setContactEmail(c.email ?? ''); setContactPhone(c.phone ?? ''); setPaymentTerms(c.payment_terms ?? ''); setParity(c.parity ?? '') }
-                }} className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                  <option value="">{t.common.select}</option>
-                  {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                {readOnly
+                  ? <div className="rounded-lg border px-3 py-2 text-sm" style={{ backgroundColor: '#f9fafb', borderColor: '#eeeff1', color: '#52525b' }}>
+                      {customers.find(c => c.id === customerId)?.name || '—'}
+                    </div>
+                  : <select value={customerId} onChange={e => {
+                      const cid = e.target.value
+                      setCustomerId(cid)
+                      const c = customers.find(x => x.id === cid)
+                      if (c) { setContactPerson(c.contact_person ?? ''); setContactEmail(c.email ?? ''); setContactPhone(c.phone ?? ''); setPaymentTerms(c.payment_terms ?? ''); setParity(c.parity ?? '') }
+                    }} className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                      <option value="">{t.common.select}</option>
+                      {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>}
               </div>
               <Input id="q-contact" label={s.contactPerson} value={contactPerson} onChange={e => setContactPerson(e.target.value)} />
               <Input id="q-email" label={t.common.email} type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} />
@@ -410,7 +414,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
               <div className="sm:col-span-2 flex flex-col gap-1">
                 <label className="text-xs font-medium text-[#7f7f7f]">{s.notes}</label>
                 <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed" />
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none disabled:bg-gray-50 disabled:text-[#52525b] disabled:border-[#eeeff1] disabled:cursor-not-allowed" />
               </div>
             </div>
           </div>
@@ -428,14 +432,14 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
         <h2 className="text-sm font-semibold text-gray-700">{s.pieces} ({pieces.length})</h2>
         {!readOnly && <Button variant="secondary" onClick={addPiece} className="gap-2"><Plus className="w-4 h-4" />{s.addPiece}</Button>}
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto mb-6">
+      <div className={`bg-white rounded-xl border overflow-x-auto mb-6 ${readOnly ? 'border-[#eeeff1]' : 'border-gray-200'}`}>
         <table className="w-full text-sm min-w-[720px]">
-          <thead className="bg-gray-50 border-b border-gray-200"><tr>
+          <thead className={`bg-gray-50 border-b ${readOnly ? 'border-[#eeeff1]' : 'border-gray-200'}`}><tr>
             {['', s.partName, s.partNumber, s.quantity, s.sellingPrice, ''].map((h, i) => (
               <th key={i} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">{h}</th>
             ))}
           </tr></thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className={`divide-y ${readOnly ? 'divide-[#eeeff1]' : 'divide-gray-200'}`}>
             {pieces.slice((piecePage - 1) * PIECE_PAGE_SIZE, piecePage * PIECE_PAGE_SIZE).map((p, idx) => (
               <tr key={p.key} className="hover:bg-[#fbfbfb] cursor-pointer" onClick={() => readOnly ? (p.id && navigate(`/quotes/${id}/items/${p.id}?ro=1`)) : calculate(p.key)}>
                 <td className="px-4 py-2 w-14">
@@ -465,7 +469,7 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
       <Pagination total={pieces.length} page={piecePage} pageSize={PIECE_PAGE_SIZE} onChange={setPiecePage} />
 
       {/* Totals */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 flex flex-wrap items-center justify-end gap-8">
+      <div className={`bg-white rounded-xl border p-5 flex flex-wrap items-center justify-end gap-8 ${readOnly ? 'border-[#eeeff1]' : 'border-gray-200'}`}>
         <div className="text-right">
           <p className="text-xs text-gray-500">{s.totalTurnover}</p>
           <p className="text-2xl font-bold text-blue-600">{money(grand.turnover)}</p>

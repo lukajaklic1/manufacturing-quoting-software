@@ -178,7 +178,7 @@ export default function CalculationPage() {
       <button onClick={() => navigate(ro ? `/quotes/${quoteId}` : `/quotes/${quoteId}/edit`)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-4 shrink-0"><ChevronLeft className="w-4 h-4" />{ro ? s.reviewTitle : s.reviewOffer}</button>
 
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap shrink-0">
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{c.part_name || s.partName}</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-gray-900">{c.part_name || s.partName}</h1>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => navigate(ro ? `/quotes/${quoteId}` : `/quotes/${quoteId}/edit`)} disabled={saving}>{t.common.back}</Button>
           {!ro && <Button loading={saving} onClick={save}>{t.common.save}</Button>}

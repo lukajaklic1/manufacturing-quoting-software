@@ -104,21 +104,30 @@ html {
   font-feature-settings: 'cv01', 'cv02', 'cv03', 'cv04', 'cv09', 'cv10';
 }
 
-/* Disabled inputs in read-only review: clearly gray, no hover effects */
+/* Disabled inputs/selects/textareas in read-only fieldset */
 fieldset:disabled input,
-fieldset:disabled select,
 fieldset:disabled textarea {
-  @apply bg-gray-100 text-gray-500 border-gray-300 cursor-not-allowed;
+  background-color: #f9fafb !important;
+  color: #52525b !important;
+  border-color: #eeeff1 !important;
+  cursor: not-allowed;
+}
+
+fieldset:disabled select {
+  background-color: #f9fafb !important;
+  color: #52525b !important;
+  -webkit-text-fill-color: #52525b !important;
+  border-color: #eeeff1 !important;
+  cursor: not-allowed;
 }
 
 fieldset:disabled input:hover,
 fieldset:disabled select:hover,
-fieldset:disabled textarea:hover {
-  @apply bg-gray-100 border-gray-300;
-}
-
+fieldset:disabled textarea:hover,
 fieldset:disabled input:focus,
 fieldset:disabled select:focus,
 fieldset:disabled textarea:focus {
-  @apply outline-none ring-0 border-gray-300;
+  border-color: #eeeff1 !important;
+  outline: none !important;
+  box-shadow: none !important;
 }

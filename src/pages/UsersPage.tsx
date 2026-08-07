@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Plus, Users, Mail, X, UserCog, MoreVertical } from 'lucide-react'
+import { Plus, Users, Mail, X, UserCog, MoreVertical, Search } from 'lucide-react'
 import { SortIcon } from '../components/ui/SortIcon'
+import { FilterSelect } from '../components/ui/FilterSelect'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useCompany } from '../hooks/useCompany'
@@ -81,6 +82,9 @@ export default function UsersPage() {
   const [page, setPage] = useState(1)
   const [sortKey, setSortKey] = useState<'name' | 'role' | 'status'>('name')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const [search, setSearch] = useState('')
+  const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'member'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(d => k === sortKey ? (d === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
   // Permission-matrix labels — modules = our app sections, actions = view / create-edit
@@ -228,7 +232,12 @@ export default function UsersPage() {
     load()
   }
 
-  const sortedUsers = [...users].sort((a, b) => {
+  const filteredUsers = users.filter(u =>
+    (!search || `${u.first_name} ${u.last_name} ${u.email ?? ''}`.toLowerCase().includes(search.toLowerCase())) &&
+    (roleFilter === 'all' || (roleFilter === 'admin' ? u.is_admin : !u.is_admin)) &&
+    (statusFilter === 'all' || (statusFilter === 'active' ? u.is_active : !u.is_active))
+  )
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
     const mul = sortDir === 'asc' ? 1 : -1
     if (sortKey === 'name') return `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`) * mul
     if (sortKey === 'role') return (Number(b.is_admin) - Number(a.is_admin)) * mul
@@ -245,6 +254,19 @@ export default function UsersPage() {
     <div>
       <PageHeader title={t.nav.users} icon={UserCog} count={users.length + invites.length} action={<Button onClick={openInvite} className="gap-2"><Plus className="w-4 h-4" />{s.addUser}</Button>} />
       <div className="p-4">
+      <div className="flex flex-wrap gap-3 mb-4">
+        <div className="relative">
+          <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder={t.common.search}
+            className="pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56" />
+        </div>
+        <FilterSelect label={s.role} value={roleFilter === 'all' ? '' : roleFilter} allLabel={t.common.all}
+          options={[{ value: 'admin', label: s.admin }, { value: 'member', label: s.member }]}
+          onChange={v => { setRoleFilter((v || 'all') as typeof roleFilter); setPage(1) }} />
+        <FilterSelect label={t.common.status} value={statusFilter === 'all' ? '' : statusFilter} allLabel={t.common.all}
+          options={[{ value: 'active', label: t.common.active }, { value: 'inactive', label: t.common.deactivated }]}
+          onChange={v => { setStatusFilter((v || 'all') as typeof statusFilter); setPage(1) }} />
+      </div>
       <div className="-mx-4 border-t border-b border-gray-200">
         {dataLoading ? (
           <div className="flex items-center justify-center h-48"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>

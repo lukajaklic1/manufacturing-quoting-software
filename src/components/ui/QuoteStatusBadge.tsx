@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<QuoteStatus, React.CSSProperties> = {
 
 export function QuoteStatusBadge({ status, label }: { status: QuoteStatus; label: string }) {
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium whitespace-nowrap"
       style={STATUS_COLORS[status]}>
       {label}
     </span>

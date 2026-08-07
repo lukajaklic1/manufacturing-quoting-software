@@ -227,7 +227,7 @@ export default function QuoteAttachments({ quoteId, companyId, quoteItemId, atta
             {(['pdf', 'cad', 'bom', 'other'] as const).map(type => (
               <button key={type}
                 onClick={() => setFilterType(f => f === type ? 'all' : type)}
-                className={`px-2 py-0.5 rounded-full text-xs font-medium border transition-all ${filterType === type ? 'border-[#3a7df2] bg-[#deeafd] text-[#3a7df2]' : 'border-[#deeafd] bg-[#eff5fe] text-[#3a7df2] hover:border-[#3a7df2]'}`}
+                className={`px-2 py-0.5 rounded-md text-xs font-medium border transition-all ${filterType === type ? 'border-[#3a7df2] bg-[#deeafd] text-[#3a7df2]' : 'border-[#deeafd] bg-[#eff5fe] text-[#3a7df2] hover:border-[#3a7df2]'}`}
               >
                 {kindLabels[type]} ({counts[type]})
               </button>
