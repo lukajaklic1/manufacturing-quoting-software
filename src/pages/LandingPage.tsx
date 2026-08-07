@@ -1784,11 +1784,11 @@ export default function LandingPage() {
             </svg>
             <span className="text-[15px] font-semibold text-white/90 group-hover:text-white transition-colors">Toolingdesk</span>
           </a>
-          <p className="text-sm text-gray-600 order-last sm:order-none">{l.footerRights}</p>
-          <div className="flex gap-6 text-sm text-gray-500">
-            <Link to="/privacy" className="hover:text-gray-300 transition-colors">{l.footerPrivacy}</Link>
-            <Link to="/terms" className="hover:text-gray-300 transition-colors">{l.footerTerms}</Link>
-            <a href="mailto:info@toolingdesk.com" className="hover:text-gray-300 transition-colors">{l.footerContact}</a>
+          <p className="text-sm text-gray-400 order-last sm:order-none">{l.footerRights}</p>
+          <div className="flex gap-6 text-sm text-gray-400">
+            <Link to="/privacy" className="hover:text-gray-200 transition-colors">{l.footerPrivacy}</Link>
+            <Link to="/terms" className="hover:text-gray-200 transition-colors">{l.footerTerms}</Link>
+            <a href="mailto:info@toolingdesk.com" className="hover:text-gray-200 transition-colors">{l.footerContact}</a>
           </div>
         </div>
       </footer>
