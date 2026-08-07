@@ -1460,41 +1460,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ RATES ══ */}
-      <section className="border-t border-gray-100 py-24">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <FadeUp>
-              <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4">
-                {isSl ? 'Urne postavke' : 'Hourly rates'}
-              </p>
-              <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
-                {isSl ? 'Točne urne postavke za vsak stroj in operaterja.' : 'Accurate hourly rates for every machine and operator.'}
-              </h2>
-              <p className="text-gray-500 leading-relaxed mb-8">
-                {isSl
-                  ? 'Vnesite investicijo, kapaciteto, fiksne in variabilne stroške — Toolingdesk samodejno izračuna urno postavko. Enako velja za vsakega operaterja.'
-                  : 'Enter investment, capacity, fixed and variable costs — Toolingdesk automatically calculates the hourly rate. The same applies to every operator.'}
-              </p>
-              <div className="flex flex-col gap-3">
-                {(isSl
-                  ? ['Amortizacija, obresti, zavarovanje in prostor', 'Energija, vzdrževanje, orodje in potrošni material', 'Letni stroški operaterja → urna postavka']
-                  : ['Depreciation, interest, insurance and space costs', 'Energy, maintenance, tooling and consumables', 'Annual operator cost → hourly rate']
-                ).map(item => (
-                  <div key={item} className="flex items-center gap-3">
-                    <Check className="w-4 h-4 text-gray-400 shrink-0" />
-                    <span className="text-gray-700 text-sm">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </FadeUp>
-            <FadeUp delay={100}>
-              <RatesMockup isSl={isSl} />
-            </FadeUp>
-          </div>
-        </div>
-      </section>
-
       {/* ══ CALCULATION ══ */}
       <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
@@ -1525,6 +1490,41 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
+            </FadeUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ RATES ══ */}
+      <section className="border-t border-gray-100 py-24">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <FadeUp>
+              <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4">
+                {isSl ? 'Urne postavke' : 'Hourly rates'}
+              </p>
+              <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
+                {isSl ? 'Točne urne postavke za vsak stroj in operaterja.' : 'Accurate hourly rates for every machine and operator.'}
+              </h2>
+              <p className="text-gray-500 leading-relaxed mb-8">
+                {isSl
+                  ? 'Vnesite investicijo, kapaciteto, fiksne in variabilne stroške — Toolingdesk samodejno izračuna urno postavko. Enako velja za vsakega operaterja.'
+                  : 'Enter investment, capacity, fixed and variable costs — Toolingdesk automatically calculates the hourly rate. The same applies to every operator.'}
+              </p>
+              <div className="flex flex-col gap-3">
+                {(isSl
+                  ? ['Amortizacija, obresti, zavarovanje in prostor', 'Energija, vzdrževanje, orodje in potrošni material', 'Letni stroški operaterja → urna postavka']
+                  : ['Depreciation, interest, insurance and space costs', 'Energy, maintenance, tooling and consumables', 'Annual operator cost → hourly rate']
+                ).map(item => (
+                  <div key={item} className="flex items-center gap-3">
+                    <Check className="w-4 h-4 text-gray-400 shrink-0" />
+                    <span className="text-gray-700 text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </FadeUp>
+            <FadeUp delay={100}>
+              <RatesMockup isSl={isSl} />
             </FadeUp>
           </div>
         </div>
