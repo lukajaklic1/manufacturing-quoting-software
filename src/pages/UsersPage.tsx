@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Users, Mail, X, PowerOff, Power, UserCog, MoreVertical } from 'lucide-react'
+import { Plus, Users, Mail, X, UserCog, MoreVertical } from 'lucide-react'
 import { SortIcon } from '../components/ui/SortIcon'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
