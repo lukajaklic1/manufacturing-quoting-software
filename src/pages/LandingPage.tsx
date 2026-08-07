@@ -1261,6 +1261,7 @@ export default function LandingPage() {
   const l = t.landing
   const isSl = lang === 'sl'
   const [openFaq, setOpenFaq] = useState<string | null>(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
     if (!loading && session) {
@@ -1299,13 +1300,15 @@ export default function LandingPage() {
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
             <AppLogo size="sm" mono />
           </a>
+          {/* Desktop links */}
           <div className="hidden md:flex items-center gap-7">
             <a href="#features" className="text-[15px] font-medium transition-colors hover:opacity-70" style={{ color: '#2e3238' }}>{l.navFeatures}</a>
             <a href="#how-it-works" className="text-[15px] font-medium transition-colors hover:opacity-70" style={{ color: '#2e3238' }}>{l.navHowItWorks}</a>
             <a href="#faq" className="text-[15px] font-medium transition-colors hover:opacity-70" style={{ color: '#2e3238' }}>FAQ</a>
           </div>
+          {/* Right side */}
           <div className="flex items-center gap-2">
-            <div className="flex gap-0.5 mr-1">
+            <div className="hidden sm:flex gap-0.5 mr-1">
               {(['en', 'sl'] as const).map(lng => (
                 <button key={lng} onClick={() => setLang(lng)}
                   className={`px-2 py-1 rounded text-xs font-medium transition-colors ${lang === lng ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-700'}`}>
@@ -1314,15 +1317,55 @@ export default function LandingPage() {
               ))}
             </div>
             <Link to="/login"
-              className="hidden sm:block text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-50 border border-gray-200">
+              className="hidden md:block text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-50 border border-gray-200">
               {l.navSignIn}
             </Link>
             <Link to="/register"
-              className="bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap">
+              className="hidden sm:block bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap">
               {l.navCta}
             </Link>
+            {/* Hamburger — mobile only */}
+            <button
+              className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={() => setMobileOpen(o => !o)}
+              aria-label="Toggle menu">
+              {mobileOpen
+                ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-5 h-5 text-gray-700"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-5 h-5 text-gray-700"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+              }
+            </button>
           </div>
         </div>
+        {/* Mobile dropdown */}
+        {mobileOpen && (
+          <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 flex flex-col gap-1">
+            <a href="#features" onClick={() => setMobileOpen(false)}
+              className="text-sm font-medium text-gray-700 py-2.5 border-b border-gray-50 hover:text-gray-900 transition-colors">{l.navFeatures}</a>
+            <a href="#how-it-works" onClick={() => setMobileOpen(false)}
+              className="text-sm font-medium text-gray-700 py-2.5 border-b border-gray-50 hover:text-gray-900 transition-colors">{l.navHowItWorks}</a>
+            <a href="#faq" onClick={() => setMobileOpen(false)}
+              className="text-sm font-medium text-gray-700 py-2.5 border-b border-gray-50 hover:text-gray-900 transition-colors">FAQ</a>
+            <div className="flex items-center gap-2 pt-2 border-b border-gray-50 pb-2.5">
+              <span className="text-xs text-gray-400 mr-1">{lang === 'sl' ? 'Jezik' : 'Language'}:</span>
+              {(['en', 'sl'] as const).map(lng => (
+                <button key={lng} onClick={() => setLang(lng)}
+                  className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${lang === lng ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-700'}`}>
+                  {lng.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col gap-2 pt-2">
+              <Link to="/login" onClick={() => setMobileOpen(false)}
+                className="text-sm text-gray-600 font-medium text-center py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                {l.navSignIn}
+              </Link>
+              <Link to="/register" onClick={() => setMobileOpen(false)}
+                className="text-sm text-white font-semibold text-center py-2.5 rounded-lg bg-gray-900 hover:bg-gray-700 transition-colors">
+                {l.navCta}
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ══ HERO ══ */}
