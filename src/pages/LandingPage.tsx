@@ -803,10 +803,13 @@ export default function LandingPage() {
         {/* Announcement pill */}
         <div className="animate-fade-up flex justify-center mb-10" style={{ animationDelay: '0.05s' }}>
           <a href="#features"
-            className="inline-flex items-center gap-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-4 py-1.5 hover:bg-blue-100 transition-colors">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"/>
+            className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 rounded-full px-[1px] py-[1px] transition-colors"
+            style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}>
+            <span className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 hover:bg-gray-50 transition-colors">
+            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}/>
             {isSl ? 'Za CNC, rezkanje in struženje' : 'Built for CNC, milling & turning shops'}
-            <ChevronRight className="w-3.5 h-3.5 text-blue-400" />
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            </span>
           </a>
         </div>
 
