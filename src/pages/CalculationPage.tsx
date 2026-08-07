@@ -197,7 +197,7 @@ export default function CalculationPage() {
               <Input id="pnum" label={s.partNumber} value={c.part_number} onChange={e => patch({ part_number: e.target.value })} />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-400">{s.quantity}</label>
+              <label className="text-xs font-medium text-label">{s.quantity}</label>
               <div className="grid grid-cols-3 gap-2 mt-1">
                 {[0, 1, 2].map(i => (
                   <NumberInput key={i} unit={u.piece} value={c.quantities[i] ?? 0}
@@ -230,14 +230,14 @@ export default function CalculationPage() {
                       ) : (<>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-gray-400">{s.shape}</label>
+                          <label className="text-xs font-medium text-label">{s.shape}</label>
                           <select value={r.shape} onChange={e => set({ shape: e.target.value as MaterialShape })}
                             className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400">
                             {(['sheet', 'round_bar', 'rect_bar', 'round_tube', 'square_tube', 'other'] as MaterialShape[]).map(sh => <option key={sh} value={sh}>{s.shapes[sh]}</option>)}
                           </select>
                         </div>
                         <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-gray-400">{s.selectMaterial}</label>
+                          <label className="text-xs font-medium text-label">{s.selectMaterial}</label>
                           <select value={r.material_id ?? ''} onChange={e => {
                             const mat = materials.find(m => m.id === e.target.value)
                             set(mat ? { material_id: mat.id, name: mat.name, density: mat.density, price_per_kg: mat.price_per_kg } : { material_id: null })
@@ -312,13 +312,13 @@ export default function CalculationPage() {
                         </div>
                       ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-400">{s.purchasedName}</label>
+                        <label className="text-xs font-medium text-label">{s.purchasedName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
                           className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                          <label className="text-xs font-medium text-gray-400">{s.supplier}</label>
+                          <label className="text-xs font-medium text-label">{s.supplier}</label>
                           <input value={r.supplier} onChange={e => set({ supplier: e.target.value })}
                             className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                         </div>
@@ -380,7 +380,7 @@ export default function CalculationPage() {
                       ) : (<>
                       {/* Operation name dropdown */}
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-400">{s.operationName}</label>
+                        <label className="text-xs font-medium text-label">{s.operationName}</label>
                         {(() => {
                           const allLists = [translations.en.qp.operationList as unknown as string[], translations.sl.qp.operationList as unknown as string[]]
                           const opIdx = r.name ? allLists.reduce<number>((found, list) => found >= 0 ? found : list.indexOf(r.name), -1) : -1
@@ -399,7 +399,7 @@ export default function CalculationPage() {
                       {/* Machine + its hourly rate */}
                       <div className="flex items-end gap-2">
                         <div className="flex flex-col gap-1 flex-1 min-w-0">
-                          <label className="text-xs font-medium text-gray-400">{s.machine}</label>
+                          <label className="text-xs font-medium text-label">{s.machine}</label>
                           <select value={r.machine_id ?? ''} onChange={e => {
                             const m = machines.find(x => x.id === e.target.value)
                             set(m ? { machine_id: m.id, machine_rate: machineRate(m) } : { machine_id: null, machine_rate: 0 })
@@ -420,7 +420,7 @@ export default function CalculationPage() {
                       {/* Operator: who + how many + rate (one row) */}
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
                         <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                          <label className="text-xs font-medium text-gray-400">{s.operator}</label>
+                          <label className="text-xs font-medium text-label">{s.operator}</label>
                           <select value={r.operator_id ?? ''} onChange={e => {
                             const l = labor.find(x => x.id === e.target.value)
                             set(l ? { operator_id: l.id, operator_rate: laborRate(l) } : { operator_id: null, operator_rate: 0 })
@@ -439,7 +439,7 @@ export default function CalculationPage() {
                         <Mini label={`${s.setupCost} (${u.min})`} value={r.setup_min} onValue={v => set({ setup_min: v ?? 0 })} decimals={2} />
                         <Mini label={s.technologists} value={r.setup_qty ?? 1} onValue={v => set({ setup_qty: v ?? 0 })} />
                         <div className="flex flex-col gap-1">
-                          <label className="text-xs font-medium text-gray-400">{s.technologist}</label>
+                          <label className="text-xs font-medium text-label">{s.technologist}</label>
                           <select value={r.setup_id ?? ''} onChange={e => {
                             const l = labor.find(x => x.id === e.target.value)
                             set(l ? { setup_id: l.id, setup_rate: laborRate(l) } : { setup_id: null, setup_rate: 0 })
@@ -501,7 +501,7 @@ export default function CalculationPage() {
                         </div>
                       ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-400">{s.toolName}</label>
+                        <label className="text-xs font-medium text-label">{s.toolName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
                           className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                       </div>
@@ -543,7 +543,7 @@ export default function CalculationPage() {
                         </div>
                       ) : (<>
                       <div className="flex flex-col gap-1 mb-3">
-                        <label className="text-xs font-medium text-gray-400">{s.packagingName}</label>
+                        <label className="text-xs font-medium text-label">{s.packagingName}</label>
                         <input value={r.name} onChange={e => set({ name: e.target.value })}
                           className="rounded-md border border-gray-200 px-2 py-2 text-[15px] font-bold text-gray-900 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400" />
                       </div>
@@ -663,7 +663,7 @@ function OhRow({ label, pct, onPct, value }: { label: string; pct: number; onPct
   )
 }
 function Mini({ label, unit, value, onValue, decimals }: { label: string; unit?: string; value: number; onValue: (v: number | null) => void; decimals?: number }) {
-  return <div className="flex flex-col gap-1"><label className="text-xs font-medium text-gray-400">{label}</label><NumberInput unit={unit} value={value} onValue={onValue} decimals={decimals} className="rounded-md border-gray-200 px-2 py-1 text-sm bg-white" /></div>
+  return <div className="flex flex-col gap-1"><label className="text-xs font-medium text-label">{label}</label><NumberInput unit={unit} value={value} onValue={onValue} decimals={decimals} className="rounded-md border-gray-200 px-2 py-1 text-sm bg-white" /></div>
 }
 function ResRow({ label, cells, strong }: { label: string; cells: string[]; strong?: boolean }) {
   return (

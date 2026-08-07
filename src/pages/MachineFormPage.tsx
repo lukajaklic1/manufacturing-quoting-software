@@ -142,7 +142,7 @@ export default function MachineFormPage() {
               <Input id="name" label={s.machineName} value={m.name ?? ''} onChange={e => setM(v => ({ ...v, name: e.target.value }))} />
               <Input id="model" label={s.machineModel} value={m.model ?? ''} onChange={e => setM(v => ({ ...v, model: e.target.value }))} />
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-400">{s.category}</label>
+                <label className="text-xs font-medium text-label">{s.category}</label>
                 <select value={m.category ?? ''} onChange={e => setM(v => ({ ...v, category: (e.target.value || null) as MachineCategory | null }))}
                   className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                   <option value="">—</option>

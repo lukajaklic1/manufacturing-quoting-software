@@ -162,7 +162,7 @@ export default function MaterialsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2"><Input id="m-name" label={s.materialName} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">{s.category}</label>
+            <label className="text-sm font-medium text-label">{s.category}</label>
             <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
               className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
               <option value="">—</option>

@@ -123,9 +123,9 @@ function HeroMockup({ isSl }: { isSl: boolean }) {
           {/* Cost table */}
           <div className="border border-gray-100 rounded-xl overflow-hidden mb-4">
             <div className="grid grid-cols-3 bg-gray-50 px-4 py-2 border-b border-gray-100">
-              <span className="text-xs font-medium text-gray-400">{isSl ? 'Opis' : 'Description'}</span>
-              <span className="text-xs font-medium text-gray-400">{isSl ? 'Vrsta' : 'Type'}</span>
-              <span className="text-xs font-medium text-gray-400 text-right">{isSl ? 'Strošek' : 'Cost'}</span>
+              <span className="text-xs font-medium text-label">{isSl ? 'Opis' : 'Description'}</span>
+              <span className="text-xs font-medium text-label">{isSl ? 'Vrsta' : 'Type'}</span>
+              <span className="text-xs font-medium text-label text-right">{isSl ? 'Strošek' : 'Cost'}</span>
             </div>
             {rows.map((row, i) => (
               <div

@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+.text-label { color: #7f7f7f; }
+
 /* ── Landing page animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(28px); }

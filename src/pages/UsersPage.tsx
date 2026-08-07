@@ -350,7 +350,7 @@ export default function UsersPage() {
               <p className="text-xs text-gray-400">{s.adminAllAccess}</p>
             ) : (
               <div className="border-t border-gray-200 pt-3">
-                <p className="text-sm font-medium text-gray-700 mb-2">{s.usersAndPermissions}</p>
+                <p className="text-sm font-medium text-label mb-2">{s.usersAndPermissions}</p>
                 <PermMatrix perms={invitePerms} onToggle={toggleInvitePerm} labels={permLabels} />
               </div>
             )}
@@ -371,7 +371,7 @@ export default function UsersPage() {
             <Input id="edit-first" label={s.firstName} value={editForm.first_name} onChange={e => setEditForm(v => ({ ...v, first_name: e.target.value }))} />
             <Input id="edit-last" label={s.lastName} value={editForm.last_name} onChange={e => setEditForm(v => ({ ...v, last_name: e.target.value }))} />
             <div className="col-span-1 sm:col-span-2 flex flex-col gap-1">
-              <label className="text-xs font-medium text-gray-400">{t.common.email}</label>
+              <label className="text-xs font-medium text-label">{t.common.email}</label>
               <input value={editUser?.email ?? ''} disabled
                 className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" />
             </div>
@@ -390,7 +390,7 @@ export default function UsersPage() {
             <p className="text-sm text-gray-500">{s.adminAllAccess}</p>
           ) : (
             <div className="border-t border-gray-200 pt-3">
-              <p className="text-sm font-medium text-gray-700 mb-2">{s.usersAndPermissions}</p>
+              <p className="text-sm font-medium text-label mb-2">{s.usersAndPermissions}</p>
               <PermMatrix perms={editPerms} onToggle={toggleEditPerm} labels={permLabels} />
             </div>
           )}
