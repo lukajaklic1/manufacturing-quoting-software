@@ -764,7 +764,7 @@ export default function LandingPage() {
 
       {/* ══ NAV ══ */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
-        <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-[1536px] mx-auto px-6 h-16 flex items-center justify-between">
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
             <AppLogo size="sm" mono />
           </a>
@@ -819,7 +819,7 @@ export default function LandingPage() {
         </div>
 
         {/* Giant headline */}
-        <div className="animate-fade-up max-w-[1100px] mx-auto mb-6" style={{ animationDelay: '0.12s' }}>
+        <div className="animate-fade-up max-w-[1200px] mx-auto mb-6" style={{ animationDelay: '0.12s' }}>
           <h1 className="font-semibold text-gray-900 tracking-tight" style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)', lineHeight: 1.06 }}>
             {l.heroTitle1}<br />{l.heroTitle2}
           </h1>
@@ -843,14 +843,14 @@ export default function LandingPage() {
         </div>
 
         {/* Product mockup — Attio style, centered, wide */}
-        <div className="animate-fade-up max-w-[1340px] mx-auto" style={{ animationDelay: '0.38s' }}>
+        <div className="animate-fade-up max-w-[1440px] mx-auto" style={{ animationDelay: '0.38s' }}>
           <HeroMockup isSl={isSl} />
         </div>
         </div>{/* end relative z-1 */}
       </section>
 
       {/* ══ STATS ══ */}
-      <section className="max-w-[1440px] mx-auto px-6 py-20">
+      <section className="max-w-[1536px] mx-auto px-6 py-20">
         <div className="grid grid-cols-3 divide-x divide-gray-100">
           {[
             { val: l.stat1Val, label: l.stat1Label },
@@ -867,7 +867,7 @@ export default function LandingPage() {
 
       {/* ══ FEATURES ══ */}
       <section id="features" className="border-t border-gray-100">
-        <div className="max-w-[1440px] mx-auto px-6 pt-20 pb-0">
+        <div className="max-w-[1536px] mx-auto px-6 pt-20 pb-0">
           <FadeUp className="mb-14">
             <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-3">{l.featuresTitle}</p>
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
@@ -879,7 +879,7 @@ export default function LandingPage() {
           </FadeUp>
         </div>
         {/* Feature grid — border style like Attio */}
-        <div className="max-w-[1440px] mx-auto px-6">
+        <div className="max-w-[1536px] mx-auto px-6">
           <div className="border border-gray-100 rounded-2xl overflow-hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <FeatureCard Icon={Calculator} title={l.feature1Title} desc={l.feature1Desc} delay={0}   />
             <FeatureCard Icon={Zap}        title={l.feature2Title} desc={l.feature2Desc} delay={60}  />
@@ -894,7 +894,7 @@ export default function LandingPage() {
 
       {/* ══ DASHBOARD — alternating ══ */}
       <section className="border-t border-gray-100 py-24">
-        <div className="max-w-[1440px] mx-auto px-6">
+        <div className="max-w-[1536px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
               <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4">
@@ -929,7 +929,7 @@ export default function LandingPage() {
 
       {/* ══ FOR WHOM ══ */}
       <section className="border-t border-gray-100 py-24">
-        <div className="max-w-[1440px] mx-auto px-6">
+        <div className="max-w-[1536px] mx-auto px-6">
           <FadeUp className="mb-14">
             <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-3">
               {isSl ? 'Za koga' : 'For whom'}
@@ -948,7 +948,7 @@ export default function LandingPage() {
 
       {/* ══ HOW IT WORKS ══ */}
       <section id="how-it-works" className="border-t border-gray-100 py-24 bg-[#fafafa]">
-        <div className="max-w-[1440px] mx-auto px-6">
+        <div className="max-w-[1536px] mx-auto px-6">
           <FadeUp className="mb-16">
             <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-3">{l.howTitle}</p>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight leading-[1.1] max-w-2xl">{l.howHeading}</h2>
@@ -964,7 +964,7 @@ export default function LandingPage() {
 
       {/* ══ TESTIMONIALS ══ */}
       <section className="border-t border-gray-100 py-24">
-        <div className="max-w-[1440px] mx-auto px-6">
+        <div className="max-w-[1536px] mx-auto px-6">
           <FadeUp className="mb-14">
             <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-3">{l.testimonialsTitle}</p>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight leading-[1.1]">{l.testimonialsHeading}</h2>
@@ -1030,7 +1030,7 @@ export default function LandingPage() {
 
       {/* ══ FOOTER ══ */}
       <footer className="bg-gray-900 border-t border-white/8 py-8">
-        <div className="max-w-[1440px] mx-auto px-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-0 justify-between">
+        <div className="max-w-[1536px] mx-auto px-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-0 justify-between">
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
             <AppLogo size="sm" mono dark />
           </a>
