@@ -47,7 +47,7 @@ export default function CustomersPage() {
   const [toDelete, setToDelete] = useState<Customer | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [page, setPage] = useState(1)
-  const [sortKey, setSortKey] = useState<'name' | 'status'>('name')
+  const [sortKey, setSortKey] = useState<'name' | 'status' | 'quotes'>('name')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   function handleSort(k: typeof sortKey) { setSortKey(k); setSortDir(s => k === sortKey ? (s === 'asc' ? 'desc' : 'asc') : 'asc'); setPage(1) }
 
@@ -115,6 +115,7 @@ export default function CustomersPage() {
     const mul = sortDir === 'asc' ? 1 : -1
     if (sortKey === 'name') return a.name.localeCompare(b.name) * mul
     if (sortKey === 'status') return ((a.status ?? 'active') > (b.status ?? 'active') ? 1 : -1) * mul
+    if (sortKey === 'quotes') return ((counts[a.id] ?? 0) - (counts[b.id] ?? 0)) * mul
     return 0
   })
   const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -150,7 +151,7 @@ export default function CustomersPage() {
         ) : (
           <div className="overflow-x-auto"><table className="w-full text-sm min-w-[820px]">
             <thead className="bg-gray-50 border-b border-gray-200"><tr>
-              {([['name', s.companyName], ['', s.contact], ['', t.common.email], ['', t.common.phone], ['', s.paymentTerms], ['', s.quotesCount], ['status', t.common.status], ['', s.updatedAt], ['', '']] as [string, string][]).map(([key, h], i) => (
+              {([['name', s.companyName], ['', s.contact], ['', t.common.email], ['', t.common.phone], ['', s.paymentTerms], ['quotes', s.quotesCount], ['status', t.common.status], ['', s.updatedAt], ['', '']] as [string, string][]).map(([key, h], i) => (
                 <th key={i} className={`text-left px-4 py-3 text-xs font-medium text-gray-500 ${key ? 'cursor-pointer select-none hover:text-gray-700' : ''}`}
                   onClick={() => key && handleSort(key as typeof sortKey)}>
                   <span className="inline-flex items-center gap-0.5">{h}{key && <SortIcon active={sortKey === key} dir={sortDir} />}</span>
