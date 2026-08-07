@@ -987,58 +987,74 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
 
             {step === 'material' && (
               <div className="flex flex-col gap-3">
+                {/* Section header */}
                 <div className="flex items-center justify-between">
                   <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Surovina' : 'Raw material'}</p>
-                  <span className="text-[10px] text-blue-600 font-medium cursor-pointer">+ {sl ? 'Dodaj material' : 'Add material'}</span>
+                  <span className="text-[10px] text-blue-600 font-medium">+ {sl ? 'Dodaj material' : 'Add material'}</span>
                 </div>
-                <div className="border border-gray-200 rounded-xl p-3 bg-white">
+
+                {/* Material card — matches real app: relative + pr-10 + absolute controls */}
+                <div className="relative border border-gray-200 rounded-xl p-3 pr-10 bg-white">
+                  {/* Chevron + trash — absolute top-right */}
+                  <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-3.5 h-3.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                  </div>
+
+                  {/* Row 1: Shape | Material | Price/kg */}
                   <div className="grid grid-cols-3 gap-2 mb-3">
-                    {/* Shape — large bold like real app */}
-                    <div>
-                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Oblika' : 'Shape'}</p>
-                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Oblika' : 'Shape'}</label>
+                      <div className="border border-gray-200 rounded-md px-2 py-[7px] flex items-center justify-between bg-white">
                         <span className="text-[12px] font-bold text-gray-900">Rect. bar</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0 ml-1"><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
                     </div>
-                    {/* Material */}
-                    <div>
-                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Material' : 'Material'}</p>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Izberi material' : 'Select material'}</label>
                       <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
                         <span className="text-[10px] text-gray-800">Al EN AW-6082</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0 ml-1"><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
                     </div>
-                    {/* Price/kg — with unit suffix */}
-                    <div>
-                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Cena / kg' : 'Price / kg'}</p>
-                      <div className="border border-gray-200 rounded-md flex items-center bg-white overflow-hidden">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Cena / kg' : 'Price / kg'}</label>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-white">
                         <span className="text-[10px] text-gray-800 px-2 py-1.5 flex-1">5,20</span>
-                        <span className="text-[9px] text-gray-400 pr-2">€/kg</span>
+                        <span className="text-[8.5px] text-gray-400 pr-2 shrink-0">€/kg</span>
                       </div>
                     </div>
                   </div>
-                  {/* Dimensions — with unit inside input */}
-                  <div className="grid grid-cols-4 gap-2 mb-3">
-                    {([['W', '65', 'mm'], ['T', '60', 'mm'], ['L', '60', 'mm'], [sl ? 'Kos/zal.' : 'Pcs/stk', '1', '']] as [string,string,string][]).map(([lbl, val, unit]) => (
-                      <div key={lbl}>
-                        <p className="text-[9px] font-medium text-gray-500 mb-1">{lbl}</p>
-                        <div className="border border-gray-200 rounded-md flex items-center bg-white overflow-hidden">
+
+                  {/* Row 2: W | T | L | Pcs/stock | Scrap% */}
+                  <div className="grid grid-cols-5 gap-2 mb-3">
+                    {([
+                      [sl ? 'Širina' : 'Width',     '65', 'mm'],
+                      [sl ? 'Deb.' : 'Thickness',   '60', 'mm'],
+                      [sl ? 'Dolžina' : 'Length',   '60', 'mm'],
+                      [sl ? 'Kos/zal.' : 'Pcs/stk', '1',  ''],
+                      [sl ? 'Odpad' : 'Scrap',       '0',  '%'],
+                    ] as [string,string,string][]).map(([lbl, val, unit]) => (
+                      <div key={lbl} className="flex flex-col gap-1">
+                        <label className="text-[9px] font-medium text-gray-500">{lbl}</label>
+                        <div className="border border-gray-200 rounded-md flex items-center bg-white">
                           <span className="text-[10px] text-gray-800 px-2 py-1.5 flex-1">{val}</span>
-                          {unit && <span className="text-[9px] text-gray-400 pr-2 shrink-0">{unit}</span>}
+                          {unit && <span className="text-[8.5px] text-gray-400 pr-1.5 shrink-0">{unit}</span>}
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span className="text-[9px] text-gray-500">
-                      {sl ? 'Gostota: ' : 'Density: '}<strong>2,7 g/cm³</strong>
-                      {' · '}{sl ? 'Vol.: ' : 'Vol.: '}<strong>234 cm³</strong>
-                      {' · '}{sl ? 'Teža: ' : 'Weight: '}<strong>0,632 kg</strong>
-                    </span>
-                    <span className="text-[12px] font-semibold text-gray-900">3,29 €</span>
+
+                  {/* Footer: density · volume · weight · total */}
+                  <div className="flex flex-wrap items-center gap-x-4 pt-2 border-t border-gray-200 text-[9px]">
+                    <span className="text-gray-500">{sl ? 'Gostota' : 'Density'}: <strong className="text-gray-800">2,7 g/cm³</strong></span>
+                    <span className="text-gray-500">{sl ? 'Volumen' : 'Volume'}: <strong className="text-gray-800">234 cm³</strong></span>
+                    <span className="text-gray-500">{sl ? 'Teža' : 'Weight'}: <strong className="text-gray-800">0,632 kg</strong></span>
+                    <span className="ml-auto text-gray-500">{sl ? 'Skupaj' : 'Total'}: <strong className="text-gray-900">3,29 €</strong></span>
                   </div>
                 </div>
+
+                {/* Add purchased parts placeholder */}
                 <div className="border border-dashed border-gray-200 rounded-xl p-3 flex items-center justify-center">
                   <span className="text-[10px] text-gray-400">+ {sl ? 'Nakupljeni deli' : 'Purchased parts'}</span>
                 </div>
@@ -1047,61 +1063,104 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
 
             {step === 'operation' && (
               <div className="flex flex-col gap-3">
+                {/* Section header */}
                 <div className="flex items-center justify-between">
                   <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Operacije' : 'Operations'}</p>
-                  <span className="text-[10px] text-blue-600 font-medium cursor-pointer">+ {sl ? 'Dodaj operacijo' : 'Add operation'}</span>
+                  <span className="text-[10px] text-blue-600 font-medium">+ {sl ? 'Dodaj operacijo' : 'Add operation'}</span>
                 </div>
-                <div className="border border-gray-200 rounded-xl p-3 bg-white">
-                  {/* Operation name — large bold like real app */}
-                  <div className="mb-2.5">
-                    <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Operacija' : 'Operation'}</p>
-                    <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
+
+                {/* Operation card */}
+                <div className="relative border border-gray-200 rounded-xl p-3 pr-10 bg-white">
+                  {/* Chevron + trash — absolute top-right */}
+                  <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-3.5 h-3.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                  </div>
+
+                  {/* Operation name — full width, large bold */}
+                  <div className="flex flex-col gap-1 mb-3">
+                    <label className="text-[9px] font-medium text-gray-500">{sl ? 'Ime operacije' : 'Operation name'}</label>
+                    <div className="border border-gray-200 rounded-md px-2 py-[7px] flex items-center justify-between bg-white">
                       <span className="text-[12px] font-bold text-gray-900">CNC milling</span>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0 ml-1"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 mb-2.5">
-                    <div>
-                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Stroj' : 'Machine'}</p>
+
+                  {/* Machine select + machine rate — side by side */}
+                  <div className="flex items-end gap-2 mb-3">
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Stroj' : 'Machine'}</label>
                       <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
                         <span className="text-[10px] text-gray-800">3-osni CNC</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0 ml-1"><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
                     </div>
-                    <div>
-                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Stroj (€/h)' : 'Machine (€/h)'}</p>
-                      <div className="border border-gray-200 rounded-md flex items-center bg-gray-50 overflow-hidden">
-                        <span className="text-[10px] text-gray-500 px-2 py-1.5">17,19</span>
+                    <div className="w-[90px] shrink-0 flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Stroj (€/h)' : 'Machine (€/h)'}</label>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-gray-50">
+                        <span className="text-[10px] text-gray-500 px-2 py-1.5 flex-1">17,19</span>
+                        <span className="text-[8.5px] text-gray-400 pr-2">€/h</span>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-2 mb-2.5">
-                    <p className="text-[8px] font-semibold text-gray-400 uppercase tracking-wider mb-2">RUN</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {([
-                        [sl ? 'Cikel (min)' : 'Cycle (min)', '55,00', 'min'],
-                        [sl ? 'Kos/cikel' : 'Pcs/cycle', '1', ''],
-                        [sl ? 'Operater (€/h)' : 'Operator (€/h)', '28,38', '€/h'],
-                      ] as [string,string,string][]).map(([l, v, unit]) => (
-                        <div key={l}>
-                          <p className="text-[8px] font-medium text-gray-500 mb-1">{l}</p>
-                          <div className="border border-gray-200 rounded flex items-center bg-white overflow-hidden">
-                            <span className="text-[10px] text-gray-800 px-1.5 py-1 flex-1">{v}</span>
-                            {unit && <span className="text-[8px] text-gray-400 pr-1.5 shrink-0">{unit}</span>}
-                          </div>
-                        </div>
-                      ))}
+
+                  {/* RUN COST divider */}
+                  <div className="mb-2 pb-1 border-b border-gray-200 text-[9px] font-semibold text-gray-400 uppercase tracking-widest">{sl ? 'Strošek teka' : 'Run cost'}</div>
+
+                  {/* Cycle min + pcs/cycle */}
+                  <div className="grid grid-cols-3 gap-2 mb-2">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Cikel (min)' : 'Cycle (min)'}</label>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-white">
+                        <span className="text-[10px] text-gray-800 px-2 py-1.5 flex-1">55,00</span>
+                        <span className="text-[8.5px] text-gray-400 pr-2 shrink-0">min</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Kos/cikel' : 'Pcs/cycle'}</label>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-white">
+                        <span className="text-[10px] text-gray-800 px-2 py-1.5">1</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span className="text-[9px] text-gray-500">
-                      Run: <strong>41,77 €/pc</strong> · Setup: <strong>45,57 €/batch</strong>
+
+                  {/* Operator row: select + qty + rate */}
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Operater' : 'Operator'}</label>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
+                        <span className="text-[10px] text-gray-800">Janez K.</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0 ml-1"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Število' : 'Qty'}</label>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-white">
+                        <span className="text-[10px] text-gray-800 px-2 py-1.5">1</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Operater (€/h)' : 'Operator (€/h)'}</label>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-gray-50">
+                        <span className="text-[10px] text-gray-500 px-2 py-1.5 flex-1">28,38</span>
+                        <span className="text-[8.5px] text-gray-400 pr-2">€/h</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-200 text-[9px]">
+                    <span className="text-gray-500">
+                      {sl ? 'Tek' : 'Run'}: <strong className="text-gray-800">41,77 €/kos</strong>
+                      {' · '}{sl ? 'Priprava' : 'Setup'}: <strong className="text-gray-800">45,57 €/lot</strong>
                     </span>
-                    <span className="text-[12px] font-semibold text-gray-900">42,23 €/pc</span>
+                    <span className="font-semibold text-gray-900 text-[11px]">42,23 €/kos</span>
                   </div>
                 </div>
+
+                {/* Add next operation placeholder */}
                 <div className="border border-dashed border-gray-200 rounded-xl p-2.5 flex items-center justify-center">
-                  <span className="text-[10px] text-gray-400">+ {sl ? 'Dodaj pregled' : 'Add inspection'}</span>
+                  <span className="text-[10px] text-gray-400">+ {sl ? 'Dodaj operacijo' : 'Add operation'}</span>
                 </div>
               </div>
             )}
