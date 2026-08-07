@@ -804,7 +804,7 @@ export default function LandingPage() {
         <div className="animate-fade-up flex justify-center mb-10" style={{ animationDelay: '0.05s' }}>
           <a href="#features"
             className="inline-flex items-center gap-1.5 text-sm text-gray-600 border border-gray-200 rounded-full px-4 py-1.5 hover:bg-gray-50 transition-colors">
-            {isSl ? 'Kalkulacije za orodjarne in kovinarstvo' : 'Quoting software for machine shops'}
+            {isSl ? 'Za CNC, rezkanje in struženje' : 'Built for CNC, milling & turning shops'}
             <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           </a>
         </div>
