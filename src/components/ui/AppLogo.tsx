@@ -5,7 +5,7 @@ interface AppLogoProps {
   mono?: boolean
 }
 
-export default function AppLogo({ size = 'md', showName = true, dark = false, mono = false }: AppLogoProps) {
+export default function AppLogo({ size = 'md', showName = true, dark = false, mono: _mono = false }: AppLogoProps) {
   const dim = size === 'sm' ? 26 : size === 'md' ? 28 : 40
   const fontSize = size === 'sm' ? 'text-lg' : size === 'md' ? 'text-2xl' : 'text-3xl'
   const textColor = dark ? 'text-white' : 'text-gray-900'
