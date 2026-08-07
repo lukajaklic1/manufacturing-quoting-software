@@ -1324,7 +1324,7 @@ export default function LandingPage() {
       </nav>
 
       {/* ══ HERO ══ */}
-      <section className="pt-20 pb-16 text-center px-6 relative">
+      <section className="pt-10 md:pt-20 pb-16 text-center px-6 relative">
         {/* Blobs clipped to section bounds */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
           {/* Blue gradient blob — top-right */}
