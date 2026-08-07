@@ -792,7 +792,14 @@ export default function LandingPage() {
       </nav>
 
       {/* ══ HERO ══ */}
-      <section className="pt-20 pb-0 text-center px-6 overflow-hidden">
+      <section className="pt-20 pb-0 text-center px-6 overflow-hidden relative">
+        {/* Blue gradient blob — top-right, diagonal, fades into white */}
+        <div aria-hidden="true" className="pointer-events-none absolute -top-32 -right-48 w-[700px] h-[700px] rounded-full"
+          style={{ background: 'radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.18) 0%, rgba(99,102,241,0.08) 40%, transparent 70%)', transform: 'rotate(-20deg)', filter: 'blur(40px)', zIndex: 0 }}/>
+        {/* Secondary smaller blob — bottom-left for balance */}
+        <div aria-hidden="true" className="pointer-events-none absolute top-48 -left-32 w-[400px] h-[400px] rounded-full"
+          style={{ background: 'radial-gradient(ellipse at 30% 60%, rgba(99,102,241,0.10) 0%, transparent 65%)', filter: 'blur(32px)', zIndex: 0 }}/>
+        <div className="relative" style={{ zIndex: 1 }}>
         {/* Announcement pill */}
         <div className="animate-fade-up flex justify-center mb-10" style={{ animationDelay: '0.05s' }}>
           <a href="#features"
@@ -830,6 +837,7 @@ export default function LandingPage() {
         <div className="animate-fade-up max-w-[1340px] mx-auto" style={{ animationDelay: '0.38s' }}>
           <HeroMockup isSl={isSl} />
         </div>
+        </div>{/* end relative z-1 */}
       </section>
 
       {/* ══ STATS ══ */}
