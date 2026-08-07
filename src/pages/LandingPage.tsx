@@ -605,14 +605,14 @@ function HeroMockup({ isSl }: { isSl: boolean }) {
   )
 }
 
-type CalcStep = 'material' | 'operation' | 'result'
+type CalcStep = 'material' | 'operation' | 'result' | 'quantities'
 
 function CalcMockup({ isSl }: { isSl: boolean }) {
   const [step, setStep] = useState<CalcStep>('material')
   const [fading, setFading] = useState(false)
 
   useEffect(() => {
-    const steps: CalcStep[] = ['material', 'operation', 'result']
+    const steps: CalcStep[] = ['material', 'operation', 'result', 'quantities']
     const id = setInterval(() => {
       setFading(true)
       setTimeout(() => {
@@ -629,9 +629,10 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
   const sl = isSl
 
   const stepLabels: Record<CalcStep, string> = {
-    material:  sl ? '1 · Surovina'      : '1 · Raw material',
-    operation: sl ? '2 · CNC operacija' : '2 · CNC operation',
-    result:    sl ? '3 · Rezultat'      : '3 · Result',
+    material:   sl ? '1 · Surovina'       : '1 · Raw material',
+    operation:  sl ? '2 · CNC operacija'  : '2 · CNC operation',
+    result:     sl ? '3 · Kalkulacija'    : '3 · Cost breakdown',
+    quantities: sl ? '4 · Rezultati'      : '4 · Results',
   }
 
   return (
@@ -682,7 +683,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
             <div className="flex items-center gap-2">
               {/* Step indicator pills */}
               <div className="flex gap-1">
-                {(['material','operation','result'] as CalcStep[]).map(s => (
+                {(['material','operation','result','quantities'] as CalcStep[]).map(s => (
                   <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${step === s ? 'w-6 bg-gray-900' : 'w-1.5 bg-gray-200'}`}/>
                 ))}
               </div>
@@ -847,6 +848,38 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     <div key={lbl as string} className="grid grid-cols-4 px-3 py-1.5 border-b border-gray-100 last:border-b-0">
                       <span className="text-gray-500">{lbl as string}</span>
                       {vals.map(v => <span key={v as string} className="text-right text-gray-800 font-medium">{v as string}</span>)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {step === 'quantities' && (
+              <div className="flex flex-col gap-2">
+                <p className="text-[11px] font-semibold text-gray-800 mb-1 flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+                  {sl ? 'Rezultati kalkulacije' : 'Calculation results'}
+                </p>
+                <div className="border border-gray-200 rounded-xl overflow-hidden text-[9.5px]">
+                  {/* Header */}
+                  <div className="grid px-3 py-2 bg-gray-50 border-b border-gray-100 text-gray-500 font-medium" style={{gridTemplateColumns:'1fr 80px 80px 80px'}}>
+                    <span></span><span className="text-right">10 pc</span><span className="text-right">15 pc</span><span className="text-right">20 pc</span>
+                  </div>
+                  {([
+                    [sl ? 'Strošek materiala' : 'Material cost',       '5,56 €', '5,56 €', '5,56 €', false],
+                    [sl ? 'Strošek operacij'  : 'Operations cost',     '42,23 €','42,23 €','42,23 €', false],
+                    [sl ? 'Pakiranje'         : 'Packaging',           '0,00 €', '0,00 €', '0,00 €', false],
+                    [sl ? 'Režija'            : 'Overhead',            '17,74 €','17,74 €','17,74 €', false],
+                    [sl ? 'Lastna cena'       : 'Cost / piece',        '82,28 €','80,78 €','80,63 €', true],
+                    [sl ? 'Marža / kos'       : 'Margin / piece',      '12,34 €','12,12 €','12,09 €', false],
+                    [sl ? 'Prodajna cena'     : 'Selling price / piece','94,63 €','92,90 €','92,72 €', true],
+                    [sl ? 'Vrednost ponudbe'  : 'Quote value',         '946,30 €','1.393,50 €','1.854,40 €', false],
+                  ] as [string,string,string,string,boolean][]).map(([lbl,v1,v2,v3,bold]) => (
+                    <div key={lbl} className={`grid px-3 py-1.5 border-b border-gray-100 last:border-b-0 ${bold ? 'bg-gray-50' : ''}`} style={{gridTemplateColumns:'1fr 80px 80px 80px'}}>
+                      <span className={bold ? 'font-semibold text-gray-900' : 'text-gray-500'}>{lbl}</span>
+                      <span className={`text-right ${bold ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>{v1}</span>
+                      <span className={`text-right ${bold ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>{v2}</span>
+                      <span className={`text-right ${bold ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>{v3}</span>
                     </div>
                   ))}
                 </div>
