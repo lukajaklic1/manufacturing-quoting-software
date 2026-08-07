@@ -270,7 +270,7 @@ export default function UsersPage() {
                 const u = 'is_admin' in item && 'first_name' in item && 'last_name' in item && 'email' in item && 'job_title' in item && !('status' in item) ? (item as AppUser) : null
                 const invite = u ? null : (item as UserInvitation)
                 return u ? (
-                  <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={u.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => openEdit(u)}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#e5eeff', border: '1px solid #d6e5ff' }}>
@@ -411,10 +411,9 @@ export default function UsersPage() {
 
           <div className="flex items-center justify-between mt-1 pt-4 -mx-6 px-6 border-t border-gray-200">
             {editUser?.id !== primaryAdminId ? (
-              <button onClick={() => { toggleActive(editUser!); setEditUser(null) }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${editUser?.is_active ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'}`}>
-                {editUser?.is_active ? <><PowerOff className="w-4 h-4" />{s.deactivateUser}</> : <><Power className="w-4 h-4" />{s.reactivateUser}</>}
-              </button>
+              <Button variant={editUser?.is_active ? 'danger' : 'secondary'} onClick={() => { toggleActive(editUser!); setEditUser(null) }}>
+                {editUser?.is_active ? s.deactivateUser : s.reactivateUser}
+              </Button>
             ) : <span />}
             <div className="flex gap-3">
               <Button variant="secondary" onClick={() => setEditUser(null)}>{t.common.cancel}</Button>

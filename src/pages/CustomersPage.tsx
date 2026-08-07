@@ -214,9 +214,17 @@ export default function CustomersPage() {
           <input type="checkbox" checked={form.status === 'active'} onChange={e => setForm(f => ({ ...f, status: e.target.checked ? 'active' : 'inactive' }))}
             className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />{t.common.activeF}
         </label>
-        <div className="flex gap-3 justify-end mt-5">
-          <Button variant="secondary" onClick={() => setOpen(false)}>{t.common.cancel}</Button>
-          <Button loading={saving} onClick={save} disabled={!form.name.trim()}>{editing ? t.common.save : s.newCustomer}</Button>
+        {editing && (counts[editing.id] ?? 0) > 0 && <p className="text-sm text-gray-400 mt-5">{s.cannotDeleteLinked}</p>}
+        <div className="flex items-center justify-between mt-4 pt-4 -mx-6 px-6 border-t border-gray-200">
+          <div>
+            {editing && (counts[editing.id] ?? 0) === 0 && (
+              <Button variant="danger" onClick={() => { setOpen(false); setToDelete(editing) }}>{t.common.delete}</Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={() => setOpen(false)}>{t.common.cancel}</Button>
+            <Button loading={saving} onClick={save} disabled={!form.name.trim()}>{editing ? t.common.save : s.newCustomer}</Button>
+          </div>
         </div>
       </Modal>
 

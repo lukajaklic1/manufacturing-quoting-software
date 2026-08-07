@@ -205,9 +205,17 @@ export default function MaterialsPage() {
           <input type="checkbox" checked={form.is_active} onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))}
             className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />{t.common.active}
         </label>
-        <div className="flex gap-3 justify-end mt-5">
-          <Button variant="secondary" onClick={() => setOpen(false)}>{t.common.cancel}</Button>
-          <Button loading={saving} onClick={save} disabled={!form.name.trim()}>{t.common.save}</Button>
+        {editing && used.has(editing.id) && <p className="text-sm text-gray-400 mt-5">{s.cannotDeleteLinked}</p>}
+        <div className="flex items-center justify-between mt-4 pt-4 -mx-6 px-6 border-t border-gray-200">
+          <div>
+            {editing && !used.has(editing.id) && (
+              <Button variant="danger" onClick={() => { setOpen(false); setToDelete(editing) }}>{t.common.delete}</Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={() => setOpen(false)}>{t.common.cancel}</Button>
+            <Button loading={saving} onClick={save} disabled={!form.name.trim()}>{t.common.save}</Button>
+          </div>
         </div>
       </Modal>
 
