@@ -1286,7 +1286,7 @@ export default function LandingPage() {
       </section>
 
       {/* ══ TESTIMONIALS ══ */}
-      <section className="border-t border-gray-100 py-24">
+      {false && <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
           <FadeUp className="mb-14">
             <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-3">{l.testimonialsTitle}</p>
@@ -1298,7 +1298,7 @@ export default function LandingPage() {
             <TestiCard quote={l.t3Quote} name={l.t3Name} role={l.t3Role} />
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ══ FAQ ══ */}
       <section id="faq" className="border-t border-gray-100 py-24 bg-[#fafafa]">
