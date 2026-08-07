@@ -398,7 +398,7 @@ export default function UsersPage() {
           <div className="flex items-center justify-between mt-1 pt-3 border-t border-gray-100">
             {editUser?.id !== primaryAdminId ? (
               <button onClick={() => { toggleActive(editUser!); setEditUser(null) }}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${editUser?.is_active ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'}`}>
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${editUser?.is_active ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'}`}>
                 {editUser?.is_active ? <><PowerOff className="w-4 h-4" />{s.deactivateUser}</> : <><Power className="w-4 h-4" />{s.reactivateUser}</>}
               </button>
             ) : <span />}
