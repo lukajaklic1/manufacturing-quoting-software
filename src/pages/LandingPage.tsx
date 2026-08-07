@@ -853,13 +853,16 @@ export default function LandingPage() {
       <section className="max-w-[1440px] mx-auto px-6 py-16">
         <div className="border border-gray-100 rounded-2xl overflow-hidden grid grid-cols-1 sm:grid-cols-3">
           {([
-            { val: l.stat1Val, label: l.stat1Label },
-            { val: l.stat2Val, label: l.stat2Label },
-            { val: l.stat3Val, label: l.stat3Label },
-          ]).map(({ val, label }, i) => (
+            { val: l.stat1Val, label: l.stat1Label, Icon: Zap },
+            { val: l.stat2Val, label: l.stat2Label, Icon: Check },
+            { val: l.stat3Val, label: l.stat3Label, Icon: TrendingUp },
+          ] as const).map(({ val, label, Icon }, i) => (
             <FadeUp key={label} delay={i * 60}
-              className="px-10 py-12 border-b sm:border-b-0 sm:border-r border-gray-100 last:border-r-0 text-center">
-              <p className="text-5xl font-bold text-gray-900 mb-3 tracking-tight">{val}</p>
+              className="px-10 py-12 border-b sm:border-b-0 sm:border-r border-gray-100 last:border-r-0 text-center flex flex-col items-center">
+              <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mb-5">
+                <Icon className="w-4 h-4 text-gray-500" />
+              </div>
+              <p className="text-5xl font-semibold text-gray-900 mb-2 tracking-tight">{val}</p>
               <p className="text-sm text-gray-500">{label}</p>
             </FadeUp>
           ))}
