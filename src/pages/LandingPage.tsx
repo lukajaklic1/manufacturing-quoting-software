@@ -645,15 +645,32 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
     { name: 'Tehnolog',                           annual: '58.000 €', rate: '43,32 €/h' },
   ]
 
-  const SidebarItem = ({ label, icon, active }: { label: string; icon: string; active?: boolean }) => (
-    <div className={`flex items-center gap-2 px-2 py-1.5 rounded-md mb-0.5 ${active ? 'bg-[#f1f1f1]' : ''}`}>
-      <svg viewBox="0 0 24 24" fill="none" stroke={active ? '#111' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 shrink-0"><path d={icon}/></svg>
-      <span className={`text-[10px] font-medium ${active ? 'text-gray-900' : 'text-gray-500'}`}>{label}</span>
-    </div>
-  )
-
   const machineActive = step === 'machines' || step === 'machine_detail' || step === 'variable'
   const operatorActive = step === 'operators'
+
+  const rNavIco = {
+    dashboard: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
+    quotes:    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+    customers: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    materials: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>,
+    machines:  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg>,
+    labor:     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M4 15v-3a8 8 0 0 1 16 0v3"/></svg>,
+    overheads: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
+    users:     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>,
+    settings:  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+    panelleft: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>,
+    building:  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>,
+    logout:    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+  }
+
+  function RNavItem({ icon, label, active }: { icon: React.ReactNode; label: string; active?: boolean }) {
+    return (
+      <div className={`flex items-center gap-2.5 px-3 py-1.5 rounded-lg mb-0.5 text-[11px] font-medium ${active ? 'bg-[#f1f1f1] text-gray-900' : 'text-gray-900'}`}>
+        <span className="shrink-0 text-gray-500 flex items-center">{icon}</span>
+        {label}
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
@@ -668,34 +685,57 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
       </div>
 
       {/* App shell */}
-      <div className="bg-white flex" style={{ height: 420 }}>
-        {/* Sidebar */}
-        <aside className="w-[148px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full px-2 pt-3">
-          <div className="flex items-center gap-1.5 px-2 mb-3">
-            <div className="w-4 h-4 bg-gray-200 rounded-sm"/>
-            <span className="text-[10px] font-semibold text-gray-700">TCE d.o.o.</span>
+      <div className="bg-white flex" style={{ height: 460 }}>
+
+        {/* ── Sidebar — same structure as all other mockups ── */}
+        <aside className="w-[172px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full">
+          <div className="h-9 px-3 border-b border-gray-200 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-1.5">
+              <svg width="15" height="15" viewBox="0 0 40 40" fill="none">
+                <polyline points="26,6 10,20 26,34" stroke="#111" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
+                <polyline points="33,6 17,20 33,34" stroke="#111" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.28"/>
+              </svg>
+              <span className="text-[12px] font-semibold text-gray-900">Toolingdesk</span>
+            </div>
+            <span className="text-gray-400">{rNavIco.panelleft}</span>
           </div>
-          <SidebarItem label={sl ? 'Ponudbe' : 'Quotes'}         icon="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-          <SidebarItem label={sl ? 'Stranke' : 'Customers'}      icon="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-          <SidebarItem label={sl ? 'Material' : 'Materials'}      icon="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-          <SidebarItem label={sl ? 'Stroji' : 'Machines'}         icon="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" active={machineActive}/>
-          <SidebarItem label={sl ? 'Operaterji' : 'Operators'}    icon="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" active={operatorActive}/>
-          <SidebarItem label={sl ? 'Režijski str.' : 'Overhead'}  icon="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <div className="px-2 pt-2 pb-1">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-md border border-gray-200">
+              <span className="text-gray-400">{rNavIco.building}</span>
+              <span className="text-[10px] font-medium text-gray-900 truncate">TCE d.o.o.</span>
+            </div>
+          </div>
+          <nav className="flex-1 overflow-y-auto py-1.5 px-1.5">
+            <RNavItem icon={rNavIco.dashboard} label={sl ? 'Poročila' : 'Reports'} />
+            <RNavItem icon={rNavIco.quotes}    label={sl ? 'Ponudbe' : 'Quotes'} />
+            <RNavItem icon={rNavIco.customers} label={sl ? 'Stranke' : 'Customers'} />
+            <RNavItem icon={rNavIco.materials} label={sl ? 'Materiali' : 'Materials'} />
+            <RNavItem icon={rNavIco.machines}  label={sl ? 'Stroji' : 'Machines'} active={machineActive} />
+            <RNavItem icon={rNavIco.labor}     label={sl ? 'Operaterji' : 'Operators'} active={operatorActive} />
+            <RNavItem icon={rNavIco.overheads} label={sl ? 'Stroški režije' : 'Overhead costs'} />
+            <RNavItem icon={rNavIco.users}     label={sl ? 'Uporabniki' : 'Users'} />
+          </nav>
+          <div className="border-t border-gray-200 px-1.5 pt-1">
+            <RNavItem icon={rNavIco.settings} label={sl ? 'Nastavitve' : 'Settings'} />
+            <div className="flex items-center gap-2 px-3 py-2">
+              <div className="w-[22px] h-[22px] rounded-full bg-blue-600 flex items-center justify-center text-white text-[8px] font-semibold shrink-0">MS</div>
+              <span className="text-[10px] font-medium text-gray-900 flex-1 truncate">Miha Sajovic</span>
+              <span className="text-gray-400">{rNavIco.logout}</span>
+            </div>
+          </div>
         </aside>
 
         {/* Main */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Header */}
-          <div className="border-b border-gray-100 px-4 py-2.5 flex items-center justify-between">
+          {/* Page header */}
+          <div className="h-9 border-b border-gray-200 bg-white px-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
-                <path d={step === 'operators' ? "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" : "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"}/>
-              </svg>
+              <span className="text-gray-500 flex items-center">{step === 'operators' ? rNavIco.labor : rNavIco.machines}</span>
               <span className="text-[12px] font-semibold text-gray-900">
                 {step === 'operators' ? (sl ? 'Operaterji' : 'Operators') : step === 'machines' ? (sl ? 'Stroji' : 'Machines') : '3-osni CNC obdelovalni center'}
               </span>
-              {step === 'machines' && <span className="text-[10px] text-gray-400 ml-1">6</span>}
-              {step === 'operators' && <span className="text-[10px] text-gray-400 ml-1">13</span>}
+              {step === 'machines' && <span className="text-[9px] font-medium text-gray-500 bg-gray-100 rounded px-1.5 py-0.5 ml-1">6</span>}
+              {step === 'operators' && <span className="text-[9px] font-medium text-gray-500 bg-gray-100 rounded px-1.5 py-0.5 ml-1">13</span>}
             </div>
             <div className="flex items-center gap-2">
               <div className="flex gap-1">
@@ -703,7 +743,7 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
                   <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${step === s ? 'w-6 bg-gray-900' : 'w-1.5 bg-gray-200'}`}/>
                 ))}
               </div>
-              <div className="text-[9px] text-gray-400 border border-gray-200 rounded-md px-1.5 py-0.5">{stepLabels[step]}</div>
+              <div className="text-[9px] text-gray-500 border border-gray-200 bg-gray-50 rounded-md px-1.5 py-0.5">{stepLabels[step]}</div>
             </div>
           </div>
 
