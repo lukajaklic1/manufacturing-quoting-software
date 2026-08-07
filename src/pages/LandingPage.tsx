@@ -876,6 +876,31 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
     quantities: sl ? '4 · Rezultati'      : '4 · Results',
   }
 
+  // Reuse same nav icons style as HeroMockup
+  const navIco = {
+    dashboard: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
+    quotes:    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+    customers: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    materials: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>,
+    machines:  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg>,
+    labor:     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>,
+    overheads: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
+    users:     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    settings:  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+    panelleft: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>,
+    building:  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>,
+    logout:    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+  }
+
+  function SideItem({ icon, label, active }: { icon: React.ReactNode; label: string; active?: boolean }) {
+    return (
+      <div className={`flex items-center gap-2.5 px-3 py-1.5 rounded-lg mb-0.5 text-[11px] font-medium ${active ? 'bg-[#f1f1f1] text-gray-900' : 'text-gray-900'}`}>
+        <span className="shrink-0 text-gray-500 flex items-center">{icon}</span>
+        {label}
+      </div>
+    )
+  }
+
   return (
     <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
       {/* Browser chrome */}
@@ -889,91 +914,104 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
       </div>
 
       {/* App shell */}
-      <div className="bg-white flex" style={{ height: 420 }}>
+      <div className="bg-white flex" style={{ height: 460 }}>
 
-        {/* Sidebar */}
-        <aside className="w-[148px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full px-2 pt-3">
-          <div className="flex items-center gap-1.5 px-2 mb-3">
-            <div className="w-4 h-4 bg-gray-200 rounded-sm"/>
-            <span className="text-[10px] font-semibold text-gray-700">TCE d.o.o.</span>
-          </div>
-          {[
-            { label: sl ? 'Poročila' : 'Reports',   icon: 'M3 3h18v4H3zM3 9h18v4H3zM3 15h10v4H3z' },
-            { label: sl ? 'Ponudbe' : 'Quotes',     icon: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z', active: true },
-            { label: sl ? 'Stranke' : 'Customers',  icon: 'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2' },
-            { label: sl ? 'Material' : 'Materials',  icon: 'M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z' },
-            { label: sl ? 'Stroji' : 'Machines',    icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
-          ].map(({ label, icon, active }) => (
-            <div key={label} className={`flex items-center gap-2 px-2 py-1.5 rounded-md mb-0.5 ${active ? 'bg-[#f1f1f1]' : ''}`}>
-              <svg viewBox="0 0 24 24" fill="none" stroke={active ? '#111' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 shrink-0">
-                <path d={icon}/>
+        {/* ── Sidebar — identical to HeroMockup ── */}
+        <aside className="w-[172px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full">
+          {/* Logo row */}
+          <div className="h-9 px-3 border-b border-gray-200 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-1.5">
+              <svg width="15" height="15" viewBox="0 0 40 40" fill="none">
+                <polyline points="26,6 10,20 26,34" stroke="#111" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
+                <polyline points="33,6 17,20 33,34" stroke="#111" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.28"/>
               </svg>
-              <span className={`text-[10px] font-medium ${active ? 'text-gray-900' : 'text-gray-500'}`}>{label}</span>
+              <span className="text-[12px] font-semibold text-gray-900">Toolingdesk</span>
             </div>
-          ))}
+            <span className="text-gray-400">{navIco.panelleft}</span>
+          </div>
+          {/* Company pill */}
+          <div className="px-2 pt-2 pb-1">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-md border border-gray-200">
+              <span className="text-gray-400">{navIco.building}</span>
+              <span className="text-[10px] font-medium text-gray-900 truncate">TCE d.o.o.</span>
+            </div>
+          </div>
+          {/* Nav links */}
+          <nav className="flex-1 overflow-y-auto py-1.5 px-1.5">
+            <SideItem icon={navIco.dashboard} label={sl ? 'Poročila' : 'Reports'} />
+            <SideItem icon={navIco.quotes}    label={sl ? 'Ponudbe' : 'Quotes'} active />
+            <SideItem icon={navIco.customers} label={sl ? 'Stranke' : 'Customers'} />
+            <SideItem icon={navIco.materials} label={sl ? 'Materiali' : 'Materials'} />
+            <SideItem icon={navIco.machines}  label={sl ? 'Stroji' : 'Machines'} />
+            <SideItem icon={navIco.labor}     label={sl ? 'Operaterji' : 'Operators'} />
+            <SideItem icon={navIco.overheads} label={sl ? 'Stroški režije' : 'Overhead costs'} />
+            <SideItem icon={navIco.users}     label={sl ? 'Uporabniki' : 'Users'} />
+          </nav>
+          {/* Bottom */}
+          <div className="border-t border-gray-200 px-1.5 pt-1">
+            <SideItem icon={navIco.settings} label={sl ? 'Nastavitve' : 'Settings'} />
+            <div className="flex items-center gap-2 px-3 py-2">
+              <div className="w-[22px] h-[22px] rounded-full bg-blue-600 flex items-center justify-center text-white text-[8px] font-semibold shrink-0">MS</div>
+              <span className="text-[10px] font-medium text-gray-900 flex-1 truncate">Miha Sajovic</span>
+              <span className="text-gray-400">{navIco.logout}</span>
+            </div>
+          </div>
         </aside>
 
-        {/* Main */}
+        {/* ── Main content ── */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Header */}
-          <div className="border-b border-gray-100 px-5 py-3 flex items-center justify-between">
+          {/* Page header — breadcrumb + title */}
+          <div className="h-9 border-b border-gray-200 bg-white px-4 flex items-center shrink-0">
+            <span className="text-[10px] text-gray-400 mr-1.5">←</span>
+            <span className="text-[10px] text-gray-400">{sl ? 'Pregled ponudbe' : 'Review offer'}</span>
+          </div>
+          {/* Sub-header: quote name + step indicator */}
+          <div className="border-b border-gray-200 px-4 py-2.5 flex items-center justify-between bg-white shrink-0">
             <div>
-              <p className="text-[11px] text-gray-400 mb-0.5">← {sl ? 'Pregled ponudbe' : 'Review offer'}</p>
               <p className="text-[13px] font-semibold text-gray-900">{sl ? 'Sklop ležajnega ohišja' : 'Bearing housing assembly'}</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">{sl ? 'Ponudba Q20260009' : 'Quote Q20260009'}</p>
             </div>
             <div className="flex items-center gap-2">
-              {/* Step indicator pills */}
               <div className="flex gap-1">
                 {(['material','operation','result','quantities'] as CalcStep[]).map(s => (
                   <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${step === s ? 'w-6 bg-gray-900' : 'w-1.5 bg-gray-200'}`}/>
                 ))}
               </div>
-              <div className="text-[10px] text-gray-400 border border-gray-200 rounded-md px-2 py-1">{stepLabels[step]}</div>
+              <div className="text-[9.5px] text-gray-500 border border-gray-200 rounded-md px-2 py-1 bg-gray-50">{stepLabels[step]}</div>
             </div>
           </div>
 
           {/* Content — fades between steps */}
-          <div className="flex-1 overflow-hidden px-5 py-4 transition-all duration-300"
+          <div className="flex-1 overflow-hidden px-4 py-3 transition-all duration-300"
             style={{ opacity: fading ? 0 : 1, transform: fading ? 'translateY(5px)' : 'translateY(0)' }}>
 
             {step === 'material' && (
               <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-[11px] font-semibold text-gray-800 flex items-center gap-1.5">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
-                    {sl ? 'Surovina' : 'Raw material'}
-                  </p>
-                  <span className="text-[10px] text-blue-600 font-medium">+ {sl ? 'Dodaj material' : 'Add material'}</span>
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Surovina' : 'Raw material'}</p>
+                  <span className="text-[10px] text-blue-600 font-medium cursor-pointer">+ {sl ? 'Dodaj material' : 'Add material'}</span>
                 </div>
                 <div className="border border-gray-200 rounded-xl p-3 bg-white">
                   <div className="grid grid-cols-3 gap-2 mb-3">
-                    <div>
-                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Oblika' : 'Shape'}</p>
-                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
-                        <span className="text-[10px] text-gray-800">Rect. bar</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    {[
+                      [sl ? 'Oblika' : 'Shape', 'Rect. bar'],
+                      [sl ? 'Material' : 'Material', 'Al EN AW-6082'],
+                      [sl ? 'Cena / kg' : 'Price / kg', '5,20 €/kg'],
+                    ].map(([lbl, val]) => (
+                      <div key={lbl}>
+                        <p className="text-[9px] text-gray-400 mb-1">{lbl}</p>
+                        <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
+                          <span className="text-[10px] text-gray-800">{val}</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Material' : 'Material'}</p>
-                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
-                        <span className="text-[10px] text-gray-800">Al EN AW-6082</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Cena / kg' : 'Price / kg'}</p>
-                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center gap-1">
-                        <span className="text-[10px] text-gray-800">5,20</span>
-                        <span className="text-[9px] text-gray-400">€/kg</span>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                   <div className="grid grid-cols-4 gap-2 mb-3">
                     {[['W', '65 mm'], ['T', '60 mm'], ['L', '60 mm'], [sl ? 'Kos/zalogo' : 'Pcs/stock', '1']].map(([lbl, val]) => (
                       <div key={lbl}>
                         <p className="text-[9px] text-gray-400 mb-1">{lbl}</p>
-                        <div className="border border-gray-200 rounded-md px-2 py-1.5">
+                        <div className="border border-gray-200 rounded-md px-2 py-1.5 bg-white">
                           <span className="text-[10px] text-gray-800">{val}</span>
                         </div>
                       </div>
@@ -985,7 +1023,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                       {' · '}{sl ? 'Volumen: ' : 'Volume: '}<strong>234 cm³</strong>
                       {' · '}{sl ? 'Teža: ' : 'Weight: '}<strong>0,632 kg</strong>
                     </span>
-                    <span className="text-[11px] font-semibold text-gray-900">3,29 €</span>
+                    <span className="text-[12px] font-semibold text-gray-900">3,29 €</span>
                   </div>
                 </div>
                 <div className="border border-dashed border-gray-200 rounded-xl p-3 flex items-center justify-center">
@@ -996,17 +1034,14 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
 
             {step === 'operation' && (
               <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-[11px] font-semibold text-gray-800 flex items-center gap-1.5">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-                    {sl ? 'Operacije' : 'Operations'}
-                  </p>
-                  <span className="text-[10px] text-blue-600 font-medium">+ {sl ? 'Dodaj operacijo' : 'Add operation'}</span>
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Operacije' : 'Operations'}</p>
+                  <span className="text-[10px] text-blue-600 font-medium cursor-pointer">+ {sl ? 'Dodaj operacijo' : 'Add operation'}</span>
                 </div>
                 <div className="border border-gray-200 rounded-xl p-3 bg-white">
                   <div className="mb-2.5">
                     <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Operacija' : 'Operation'}</p>
-                    <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
+                    <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
                       <span className="text-[10px] font-medium text-gray-800">CNC milling</span>
                       <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
@@ -1014,20 +1049,20 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   <div className="grid grid-cols-2 gap-2 mb-2.5">
                     <div>
                       <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Stroj' : 'Machine'}</p>
-                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
                         <span className="text-[10px] text-gray-800">3-osni CNC</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
                     </div>
                     <div>
                       <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Stroj (€/h)' : 'Machine (€/h)'}</p>
-                      <div className="border border-gray-200 rounded-md px-2 py-1.5">
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 bg-white">
                         <span className="text-[10px] text-gray-800">17,19</span>
                       </div>
                     </div>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-2 mb-2.5">
-                    <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wide mb-1.5">RUN</p>
+                    <p className="text-[8px] font-semibold text-gray-400 uppercase tracking-wider mb-2">RUN</p>
                     <div className="grid grid-cols-3 gap-2">
                       {[[sl ? 'Cikel (min)' : 'Cycle (min)', '55,00'], [sl ? 'Kos/cikel' : 'Pcs/cycle', '1'], [sl ? 'Operater (€/h)' : 'Operator (€/h)', '28,38']].map(([l, v]) => (
                         <div key={l}>
@@ -1043,36 +1078,32 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     <span className="text-[9px] text-gray-500">
                       Run: <strong>41,77 €/pc</strong> · Setup: <strong>45,57 €/batch</strong>
                     </span>
-                    <span className="text-[11px] font-semibold text-gray-900">42,23 €/pc</span>
+                    <span className="text-[12px] font-semibold text-gray-900">42,23 €/pc</span>
                   </div>
                 </div>
                 <div className="border border-dashed border-gray-200 rounded-xl p-2.5 flex items-center justify-center">
-                  <span className="text-[10px] text-gray-400">+ Inspection</span>
+                  <span className="text-[10px] text-gray-400">+ {sl ? 'Dodaj pregled' : 'Add inspection'}</span>
                 </div>
               </div>
             )}
 
             {step === 'result' && (
-              <div className="flex flex-col gap-2">
-                <p className="text-[11px] font-semibold text-gray-800 mb-1 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  {sl ? 'Rezultat kalkulacije' : 'Calculation result'}
-                </p>
-                {/* Overhead table */}
+              <div className="flex flex-col gap-2.5">
+                <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Rezultat kalkulacije' : 'Calculation result'}</p>
                 <div className="border border-gray-200 rounded-xl overflow-hidden text-[10px]">
-                  {[
-                    [sl ? 'Neposredni stroški' : 'Direct costs', '54,54 €', false, true],
-                    [sl ? 'Materialna režija (10%)' : 'Material overhead (10%)', '0,55 €', false, false],
-                    [sl ? 'Proizvod. režija (35%)' : 'Manufacturing OH (35%)', '17,15 €', false, false],
-                    [sl ? 'Skupaj brez marže' : 'Subtotal', '72,25 €', false, true],
-                    ['SG&A (8,89%)', '6,42 €', false, false],
-                    [sl ? 'Logistika (3,06%)' : 'Logistics (3,06%)', '2,21 €', false, false],
-                    [sl ? 'Lastna cena' : 'Cost / piece', '82,28 €', false, true],
-                    [sl ? 'Marža (15%)' : 'Profit margin (15%)', '12,34 €', false, false],
-                  ].map(([label, val, _blue, bold]) => (
-                    <div key={label as string} className={`flex items-center justify-between px-3 py-1.5 border-b border-gray-100 last:border-b-0 ${bold ? 'bg-gray-50' : ''}`}>
-                      <span className={`${bold ? 'font-semibold text-gray-900' : 'text-gray-500'}`}>{label as string}</span>
-                      <span className={`${bold ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>{val as string}</span>
+                  {([
+                    [sl ? 'Neposredni stroški' : 'Direct costs', '54,54 €', true],
+                    [sl ? 'Materialna režija (10%)' : 'Material overhead (10%)', '0,55 €', false],
+                    [sl ? 'Proizvod. režija (35%)' : 'Manufacturing OH (35%)', '17,15 €', false],
+                    [sl ? 'Skupaj brez marže' : 'Subtotal', '72,25 €', true],
+                    ['SG&A (8,89%)', '6,42 €', false],
+                    [sl ? 'Logistika (3,06%)' : 'Logistics (3.06%)', '2,21 €', false],
+                    [sl ? 'Lastna cena' : 'Cost / piece', '82,28 €', true],
+                    [sl ? 'Marža (15%)' : 'Profit margin (15%)', '12,34 €', false],
+                  ] as [string, string, boolean][]).map(([label, val, bold]) => (
+                    <div key={label} className={`flex items-center justify-between px-3 py-1.5 border-b border-gray-100 last:border-b-0 ${bold ? 'bg-gray-50' : ''}`}>
+                      <span className={bold ? 'font-semibold text-gray-900' : 'text-gray-500'}>{label}</span>
+                      <span className={bold ? 'font-semibold text-gray-900' : 'text-gray-700'}>{val}</span>
                     </div>
                   ))}
                   <div className="flex items-center justify-between px-3 py-2 bg-gray-900">
@@ -1080,15 +1111,14 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     <span className="text-white font-bold text-[13px]">94,63 €</span>
                   </div>
                 </div>
-                {/* Qty table */}
                 <div className="border border-gray-200 rounded-xl overflow-hidden text-[9px]">
                   <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-100 px-3 py-1.5 text-gray-500 font-medium">
                     <span>{sl ? 'Kosov' : 'Qty'}</span><span className="text-right">100 pc</span><span className="text-right">1.000 pc</span><span className="text-right">10.000 pc</span>
                   </div>
-                  {[[sl ? 'Cena/kos' : 'Cost/pc','82,28 €','80,78 €','80,63 €'],[sl ? 'Prodajno/kos' : 'Sell/pc','94,63 €','92,90 €','92,72 €']].map(([lbl,...vals]) => (
-                    <div key={lbl as string} className="grid grid-cols-4 px-3 py-1.5 border-b border-gray-100 last:border-b-0">
-                      <span className="text-gray-500">{lbl as string}</span>
-                      {vals.map(v => <span key={v as string} className="text-right text-gray-800 font-medium">{v as string}</span>)}
+                  {([[sl ? 'Cena/kos' : 'Cost/pc','82,28 €','80,78 €','80,63 €'],[sl ? 'Prodajno/kos' : 'Sell/pc','94,63 €','92,90 €','92,72 €']] as string[][]).map(([lbl,...vals]) => (
+                    <div key={lbl} className="grid grid-cols-4 px-3 py-1.5 border-b border-gray-100 last:border-b-0">
+                      <span className="text-gray-500">{lbl}</span>
+                      {vals.map(v => <span key={v} className="text-right text-gray-800 font-medium">{v}</span>)}
                     </div>
                   ))}
                 </div>
@@ -1096,25 +1126,21 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
             )}
 
             {step === 'quantities' && (
-              <div className="flex flex-col gap-2">
-                <p className="text-[11px] font-semibold text-gray-800 mb-1 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
-                  {sl ? 'Rezultati kalkulacije' : 'Calculation results'}
-                </p>
+              <div className="flex flex-col gap-2.5">
+                <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Rezultati kalkulacije' : 'Calculation results'}</p>
                 <div className="border border-gray-200 rounded-xl overflow-hidden text-[9.5px]">
-                  {/* Header */}
                   <div className="grid px-3 py-2 bg-gray-50 border-b border-gray-100 text-gray-500 font-medium" style={{gridTemplateColumns:'1fr 80px 80px 80px'}}>
                     <span></span><span className="text-right">10 pc</span><span className="text-right">15 pc</span><span className="text-right">20 pc</span>
                   </div>
                   {([
-                    [sl ? 'Strošek materiala' : 'Material cost',       '5,56 €', '5,56 €', '5,56 €', false],
-                    [sl ? 'Strošek operacij'  : 'Operations cost',     '42,23 €','42,23 €','42,23 €', false],
-                    [sl ? 'Pakiranje'         : 'Packaging',           '0,00 €', '0,00 €', '0,00 €', false],
-                    [sl ? 'Režija'            : 'Overhead',            '17,74 €','17,74 €','17,74 €', false],
-                    [sl ? 'Lastna cena'       : 'Cost / piece',        '82,28 €','80,78 €','80,63 €', true],
-                    [sl ? 'Marža / kos'       : 'Margin / piece',      '12,34 €','12,12 €','12,09 €', false],
-                    [sl ? 'Prodajna cena'     : 'Selling price / piece','94,63 €','92,90 €','92,72 €', true],
-                    [sl ? 'Vrednost ponudbe'  : 'Quote value',         '946,30 €','1.393,50 €','1.854,40 €', false],
+                    [sl ? 'Strošek materiala' : 'Material cost',        '5,56 €',   '5,56 €',      '5,56 €',      false],
+                    [sl ? 'Strošek operacij'  : 'Operations cost',      '42,23 €',  '42,23 €',     '42,23 €',     false],
+                    [sl ? 'Pakiranje'         : 'Packaging',            '0,00 €',   '0,00 €',      '0,00 €',      false],
+                    [sl ? 'Režija'            : 'Overhead',             '17,74 €',  '17,74 €',     '17,74 €',     false],
+                    [sl ? 'Lastna cena'       : 'Cost / piece',         '82,28 €',  '80,78 €',     '80,63 €',     true],
+                    [sl ? 'Marža / kos'       : 'Margin / piece',       '12,34 €',  '12,12 €',     '12,09 €',     false],
+                    [sl ? 'Prodajna cena'     : 'Selling price / piece','94,63 €',  '92,90 €',     '92,72 €',     true],
+                    [sl ? 'Vrednost ponudbe'  : 'Quote value',          '946,30 €', '1.393,50 €',  '1.854,40 €',  false],
                   ] as [string,string,string,string,boolean][]).map(([lbl,v1,v2,v3,bold]) => (
                     <div key={lbl} className={`grid px-3 py-1.5 border-b border-gray-100 last:border-b-0 ${bold ? 'bg-gray-50' : ''}`} style={{gridTemplateColumns:'1fr 80px 80px 80px'}}>
                       <span className={bold ? 'font-semibold text-gray-900' : 'text-gray-500'}>{lbl}</span>
