@@ -605,6 +605,260 @@ function HeroMockup({ isSl }: { isSl: boolean }) {
   )
 }
 
+type CalcStep = 'material' | 'operation' | 'result'
+
+function CalcMockup({ isSl }: { isSl: boolean }) {
+  const [step, setStep] = useState<CalcStep>('material')
+  const [fading, setFading] = useState(false)
+
+  useEffect(() => {
+    const steps: CalcStep[] = ['material', 'operation', 'result']
+    const id = setInterval(() => {
+      setFading(true)
+      setTimeout(() => {
+        setStep(s => {
+          const i = steps.indexOf(s)
+          return steps[(i + 1) % steps.length]
+        })
+        setFading(false)
+      }, 300)
+    }, 3800)
+    return () => clearInterval(id)
+  }, [])
+
+  const sl = isSl
+
+  const stepLabels: Record<CalcStep, string> = {
+    material:  sl ? '1 · Surovina'      : '1 · Raw material',
+    operation: sl ? '2 · CNC operacija' : '2 · CNC operation',
+    result:    sl ? '3 · Rezultat'      : '3 · Result',
+  }
+
+  return (
+    <div className="rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
+      {/* Browser chrome */}
+      <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-2.5 flex items-center gap-3">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"/><div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]"/><div className="w-2.5 h-2.5 rounded-full bg-[#28c840]"/>
+        </div>
+        <div className="flex-1 mx-2 bg-white rounded-md h-5 flex items-center px-3 border border-gray-200/60">
+          <span className="text-[10px] text-gray-400">app.toolingdesk.com/calculation</span>
+        </div>
+      </div>
+
+      {/* App shell */}
+      <div className="bg-white flex" style={{ height: 420 }}>
+
+        {/* Sidebar */}
+        <aside className="w-[148px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full px-2 pt-3">
+          <div className="flex items-center gap-1.5 px-2 mb-3">
+            <div className="w-4 h-4 bg-gray-200 rounded-sm"/>
+            <span className="text-[10px] font-semibold text-gray-700">TCE d.o.o.</span>
+          </div>
+          {[
+            { label: sl ? 'Poročila' : 'Reports',   icon: 'M3 3h18v4H3zM3 9h18v4H3zM3 15h10v4H3z' },
+            { label: sl ? 'Ponudbe' : 'Quotes',     icon: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z', active: true },
+            { label: sl ? 'Stranke' : 'Customers',  icon: 'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2' },
+            { label: sl ? 'Material' : 'Materials',  icon: 'M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z' },
+            { label: sl ? 'Stroji' : 'Machines',    icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+          ].map(({ label, icon, active }) => (
+            <div key={label} className={`flex items-center gap-2 px-2 py-1.5 rounded-md mb-0.5 ${active ? 'bg-[#f1f1f1]' : ''}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke={active ? '#111' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 shrink-0">
+                <path d={icon}/>
+              </svg>
+              <span className={`text-[10px] font-medium ${active ? 'text-gray-900' : 'text-gray-500'}`}>{label}</span>
+            </div>
+          ))}
+        </aside>
+
+        {/* Main */}
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          {/* Header */}
+          <div className="border-b border-gray-100 px-5 py-3 flex items-center justify-between">
+            <div>
+              <p className="text-[11px] text-gray-400 mb-0.5">← {sl ? 'Pregled ponudbe' : 'Review offer'}</p>
+              <p className="text-[13px] font-semibold text-gray-900">{sl ? 'Sklop ležajnega ohišja' : 'Bearing housing assembly'}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Step indicator pills */}
+              <div className="flex gap-1">
+                {(['material','operation','result'] as CalcStep[]).map(s => (
+                  <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${step === s ? 'w-6 bg-gray-900' : 'w-1.5 bg-gray-200'}`}/>
+                ))}
+              </div>
+              <div className="text-[10px] text-gray-400 border border-gray-200 rounded-md px-2 py-1">{stepLabels[step]}</div>
+            </div>
+          </div>
+
+          {/* Content — fades between steps */}
+          <div className="flex-1 overflow-hidden px-5 py-4 transition-all duration-300"
+            style={{ opacity: fading ? 0 : 1, transform: fading ? 'translateY(5px)' : 'translateY(0)' }}>
+
+            {step === 'material' && (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[11px] font-semibold text-gray-800 flex items-center gap-1.5">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                    {sl ? 'Surovina' : 'Raw material'}
+                  </p>
+                  <span className="text-[10px] text-blue-600 font-medium">+ {sl ? 'Dodaj material' : 'Add material'}</span>
+                </div>
+                <div className="border border-gray-200 rounded-xl p-3 bg-white">
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <div>
+                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Oblika' : 'Shape'}</p>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
+                        <span className="text-[10px] text-gray-800">Rect. bar</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Material' : 'Material'}</p>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
+                        <span className="text-[10px] text-gray-800">Al EN AW-6082</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Cena / kg' : 'Price / kg'}</p>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center gap-1">
+                        <span className="text-[10px] text-gray-800">5,20</span>
+                        <span className="text-[9px] text-gray-400">€/kg</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2 mb-3">
+                    {[['W', '65 mm'], ['T', '60 mm'], ['L', '60 mm'], [sl ? 'Kos/zalogo' : 'Pcs/stock', '1']].map(([lbl, val]) => (
+                      <div key={lbl}>
+                        <p className="text-[9px] text-gray-400 mb-1">{lbl}</p>
+                        <div className="border border-gray-200 rounded-md px-2 py-1.5">
+                          <span className="text-[10px] text-gray-800">{val}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <span className="text-[9px] text-gray-500">
+                      {sl ? 'Gostota: ' : 'Density: '}<strong>2,7 g/cm³</strong>
+                      {' · '}{sl ? 'Volumen: ' : 'Volume: '}<strong>234 cm³</strong>
+                      {' · '}{sl ? 'Teža: ' : 'Weight: '}<strong>0,632 kg</strong>
+                    </span>
+                    <span className="text-[11px] font-semibold text-gray-900">3,29 €</span>
+                  </div>
+                </div>
+                <div className="border border-dashed border-gray-200 rounded-xl p-3 flex items-center justify-center">
+                  <span className="text-[10px] text-gray-400">+ {sl ? 'Nakupljeni deli' : 'Purchased parts'}</span>
+                </div>
+              </div>
+            )}
+
+            {step === 'operation' && (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[11px] font-semibold text-gray-800 flex items-center gap-1.5">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+                    {sl ? 'Operacije' : 'Operations'}
+                  </p>
+                  <span className="text-[10px] text-blue-600 font-medium">+ {sl ? 'Dodaj operacijo' : 'Add operation'}</span>
+                </div>
+                <div className="border border-gray-200 rounded-xl p-3 bg-white">
+                  <div className="mb-2.5">
+                    <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Operacija' : 'Operation'}</p>
+                    <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
+                      <span className="text-[10px] font-medium text-gray-800">CNC milling</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-2.5">
+                    <div>
+                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Stroj' : 'Machine'}</p>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between">
+                        <span className="text-[10px] text-gray-800">3-osni CNC</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Stroj (€/h)' : 'Machine (€/h)'}</p>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5">
+                        <span className="text-[10px] text-gray-800">17,19</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2 mb-2.5">
+                    <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wide mb-1.5">RUN</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[[sl ? 'Cikel (min)' : 'Cycle (min)', '55,00'], [sl ? 'Kos/cikel' : 'Pcs/cycle', '1'], [sl ? 'Operater (€/h)' : 'Operator (€/h)', '28,38']].map(([l, v]) => (
+                        <div key={l}>
+                          <p className="text-[8px] text-gray-400 mb-1">{l}</p>
+                          <div className="border border-gray-200 rounded px-1.5 py-1 bg-white">
+                            <span className="text-[10px] text-gray-800">{v}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <span className="text-[9px] text-gray-500">
+                      Run: <strong>41,77 €/pc</strong> · Setup: <strong>45,57 €/batch</strong>
+                    </span>
+                    <span className="text-[11px] font-semibold text-gray-900">42,23 €/pc</span>
+                  </div>
+                </div>
+                <div className="border border-dashed border-gray-200 rounded-xl p-2.5 flex items-center justify-center">
+                  <span className="text-[10px] text-gray-400">+ Inspection</span>
+                </div>
+              </div>
+            )}
+
+            {step === 'result' && (
+              <div className="flex flex-col gap-2">
+                <p className="text-[11px] font-semibold text-gray-800 mb-1 flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  {sl ? 'Rezultat kalkulacije' : 'Calculation result'}
+                </p>
+                {/* Overhead table */}
+                <div className="border border-gray-200 rounded-xl overflow-hidden text-[10px]">
+                  {[
+                    [sl ? 'Neposredni stroški' : 'Direct costs', '54,54 €', false, true],
+                    [sl ? 'Materialna režija (10%)' : 'Material overhead (10%)', '0,55 €', false, false],
+                    [sl ? 'Proizvod. režija (35%)' : 'Manufacturing OH (35%)', '17,15 €', false, false],
+                    [sl ? 'Skupaj brez marže' : 'Subtotal', '72,25 €', false, true],
+                    ['SG&A (8,89%)', '6,42 €', false, false],
+                    [sl ? 'Logistika (3,06%)' : 'Logistics (3,06%)', '2,21 €', false, false],
+                    [sl ? 'Lastna cena' : 'Cost / piece', '82,28 €', false, true],
+                    [sl ? 'Marža (15%)' : 'Profit margin (15%)', '12,34 €', false, false],
+                  ].map(([label, val, _blue, bold]) => (
+                    <div key={label as string} className={`flex items-center justify-between px-3 py-1.5 border-b border-gray-100 last:border-b-0 ${bold ? 'bg-gray-50' : ''}`}>
+                      <span className={`${bold ? 'font-semibold text-gray-900' : 'text-gray-500'}`}>{label as string}</span>
+                      <span className={`${bold ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>{val as string}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center justify-between px-3 py-2 bg-gray-900">
+                    <span className="text-white font-semibold text-[11px]">{sl ? 'Prodajna cena / kos' : 'Selling price / piece'}</span>
+                    <span className="text-white font-bold text-[13px]">94,63 €</span>
+                  </div>
+                </div>
+                {/* Qty table */}
+                <div className="border border-gray-200 rounded-xl overflow-hidden text-[9px]">
+                  <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-100 px-3 py-1.5 text-gray-500 font-medium">
+                    <span>{sl ? 'Kosov' : 'Qty'}</span><span className="text-right">100 pc</span><span className="text-right">1.000 pc</span><span className="text-right">10.000 pc</span>
+                  </div>
+                  {[[sl ? 'Cena/kos' : 'Cost/pc','82,28 €','80,78 €','80,63 €'],[sl ? 'Prodajno/kos' : 'Sell/pc','94,63 €','92,90 €','92,72 €']].map(([lbl,...vals]) => (
+                    <div key={lbl as string} className="grid grid-cols-4 px-3 py-1.5 border-b border-gray-100 last:border-b-0">
+                      <span className="text-gray-500">{lbl as string}</span>
+                      {vals.map(v => <span key={v as string} className="text-right text-gray-800 font-medium">{v as string}</span>)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function DashboardMockup({ isSl }: { isSl: boolean }) {
   const bars = [55, 72, 60, 88, 65, 95, 80]
   const months = isSl ? ['Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg'] : ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
@@ -923,6 +1177,41 @@ export default function LandingPage() {
             </FadeUp>
             <FadeUp delay={100}>
               <DashboardMockup isSl={isSl} />
+            </FadeUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ CALCULATION ══ */}
+      <section className="border-t border-gray-100 py-24">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <FadeUp delay={100} className="order-2 lg:order-1">
+              <CalcMockup isSl={isSl} />
+            </FadeUp>
+            <FadeUp className="order-1 lg:order-2">
+              <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4">
+                {isSl ? 'Kalkulacija' : 'Cost calculation'}
+              </p>
+              <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
+                {isSl ? 'Natančna kalkulacija za vsak kos.' : 'Accurate cost breakdown for every part.'}
+              </h2>
+              <p className="text-gray-500 leading-relaxed mb-8">
+                {isSl
+                  ? 'Dodajte material, operacije, nakupljene dele in stroške. Toolingdesk samodejno izračuna lastno ceno in prodajno ceno za vsako količino.'
+                  : 'Add raw materials, CNC operations, purchased parts and overhead. Toolingdesk automatically calculates cost price and selling price for every quantity.'}
+              </p>
+              <div className="flex flex-col gap-3">
+                {(isSl
+                  ? ['Material, oblika in teža iz vgrajenega materiala', 'Strojne operacije z nastavitvenim in delovnim časom', 'Lastna cena + režija + marža = prodajna cena']
+                  : ['Material cost from built-in material library', 'Machine operations with setup and cycle time', 'Cost price + overhead + margin = selling price']
+                ).map(item => (
+                  <div key={item} className="flex items-center gap-3">
+                    <Check className="w-4 h-4 text-gray-400 shrink-0" />
+                    <span className="text-gray-700 text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
             </FadeUp>
           </div>
         </div>
