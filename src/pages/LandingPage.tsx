@@ -913,7 +913,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
     material:   sl ? '1 · Surovina'       : '1 · Raw material',
     operation:  sl ? '2 · CNC operacija'  : '2 · CNC operation',
     result:     sl ? '3 · Režija'          : '3 · Overheads',
-    quantities: sl ? '4 · Rezultat'       : '4 · Calc. result',
+    quantities: sl ? '4 · Rezultati'       : '4 · Results',
   }
 
   // Reuse same nav icons style as HeroMockup
