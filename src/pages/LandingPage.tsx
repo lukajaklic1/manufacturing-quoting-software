@@ -993,26 +993,39 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                 </div>
                 <div className="border border-gray-200 rounded-xl p-3 bg-white">
                   <div className="grid grid-cols-3 gap-2 mb-3">
-                    {[
-                      [sl ? 'Oblika' : 'Shape', 'Rect. bar'],
-                      [sl ? 'Material' : 'Material', 'Al EN AW-6082'],
-                      [sl ? 'Cena / kg' : 'Price / kg', '5,20 €/kg'],
-                    ].map(([lbl, val]) => (
-                      <div key={lbl}>
-                        <p className="text-[9px] text-gray-400 mb-1">{lbl}</p>
-                        <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
-                          <span className="text-[10px] text-gray-800">{val}</span>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
+                    {/* Shape — large bold like real app */}
+                    <div>
+                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Oblika' : 'Shape'}</p>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
+                        <span className="text-[12px] font-bold text-gray-900">Rect. bar</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0"><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
-                    ))}
+                    </div>
+                    {/* Material */}
+                    <div>
+                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Material' : 'Material'}</p>
+                      <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
+                        <span className="text-[10px] text-gray-800">Al EN AW-6082</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                    </div>
+                    {/* Price/kg — with unit suffix */}
+                    <div>
+                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Cena / kg' : 'Price / kg'}</p>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-white overflow-hidden">
+                        <span className="text-[10px] text-gray-800 px-2 py-1.5 flex-1">5,20</span>
+                        <span className="text-[9px] text-gray-400 pr-2">€/kg</span>
+                      </div>
+                    </div>
                   </div>
+                  {/* Dimensions — with unit inside input */}
                   <div className="grid grid-cols-4 gap-2 mb-3">
-                    {[['W', '65 mm'], ['T', '60 mm'], ['L', '60 mm'], [sl ? 'Kos/zalogo' : 'Pcs/stock', '1']].map(([lbl, val]) => (
+                    {([['W', '65', 'mm'], ['T', '60', 'mm'], ['L', '60', 'mm'], [sl ? 'Kos/zal.' : 'Pcs/stk', '1', '']] as [string,string,string][]).map(([lbl, val, unit]) => (
                       <div key={lbl}>
-                        <p className="text-[9px] text-gray-400 mb-1">{lbl}</p>
-                        <div className="border border-gray-200 rounded-md px-2 py-1.5 bg-white">
-                          <span className="text-[10px] text-gray-800">{val}</span>
+                        <p className="text-[9px] font-medium text-gray-500 mb-1">{lbl}</p>
+                        <div className="border border-gray-200 rounded-md flex items-center bg-white overflow-hidden">
+                          <span className="text-[10px] text-gray-800 px-2 py-1.5 flex-1">{val}</span>
+                          {unit && <span className="text-[9px] text-gray-400 pr-2 shrink-0">{unit}</span>}
                         </div>
                       </div>
                     ))}
@@ -1020,7 +1033,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                     <span className="text-[9px] text-gray-500">
                       {sl ? 'Gostota: ' : 'Density: '}<strong>2,7 g/cm³</strong>
-                      {' · '}{sl ? 'Volumen: ' : 'Volume: '}<strong>234 cm³</strong>
+                      {' · '}{sl ? 'Vol.: ' : 'Vol.: '}<strong>234 cm³</strong>
                       {' · '}{sl ? 'Teža: ' : 'Weight: '}<strong>0,632 kg</strong>
                     </span>
                     <span className="text-[12px] font-semibold text-gray-900">3,29 €</span>
@@ -1039,36 +1052,42 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   <span className="text-[10px] text-blue-600 font-medium cursor-pointer">+ {sl ? 'Dodaj operacijo' : 'Add operation'}</span>
                 </div>
                 <div className="border border-gray-200 rounded-xl p-3 bg-white">
+                  {/* Operation name — large bold like real app */}
                   <div className="mb-2.5">
-                    <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Operacija' : 'Operation'}</p>
+                    <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Operacija' : 'Operation'}</p>
                     <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
-                      <span className="text-[10px] font-medium text-gray-800">CNC milling</span>
+                      <span className="text-[12px] font-bold text-gray-900">CNC milling</span>
                       <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 mb-2.5">
                     <div>
-                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Stroj' : 'Machine'}</p>
+                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Stroj' : 'Machine'}</p>
                       <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
                         <span className="text-[10px] text-gray-800">3-osni CNC</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5"><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
                     </div>
                     <div>
-                      <p className="text-[9px] text-gray-400 mb-1">{sl ? 'Stroj (€/h)' : 'Machine (€/h)'}</p>
-                      <div className="border border-gray-200 rounded-md px-2 py-1.5 bg-white">
-                        <span className="text-[10px] text-gray-800">17,19</span>
+                      <p className="text-[9px] font-medium text-gray-500 mb-1">{sl ? 'Stroj (€/h)' : 'Machine (€/h)'}</p>
+                      <div className="border border-gray-200 rounded-md flex items-center bg-gray-50 overflow-hidden">
+                        <span className="text-[10px] text-gray-500 px-2 py-1.5">17,19</span>
                       </div>
                     </div>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-2 mb-2.5">
                     <p className="text-[8px] font-semibold text-gray-400 uppercase tracking-wider mb-2">RUN</p>
                     <div className="grid grid-cols-3 gap-2">
-                      {[[sl ? 'Cikel (min)' : 'Cycle (min)', '55,00'], [sl ? 'Kos/cikel' : 'Pcs/cycle', '1'], [sl ? 'Operater (€/h)' : 'Operator (€/h)', '28,38']].map(([l, v]) => (
+                      {([
+                        [sl ? 'Cikel (min)' : 'Cycle (min)', '55,00', 'min'],
+                        [sl ? 'Kos/cikel' : 'Pcs/cycle', '1', ''],
+                        [sl ? 'Operater (€/h)' : 'Operator (€/h)', '28,38', '€/h'],
+                      ] as [string,string,string][]).map(([l, v, unit]) => (
                         <div key={l}>
-                          <p className="text-[8px] text-gray-400 mb-1">{l}</p>
-                          <div className="border border-gray-200 rounded px-1.5 py-1 bg-white">
-                            <span className="text-[10px] text-gray-800">{v}</span>
+                          <p className="text-[8px] font-medium text-gray-500 mb-1">{l}</p>
+                          <div className="border border-gray-200 rounded flex items-center bg-white overflow-hidden">
+                            <span className="text-[10px] text-gray-800 px-1.5 py-1 flex-1">{v}</span>
+                            {unit && <span className="text-[8px] text-gray-400 pr-1.5 shrink-0">{unit}</span>}
                           </div>
                         </div>
                       ))}
