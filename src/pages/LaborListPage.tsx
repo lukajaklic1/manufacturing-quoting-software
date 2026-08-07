@@ -26,7 +26,7 @@ export default function LaborListPage() {
   const s = t.qp
   const navigate = useNavigate()
   const cur = company?.currency ?? 'EUR'
-  type Row = LaborRate & { editor: { first_name: string; last_name: string } | null }
+  type Row = LaborRate & { editor: { first_name: string; last_name: string } | null; creator: { first_name: string; last_name: string } | null }
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
   const [toDelete, setToDelete] = useState<LaborRate | null>(null)
@@ -56,7 +56,7 @@ export default function LaborListPage() {
   async function load() {
     if (!company) return
     setLoading(true)
-    const { data } = await supabase.from('labor_rates').select('*, editor:users!updated_by(first_name, last_name)').eq('company_id', company.id).order('name')
+    const { data } = await supabase.from('labor_rates').select('*, editor:users!updated_by(first_name, last_name), creator:users!created_by(first_name, last_name)').eq('company_id', company.id).order('name')
     setRows((data as Row[]) ?? [])
     setUsed(await usedLaborIds())
     setLoading(false)
@@ -122,7 +122,9 @@ export default function LaborListPage() {
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}><CalendarDays className="w-3 h-3 text-gray-500 shrink-0" />{format(new Date(l.editor ? l.updated_at : l.created_at), 'd. M. yyyy')}</span>
-                      {l.editor && <PersonBadge name={`${l.editor.first_name} ${l.editor.last_name}`} />}
+                      {l.editor
+                        ? <PersonBadge name={`${l.editor.first_name} ${l.editor.last_name}`} />
+                        : l.creator && <PersonBadge name={`${l.creator.first_name} ${l.creator.last_name}`} />}
                     </div>
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>

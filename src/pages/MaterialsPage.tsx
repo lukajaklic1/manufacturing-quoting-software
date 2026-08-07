@@ -30,7 +30,7 @@ export default function MaterialsPage() {
   const canEdit = hasPerm('materials', 'create')
   const { t } = useLanguage()
   const s = t.qp
-  type Row = Material & { editor: { first_name: string; last_name: string } | null }
+  type Row = Material & { editor: { first_name: string; last_name: string } | null; creator: { first_name: string; last_name: string } | null }
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -51,7 +51,8 @@ export default function MaterialsPage() {
   async function load() {
     if (!company) return
     setLoading(true)
-    const { data } = await supabase.from('materials').select('*, editor:users!updated_by(first_name, last_name)').eq('company_id', company.id).order('name')
+    const { data, error } = await supabase.from('materials').select('*, editor:users!updated_by(first_name, last_name), creator:users!created_by(first_name, last_name)').eq('company_id', company.id).order('name')
+    console.log('materials query', { data, error })
     setRows((data as Row[]) ?? [])
     setUsed(await usedMaterialIds())
     setLoading(false)
@@ -65,14 +66,15 @@ export default function MaterialsPage() {
   async function save() {
     if (!company || !form.name.trim()) return
     setSaving(true)
+    const uid = (await supabase.auth.getUser()).data.user?.id ?? null
     const payload = {
       name: form.name.trim(), category: form.category || null,
       density: form.density ?? 0, price_per_kg: form.price_per_kg ?? 0,
       is_active: form.is_active,
     }
     const { error } = editing
-      ? await supabase.from('materials').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editing.id)
-      : await supabase.from('materials').insert({ ...payload, company_id: company.id })
+      ? await supabase.from('materials').update({ ...payload, updated_at: new Date().toISOString(), updated_by: uid }).eq('id', editing.id)
+      : await supabase.from('materials').insert({ ...payload, company_id: company.id, created_by: uid })
     setSaving(false)
     if (error) { toast.error(error.message); return }
     toast.success(t.common.saved); setOpen(false); load()
@@ -157,7 +159,9 @@ export default function MaterialsPage() {
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}><CalendarDays className="w-3 h-3 text-gray-500 shrink-0" />{format(new Date(m.editor ? m.updated_at : m.created_at), 'd. M. yyyy')}</span>
-                      {m.editor && <PersonBadge name={`${m.editor.first_name} ${m.editor.last_name}`} />}
+                      {m.editor
+                        ? <PersonBadge name={`${m.editor.first_name} ${m.editor.last_name}`} />
+                        : m.creator && <PersonBadge name={`${m.creator.first_name} ${m.creator.last_name}`} />}
                     </div>
                   </td>
                   <td className="px-4 py-2.5" onClick={e => e.stopPropagation()}>
