@@ -804,7 +804,7 @@ export default function LandingPage() {
         <div className="animate-fade-up flex justify-center mb-10" style={{ animationDelay: '0.05s' }}>
           <a href="#features"
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 rounded-full px-[1px] py-[1px] transition-colors"
-            style={{ background: 'linear-gradient(135deg, #93c5fd, #d1d5db)' }}>
+            style={{ background: 'linear-gradient(135deg, #bfdbfe, #ddd6fe)' }}>
             <span className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 hover:bg-gray-50 transition-colors">
             {isSl ? 'Za CNC, rezkanje in struženje' : 'Built for CNC, milling & turning shops'}
             <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
