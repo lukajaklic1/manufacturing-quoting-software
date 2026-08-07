@@ -1129,7 +1129,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     <div className="flex flex-col gap-1">
                       <label className="text-[9px] font-medium text-gray-500">{sl ? 'Operater' : 'Operator'}</label>
                       <div className="border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between bg-white">
-                        <span className="text-[10px] text-gray-800">Janez K.</span>
+                        <span className="text-[10px] text-gray-800">CNC operator</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-2.5 h-2.5 shrink-0 ml-1"><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
                     </div>
@@ -1151,10 +1151,10 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   {/* Footer */}
                   <div className="flex items-center justify-between pt-2 border-t border-gray-200 text-[9px]">
                     <span className="text-gray-500">
-                      {sl ? 'Tek' : 'Run'}: <strong className="text-gray-800">41,77 €/kos</strong>
+                      {sl ? 'Tek' : 'Run'}: <strong className="text-gray-800">41,77 €/pc</strong>
                       {' · '}{sl ? 'Priprava' : 'Setup'}: <strong className="text-gray-800">45,57 €/lot</strong>
                     </span>
-                    <span className="font-semibold text-gray-900 text-[11px]">42,23 €/kos</span>
+                    <span className="font-semibold text-gray-900 text-[11px]">42,23 €/pc</span>
                   </div>
                 </div>
 
@@ -1184,9 +1184,9 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                       <span className={bold ? 'font-semibold text-gray-900' : 'text-gray-700'}>{val}</span>
                     </div>
                   ))}
-                  <div className="flex items-center justify-between px-3 py-2 bg-gray-900">
-                    <span className="text-white font-semibold text-[11px]">{sl ? 'Prodajna cena / kos' : 'Selling price / piece'}</span>
-                    <span className="text-white font-bold text-[13px]">94,63 €</span>
+                  <div className="flex items-center justify-between px-3 py-2 bg-gray-100">
+                    <span className="text-gray-900 font-semibold text-[11px]">{sl ? 'Prodajna cena / kos' : 'Selling price / piece'}</span>
+                    <span className="text-gray-900 font-bold text-[13px]">94,63 €</span>
                   </div>
                 </div>
                 <div className="border border-gray-200 rounded-xl overflow-hidden text-[9px]">
