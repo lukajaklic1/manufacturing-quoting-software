@@ -858,8 +858,8 @@ export default function LandingPage() {
             { val: l.stat3Val, label: l.stat3Label },
           ]).map(({ val, label }, i) => (
             <FadeUp key={label} delay={i * 60}
-              className="p-7 border-b sm:border-b-0 sm:border-r border-gray-100 last:border-r-0 text-center">
-              <p className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">{val}</p>
+              className="px-10 py-12 border-b sm:border-b-0 sm:border-r border-gray-100 last:border-r-0 text-center">
+              <p className="text-5xl font-bold text-gray-900 mb-3 tracking-tight">{val}</p>
               <p className="text-sm text-gray-500">{label}</p>
             </FadeUp>
           ))}
