@@ -858,7 +858,7 @@ export default function LandingPage() {
             { val: l.stat3Val, label: l.stat3Label, Icon: TrendingUp },
           ] as const).map(({ val, label, Icon }, i) => (
             <FadeUp key={label} delay={i * 60}
-              className="px-10 py-12 border-b sm:border-b-0 sm:border-r border-gray-100 last:border-r-0 text-center flex flex-col items-center">
+              className="px-10 py-12 border-b sm:border-b-0 sm:border-r border-gray-100 last:border-r-0 flex flex-col items-start">
               <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mb-5">
                 <Icon className="w-4 h-4 text-gray-500" />
               </div>
