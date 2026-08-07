@@ -1774,16 +1774,21 @@ export default function LandingPage() {
       </section>
 
       {/* ══ FOOTER ══ */}
-      <footer className="bg-gray-900 border-t border-white/8 py-8">
-        <div className="max-w-[1440px] mx-auto px-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-0 justify-between">
-          <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
-            <AppLogo size="sm" mono dark />
+      <footer className="bg-gray-950 border-t border-white/[0.07]">
+        <div className="max-w-[1440px] mx-auto px-6 py-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-0 justify-between">
+          <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+            className="flex items-center gap-2 group">
+            <svg width="18" height="18" viewBox="0 0 40 40" fill="none">
+              <polyline points="26,6 10,20 26,34" stroke="white" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="33,6 17,20 33,34" stroke="white" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.3"/>
+            </svg>
+            <span className="text-[15px] font-semibold text-white/90 group-hover:text-white transition-colors">Toolingdesk</span>
           </a>
-          <p className="text-sm text-gray-600">{l.footerRights}</p>
-          <div className="flex gap-6 text-sm text-gray-500 order-first sm:order-last">
-            <Link to="/privacy" className="hover:text-white transition-colors">{l.footerPrivacy}</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">{l.footerTerms}</Link>
-            <a href="mailto:info@toolingdesk.com" className="hover:text-white transition-colors">{l.footerContact}</a>
+          <p className="text-sm text-gray-600 order-last sm:order-none">{l.footerRights}</p>
+          <div className="flex gap-6 text-sm text-gray-500">
+            <Link to="/privacy" className="hover:text-gray-300 transition-colors">{l.footerPrivacy}</Link>
+            <Link to="/terms" className="hover:text-gray-300 transition-colors">{l.footerTerms}</Link>
+            <a href="mailto:info@toolingdesk.com" className="hover:text-gray-300 transition-colors">{l.footerContact}</a>
           </div>
         </div>
       </footer>
