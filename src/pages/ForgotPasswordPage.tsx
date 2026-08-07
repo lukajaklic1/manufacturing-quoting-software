@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-normal text-label">{a.email}</label>
+                  <label className="text-xs font-medium text-label">{a.email}</label>
                   <input type="email" required autoComplete="email"
                     value={email} onChange={e => setEmail(e.target.value)}
                     placeholder="you@company.com"

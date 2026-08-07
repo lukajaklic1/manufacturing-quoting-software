@@ -212,7 +212,7 @@ export default function DashboardPage() {
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 ${k.bg}`}>
                 <k.icon className={`w-4 h-4 ${k.iconColor}`} />
               </div>
-              <p className="text-xs font-normal text-label">{k.label}</p>
+              <p className="text-xs font-medium text-label">{k.label}</p>
               <p className="text-2xl font-semibold text-gray-900 mt-0.5 tracking-tight">{k.value}</p>
             </div>
           ))}
