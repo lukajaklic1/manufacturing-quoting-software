@@ -850,16 +850,20 @@ export default function LandingPage() {
       </section>
 
       {/* ══ STATS ══ */}
-      <section className="max-w-[1440px] mx-auto px-6 py-20">
-        <div className="grid grid-cols-3 divide-x divide-gray-100">
-          {[
-            { val: l.stat1Val, label: l.stat1Label },
-            { val: l.stat2Val, label: l.stat2Label },
-            { val: l.stat3Val, label: l.stat3Label },
-          ].map(({ val, label }) => (
-            <FadeUp key={label} className="text-center px-8 py-4">
-              <p className="text-4xl font-bold text-gray-900 mb-1">{val}</p>
-              <p className="text-sm text-gray-400">{label}</p>
+      <section className="max-w-[1440px] mx-auto px-6 py-16">
+        <div className="border border-gray-100 rounded-2xl overflow-hidden grid grid-cols-1 sm:grid-cols-3">
+          {([
+            { val: l.stat1Val, label: l.stat1Label, Icon: Zap },
+            { val: l.stat2Val, label: l.stat2Label, Icon: Check },
+            { val: l.stat3Val, label: l.stat3Label, Icon: TrendingUp },
+          ] as const).map(({ val, label, Icon }, i) => (
+            <FadeUp key={label} delay={i * 60}
+              className="p-7 border-b sm:border-b-0 sm:border-r border-gray-100 last:border-r-0">
+              <div className="w-9 h-9 rounded-lg bg-gray-900 flex items-center justify-center mb-5">
+                <Icon className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">{val}</p>
+              <p className="text-sm text-gray-500">{label}</p>
             </FadeUp>
           ))}
         </div>
