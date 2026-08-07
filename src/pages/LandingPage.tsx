@@ -281,7 +281,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
   const thCls = "px-3 py-2 text-[9px] font-medium text-gray-500 text-left whitespace-nowrap"
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
+    <div className="relative w-full rounded-2xl overflow-hidden border border-gray-200 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
       {/* Browser chrome */}
       <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-2.5 flex items-center gap-3">
         <div className="flex gap-1.5">
@@ -656,7 +656,7 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
   const operatorActive = step === 'operators'
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
+    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
       {/* Browser chrome */}
       <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-2.5 flex items-center gap-3">
         <div className="flex gap-1.5">
@@ -877,7 +877,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
   }
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
+    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
       {/* Browser chrome */}
       <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-2.5 flex items-center gap-3">
         <div className="flex gap-1.5">
@@ -1450,7 +1450,7 @@ export default function LandingPage() {
               </div>
             </FadeUp>
             <FadeUp delay={100}>
-              <div className="overflow-hidden rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,.10)]" style={{ maxHeight: 460 }}>
+              <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-[0_24px_80px_rgba(0,0,0,.10)]" style={{ maxHeight: 460 }}>
                 <div style={{ width: 900 }}>
                   <HeroMockup isSl={isSl} views={['dashboard', 'quotes']} />
                 </div>
