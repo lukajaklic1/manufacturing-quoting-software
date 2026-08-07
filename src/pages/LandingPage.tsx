@@ -1454,7 +1454,9 @@ export default function LandingPage() {
               </div>
             </FadeUp>
             <FadeUp delay={100}>
-              <DashboardMockup isSl={isSl} />
+              <div className="overflow-hidden rounded-2xl" style={{ maxHeight: 460 }}>
+                <HeroMockup isSl={isSl} />
+              </div>
             </FadeUp>
           </div>
         </div>
