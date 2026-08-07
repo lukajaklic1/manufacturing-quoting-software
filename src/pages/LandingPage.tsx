@@ -1136,51 +1136,6 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
   )
 }
 
-function DashboardMockup({ isSl }: { isSl: boolean }) {
-  const bars = [55, 72, 60, 88, 65, 95, 80]
-  const months = isSl ? ['Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg'] : ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
-  const stats = isSl
-    ? [['Vrednost ponudb', '184.200 €', '+12%', true], ['Dobljene', '120.000 €', '+8%', true], ['Poslane', '25', '↑3', true], ['Uspešnost', '65%', '+5%', true]]
-    : [['Quote value', '€184,200', '+12%', true], ['Won', '€120,000', '+8%', true], ['Sent', '25', '↑3', true], ['Win rate', '65%', '+5%', true]]
-
-  return (
-    <div className="rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_24px_80px_rgba(0,0,0,.10)]">
-      <div className="bg-[#f6f6f6] border-b border-gray-200 px-4 py-3 flex items-center gap-3">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" />
-        </div>
-        <div className="flex-1 mx-2 bg-white rounded-md h-6 flex items-center px-3 border border-gray-200/60">
-          <span className="text-xs text-gray-400">toolingdesk.com/dashboard</span>
-        </div>
-      </div>
-      <div className="bg-white p-5">
-        <div className="grid grid-cols-4 gap-3 mb-5">
-          {stats.map(([label, val, chg]) => (
-            <div key={label as string} className="rounded-xl border border-gray-100 p-3">
-              <p className="text-xs text-gray-400 mb-1">{label as string}</p>
-              <p className="text-base font-bold text-gray-900">{val as string}</p>
-              <p className="text-xs text-green-600 font-medium mt-0.5">{chg as string}</p>
-            </div>
-          ))}
-        </div>
-        <div className="rounded-xl border border-gray-100 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-semibold text-gray-700">{isSl ? 'Vrednost ponudb po mesecih' : 'Quote value by month'}</p>
-            <span className="text-xs text-gray-400">{isSl ? 'Zadnjih 7 mesecev' : 'Last 7 months'}</span>
-          </div>
-          <div className="flex items-end gap-2" style={{ height: 80 }}>
-            {bars.map((h, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full rounded-sm bg-gray-900 transition-all" style={{ height: `${h}%` }} />
-                <span className="text-xs text-gray-400">{months[i]}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 function FeatureCard({ Icon, title, desc, delay }: { Icon: React.ElementType; title: string; desc: string; delay: number }) {
   const ref = useRef<HTMLDivElement>(null)
