@@ -268,7 +268,7 @@ export default function OfferPdf({ snap, lang = 'sl' }: { snap: OfferSnapshot; l
         ))}
 
         {/* Grand total */}
-        <View style={s.totalSection}>
+        <View style={s.totalSection} wrap={false}>
           <View style={s.grandTotalBox}>
             <Text style={s.grandTotalLabel}>{L.grandTotal}</Text>
             <Text style={s.grandTotalValue}>{eur(grand_total)}</Text>
@@ -277,7 +277,7 @@ export default function OfferPdf({ snap, lang = 'sl' }: { snap: OfferSnapshot; l
 
         {/* Notes */}
         {offer.notes && (
-          <View style={s.notesBox}>
+          <View style={s.notesBox} wrap={false}>
             <Text style={s.notesLabel}>{L.notes}</Text>
             <Text style={s.notesText}>{offer.notes}</Text>
           </View>
