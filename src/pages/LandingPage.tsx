@@ -1480,7 +1480,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 rounded-full px-[1px] py-[1px] transition-colors"
             style={{ background: 'linear-gradient(135deg, #bfdbfe, #a5c8fd)' }}>
             <span className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 hover:bg-gray-50 transition-colors">
-            {isSl ? 'Za CNC, rezkanje in struženje' : 'Built for CNC, milling & turning shops'}
+            {isSl ? 'Za CNC, rezkanje in struženje' : 'Purpose-built for machine shops'}
             <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
             </span>
           </a>
