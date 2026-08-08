@@ -75,13 +75,6 @@ export default function TermsPage() {
           <p><span className="font-medium text-gray-500">{sl ? 'Kontakt:' : 'Contact:'}</span> <a href="mailto:info@bimetric.si" className="text-blue-600 hover:underline">info@bimetric.si</a></p>
         </div>
 
-        {/* Important note */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-10 text-sm text-amber-800">
-          <span className="font-semibold">{sl ? 'Pomembno: ' : 'Important: '}</span>
-          {sl
-            ? 'Ti pogoji so pripravljeni za trenutno brezplačno beta različico B2B storitve Toolingdesk. Ker je »Bimetric« trenutno naveden le kot začasna identifikacija ponudnika, je pred širšo javno ali plačljivo uporabo priporočljivo preveriti, ali so identifikacijski podatki ponudnika zadostni po veljavnem slovenskem in evropskem pravu. Ta dokument ni nadomestilo za individualno pravno svetovanje.'
-            : 'These Terms are drafted for the current free beta version of the B2B Toolingdesk service. Because "Bimetric" is currently used as a temporary identification of the Provider, the sufficiency of the Provider identification should be reviewed before broader public or paid use under applicable Slovenian and EU law. This document does not replace individual legal advice.'}
-        </div>
 
         {/* ── I. SPLOŠNE DOLOČBE ── */}
         <H2>{sl ? 'I. SPLOŠNE DOLOČBE' : 'I. GENERAL PROVISIONS'}</H2>
