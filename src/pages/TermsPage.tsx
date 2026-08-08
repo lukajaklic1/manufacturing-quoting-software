@@ -602,6 +602,7 @@ export default function TermsPage() {
 
         {/* Footer */}
         <div className="mt-12 pt-6 border-t border-gray-200 text-sm text-gray-500 space-y-1">
+          <div><strong>{sl ? 'Kontakt:' : 'Contact:'}</strong> info@bimetric.si</div>
           <div><strong>{sl ? 'Ponudnik:' : 'Provider:'}</strong> Bimetric</div>
           <div><strong>{sl ? 'Storitev:' : 'Service:'}</strong> Toolingdesk</div>
         </div>
