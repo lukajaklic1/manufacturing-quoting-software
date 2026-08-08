@@ -1494,7 +1494,7 @@ export default function LandingPage() {
         </div>
 
         {/* Subtitle */}
-        <p className="animate-fade-up text-lg font-medium max-w-xl mx-auto mb-10 leading-relaxed" style={{ animationDelay: '0.2s', color: '#7f7f7f' }}>
+        <p className="animate-fade-up text-lg font-normal max-w-xl mx-auto mb-10 leading-relaxed text-gray-500" style={{ animationDelay: '0.2s' }}>
           {l.heroSubtitle}
         </p>
 
