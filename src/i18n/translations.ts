@@ -1954,7 +1954,6 @@ export const translations = {
       heroTitle1: 'Program za predkalkulacije',
       heroTitle2: 'in pripravo ponudb za',
       heroTitle3: 'obdelovalce kovin',
-      heroTitle3: '',
       heroSubtitle: 'Toolingdesk je program, ki omogoča predkalkulacijo stroškov materiala, strojev in režije ter pripravo ponudbe v nekaj minutah.',
       heroCtaPrimary: 'Začnite brezplačno',
       heroCtaSecondary: 'Prijava',
