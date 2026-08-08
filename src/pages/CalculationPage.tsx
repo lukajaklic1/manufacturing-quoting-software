@@ -144,7 +144,22 @@ export default function CalculationPage() {
           const calcsMap: Record<string, Calculation> = {}
           for (const c of (cs as Calculation[]) ?? []) calcsMap[c.quote_item_id] = c
           const thumbs: Record<string, string> = {}
-          for (const it of items) { if ((it as any).thumb_path) thumbs[it.id] = (it as any).thumb_path }
+          // Load thumbnails from quote_attachments (keyed by quote_item_id)
+          const { data: attRows } = await supabase
+            .from('quote_attachments').select('quote_item_id, thumb_path, storage_path')
+            .eq('quote_id', quoteId).not('quote_item_id', 'is', null).not('thumb_path', 'is', null)
+          for (const a of (attRows ?? []) as any[]) {
+            if (a.quote_item_id && a.thumb_path && !thumbs[a.quote_item_id]) {
+              // Download persisted thumbnail and embed as data-url
+              const { data: blob } = await supabase.storage.from('quotations').download(a.thumb_path)
+              if (blob) {
+                const dataUrl = await new Promise<string>(res => {
+                  const fr = new FileReader(); fr.onload = () => res(fr.result as string); fr.readAsDataURL(blob)
+                })
+                thumbs[a.quote_item_id] = dataUrl
+              }
+            }
+          }
           const newSnap = await buildSnapshot(quote as any, cust as any, company, items, calcsMap, thumbs)
           await supabase.from('quotes').update({ snapshot: newSnap, updated_at: new Date().toISOString() }).eq('id', quoteId)
         }
