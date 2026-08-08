@@ -405,7 +405,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
-                        {(sl ? ['Stranka','Poslana vrednost','Dobljena vrednost','Poslane','Dobljene','Win rate']
+                        {(sl ? ['Stranka','Poslana vrednost','Dobljena vrednost','Poslane','Dobljene','Uspešnost']
                               : ['Customer','Sent value','Won value','Sent','Won','Win rate']).map((h,i)=>(
                           <th key={h} className={`px-3 py-1.5 text-[9px] font-medium text-gray-500 ${i===0?'text-left':i<=2?'text-right':i<=4?'text-center':'text-right'}`}>
                             <span className="inline-flex items-center gap-0.5">{h}{sortIco}</span>

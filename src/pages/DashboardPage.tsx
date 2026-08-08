@@ -273,7 +273,7 @@ export default function DashboardPage() {
                       { key: 'realized_value' as SortKey, label: sl ? 'Dobljena vrednost' : 'Won value', align: 'right' },
                       { key: 'sent_count' as SortKey, label: sl ? 'Poslane' : 'Sent', align: 'center' },
                       { key: 'realized_count' as SortKey, label: sl ? 'Dobljene' : 'Won', align: 'center' },
-                      { key: 'win_rate' as SortKey, label: sl ? 'Win rate' : 'Win rate', align: 'right' },
+                      { key: 'win_rate' as SortKey, label: sl ? 'Uspešnost' : 'Win rate', align: 'right' },
                     ].map(col => (
                       <th key={col.key}
                         className={`px-6 py-3 text-xs font-medium text-gray-500 cursor-pointer select-none text-${col.align}`}
