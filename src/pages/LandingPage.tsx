@@ -1377,8 +1377,8 @@ export default function LandingPage() {
     { Icon: BarChart2,  label: 'Maloserijska proizvodnja',        desc: 'Vsak kos zahteva svojo kalkulacijo. Toolingdesk zagotavlja enoten proces za ekipo.' },
     { Icon: TrendingUp, label: 'Kooperacija',                     desc: 'Stroški zunanjih storitev so vključeni skupaj z lastnimi stroški v eno ponudbo.' },
   ] : [
-    { Icon: Settings,   label: 'Tool & Die Shops',           desc: 'Precise calculation of machine hours, materials and labor for tools, moulds and fixtures.' },
-    { Icon: Calculator, label: 'CNC Machining',              desc: 'Every operation — milling, turning, EDM — has its own hourly rate and cycle time.' },
+    { Icon: Settings,   label: 'Tool & Die Shops',           desc: 'Precise calculation of machine hours, materials and labor for tools, molds and fixtures.' },
+    { Icon: Calculator, label: 'CNC Machining',              desc: 'Every operation from milling, turning or EDM, has its own hourly rate and cycle time.' },
     { Icon: Zap,        label: 'Welding & Steel Structures', desc: 'Material, welding time and surface treatment costs calculated together for every assembly.' },
     { Icon: FileText,   label: 'Laser Cutting & Sheet Metal',desc: 'Cutting and forming costs based on material type, thickness and machine time.' },
     { Icon: BarChart2,  label: 'Custom Manufacturing',       desc: 'Every part needs its own calculation. Toolingdesk gives your team a consistent process.' },
@@ -1582,7 +1582,7 @@ export default function LandingPage() {
               <div className="flex flex-col gap-3">
                 {(isSl
                   ? ['Skupna vrednost ponudb v teku', 'Stopnja dobljenih poslov', 'Mesečni trend ponudb']
-                  : ['Total value of open quotes', 'Win rate tracking', 'Monthly quote trend']
+                  : ['Sent value tracking', 'Win rate tracking', 'Monthly quote trend']
                 ).map(item => (
                   <div key={item} className="flex items-center gap-3">
                     <Check className="w-4 h-4 text-gray-400 shrink-0" />
@@ -1619,7 +1619,7 @@ export default function LandingPage() {
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
                   ? 'Dodajte material, operacije, nakupljene dele in stroške. Toolingdesk samodejno izračuna lastno ceno in prodajno ceno za vsako količino.'
-                  : 'Add raw materials, CNC operations, purchased parts and overhead. Toolingdesk automatically calculates cost price and selling price for every quantity.'}
+                  : 'Add raw materials, operations, purchased parts, tooling and overheads. Toolingdesk automatically calculates cost price and selling price for up to 3 different quantities.'}
               </p>
               <div className="flex flex-col gap-3">
                 {(isSl
@@ -1646,17 +1646,17 @@ export default function LandingPage() {
                 {isSl ? 'Urne postavke' : 'Hourly rates'}
               </p>
               <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
-                {isSl ? 'Točne urne postavke za vsak stroj in operaterja.' : 'Accurate hourly rates for every machine and operator.'}
+                {isSl ? 'Točne urne postavke za vsak stroj in operaterja.' : 'Detailed hourly rates for every machine and operator.'}
               </h2>
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
                   ? 'Vnesite investicijo, kapaciteto, fiksne in variabilne stroške — Toolingdesk samodejno izračuna urno postavko. Enako velja za vsakega operaterja.'
-                  : 'Enter investment, capacity, fixed and variable costs — Toolingdesk automatically calculates the hourly rate. The same applies to every operator.'}
+                  : 'Enter data on investment value, capacity, and energy usage. Toolingdesk automatically calculates the hourly rate. The same applies to every operator.'}
               </p>
               <div className="flex flex-col gap-3">
                 {(isSl
                   ? ['Amortizacija, obresti, zavarovanje in prostor', 'Energija, vzdrževanje, orodje in potrošni material', 'Letni stroški operaterja → urna postavka']
-                  : ['Depreciation, interest, insurance and space costs', 'Energy, maintenance, tooling and consumables', 'Annual operator cost → hourly rate']
+                  : ['Depreciation, interest, insurance and space costs', 'Energy, maintenance, tooling and consumables', 'Annual operator cost and capacity to calculate hourly rate']
                 ).map(item => (
                   <div key={item} className="flex items-center gap-3">
                     <Check className="w-4 h-4 text-gray-400 shrink-0" />
