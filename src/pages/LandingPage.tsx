@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+﻿import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useEffect, useState, useRef } from 'react'
 import type { RefObject } from 'react'
@@ -32,7 +32,7 @@ function FadeUp({ children, delay = 0, className = '' }: { children: React.React
   )
 }
 
-/* ── Dashboard → Quotes → Customers cycling mockup ── */
+/* â”€â”€ Dashboard â†’ Quotes â†’ Customers cycling mockup â”€â”€ */
 type MockView = 'dashboard' | 'quotes' | 'customers'
 
 function SideNavItem({ label, icon, active }: { label: string; icon: React.ReactNode; active?: boolean }) {
@@ -58,7 +58,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
     return () => clearInterval(timer)
   }, [])
 
-  // Icon SVG helpers (scaled to 12×12, matching actual Lucide icons used in sidebar)
+  // Icon SVG helpers (scaled to 12Ă—12, matching actual Lucide icons used in sidebar)
   const ico = {
     dashboard: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
     quotes:    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
@@ -84,31 +84,31 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
 
   // KPI cards: exact match to DashboardPage.tsx
   const kpis = [
-    { label: sl ? 'Vrednost poslanih' : 'Sent value',     value: '40.068 €', bg: '#eff6ff', icon: ico.trending },
-    { label: sl ? 'Vrednost dobljenih' : 'Won value',     value: '32.545 €', bg: '#e0fced', icon: ico.check2 },
+    { label: sl ? 'Vrednost poslanih' : 'Sent value',     value: '40.068 â‚¬', bg: '#eff6ff', icon: ico.trending },
+    { label: sl ? 'Vrednost dobljenih' : 'Won value',     value: '32.545 â‚¬', bg: '#e0fced', icon: ico.check2 },
     { label: sl ? 'Poslane ponudbe' : 'Sent quotes',      value: '8',         bg: '#eff6ff', icon: ico.filetext },
     { label: sl ? 'Dobljene ponudbe' : 'Won quotes',      value: '4',         bg: '#e0fced', icon: ico.trophy },
   ]
 
-  // Customer table rows — 7 rows matching actual app, sorted by sent_value desc
+  // Customer table rows â€” 7 rows matching actual app, sorted by sent_value desc
   const custRows = sl
     ? [
-        { name: 'EuroMotion Systems d.o.o.', sv: '23.360 €', wv: '22.561 €', s: 3, w: 2, wr: '66,7 %' },
-        { name: 'Metalin d.o.o.',            sv: '9.463 €',  wv: '9.463 €',  s: 1, w: 1, wr: '100,0 %' },
-        { name: 'Alpin Automation d.o.o.',   sv: '6.082 €',  wv: '0 €',      s: 1, w: 0, wr: '0,0 %' },
-        { name: 'ProMeh d.o.o.',             sv: '561 €',    wv: '0 €',      s: 1, w: 0, wr: '0,0 %' },
-        { name: 'NordSteel Engineering d.o.o.', sv: '522 €', wv: '522 €',    s: 1, w: 1, wr: '100,0 %' },
-        { name: 'InoTech Solutions d.o.o.',  sv: '80 €',     wv: '0 €',      s: 1, w: 0, wr: '0,0 %' },
-        { name: 'Adria Precision d.o.o.',    sv: '0 €',      wv: '0 €',      s: 0, w: 0, wr: '0,0 %' },
+        { name: 'EuroMotion Systems d.o.o.', sv: '23.360 â‚¬', wv: '22.561 â‚¬', s: 3, w: 2, wr: '66,7 %' },
+        { name: 'Metalin d.o.o.',            sv: '9.463 â‚¬',  wv: '9.463 â‚¬',  s: 1, w: 1, wr: '100,0 %' },
+        { name: 'Alpin Automation d.o.o.',   sv: '6.082 â‚¬',  wv: '0 â‚¬',      s: 1, w: 0, wr: '0,0 %' },
+        { name: 'ProMeh d.o.o.',             sv: '561 â‚¬',    wv: '0 â‚¬',      s: 1, w: 0, wr: '0,0 %' },
+        { name: 'NordSteel Engineering d.o.o.', sv: '522 â‚¬', wv: '522 â‚¬',    s: 1, w: 1, wr: '100,0 %' },
+        { name: 'InoTech Solutions d.o.o.',  sv: '80 â‚¬',     wv: '0 â‚¬',      s: 1, w: 0, wr: '0,0 %' },
+        { name: 'Adria Precision d.o.o.',    sv: '0 â‚¬',      wv: '0 â‚¬',      s: 0, w: 0, wr: '0,0 %' },
       ]
     : [
-        { name: 'EuroMotion Systems d.o.o.', sv: '23,360 €', wv: '22,561 €', s: 3, w: 2, wr: '66.7 %' },
-        { name: 'Metalin d.o.o.',            sv: '9,463 €',  wv: '9,463 €',  s: 1, w: 1, wr: '100.0 %' },
-        { name: 'Alpin Automation d.o.o.',   sv: '6,082 €',  wv: '0 €',      s: 1, w: 0, wr: '0.0 %' },
-        { name: 'ProMeh d.o.o.',             sv: '561 €',    wv: '0 €',      s: 1, w: 0, wr: '0.0 %' },
-        { name: 'NordSteel Engineering d.o.o.', sv: '522 €', wv: '522 €',    s: 1, w: 1, wr: '100.0 %' },
-        { name: 'InoTech Solutions d.o.o.',  sv: '80 €',     wv: '0 €',      s: 1, w: 0, wr: '0.0 %' },
-        { name: 'Adria Precision d.o.o.',    sv: '0 €',      wv: '0 €',      s: 0, w: 0, wr: '0.0 %' },
+        { name: 'EuroMotion Systems d.o.o.', sv: '23,360 â‚¬', wv: '22,561 â‚¬', s: 3, w: 2, wr: '66.7 %' },
+        { name: 'Metalin d.o.o.',            sv: '9,463 â‚¬',  wv: '9,463 â‚¬',  s: 1, w: 1, wr: '100.0 %' },
+        { name: 'Alpin Automation d.o.o.',   sv: '6,082 â‚¬',  wv: '0 â‚¬',      s: 1, w: 0, wr: '0.0 %' },
+        { name: 'ProMeh d.o.o.',             sv: '561 â‚¬',    wv: '0 â‚¬',      s: 1, w: 0, wr: '0.0 %' },
+        { name: 'NordSteel Engineering d.o.o.', sv: '522 â‚¬', wv: '522 â‚¬',    s: 1, w: 1, wr: '100.0 %' },
+        { name: 'InoTech Solutions d.o.o.',  sv: '80 â‚¬',     wv: '0 â‚¬',      s: 1, w: 0, wr: '0.0 %' },
+        { name: 'Adria Precision d.o.o.',    sv: '0 â‚¬',      wv: '0 â‚¬',      s: 0, w: 0, wr: '0.0 %' },
       ]
 
   // Chart: 3 periods. H=70 is the chart pixel height (matches BarChart component).
@@ -120,12 +120,12 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
       { label: '07/26', s: 46, w: 44 },
       { label: '08/26', s: 0,  w: 0  },
     ],
-    yLabels: ['60k €', '45k €', '30k €', '15k €', '0 €'],
+    yLabels: ['60k â‚¬', '45k â‚¬', '30k â‚¬', '15k â‚¬', '0 â‚¬'],
     sentC: '#bfdbfe', wonC: '#3b82f6',
     sentLabel: sl ? 'Poslano' : 'Sent', wonLabel: sl ? 'Dobljeno' : 'Won',
   }
   const cntChart = {
-    title: sl ? 'Število ponudb' : 'Quote count',
+    title: sl ? 'Ĺ tevilo ponudb' : 'Quote count',
     periods: [
       { label: '06/26', s: 42, w: 20 },
       { label: '07/26', s: 58, w: 32 },
@@ -157,7 +157,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
           })}
           {/* Solid baseline */}
           <line x1="32" y1={BL} x2="282" y2={BL} stroke="#e5e7eb" strokeWidth="0.8"/>
-          {/* Bars — 3 periods evenly spaced */}
+          {/* Bars â€” 3 periods evenly spaced */}
           {chart.periods.map((p, pi) => {
             const cx = 32 + (250 * (pi + 0.5) / 3)
             const bw = 14, gap = 3
@@ -169,7 +169,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
               </g>
             )
           })}
-          {/* Legend — small, centered */}
+          {/* Legend â€” small, centered */}
           <rect x="85" y="96" width="6" height="4" fill={chart.sentC} rx="1"/>
           <text x="93" y="100" fontSize="5.5" fill="#6b7280">{chart.sentLabel}</text>
           <rect x="125" y="96" width="6" height="4" fill={chart.wonC} rx="1"/>
@@ -179,42 +179,42 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
     )
   }
 
-  // ── Quotes rows (contact has name + email, assignee has name) ──
+  // â”€â”€ Quotes rows (contact has name + email, assignee has name) â”€â”€
   const quoteRows = sl ? [
-    { num:'Q20260010', cust:'InoTech Solutions d.o.o.',    contact:'Andrej Zupan', email:'andrej.zupan@inotech.si',          status:'Poslana',    sc:'#215bcf', sbg:'#e5eeff', sbd:'#d6e5ff', val:'80,10 €',     date:'10. 7. 2026', aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
-    { num:'Q20260009', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Žagar',  email:'matej.zagar@euromotion.si',        status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'12.231,60 €', date:'7. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
-    { num:'Q20260007', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Žagar',  email:'matej.zagar@euromotion.si',        status:'Izgubljena', sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'799,84 €',    date:'5. 7. 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
-    { num:'Q20260006', cust:'ProMeh d.o.o.',               contact:'Tina Novak',   email:'tina.novak@promeh.si',             status:'Izgubljena', sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'560,77 €',    date:'5. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
-    { num:'Q20260004', cust:'NordSteel Engineering d.o.o.',contact:'Maja Horvat',  email:'maja.horvat@nordsteel.si',         status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'521,80 €',    date:'5. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:8 },
-    { num:'Q20260003', cust:'Alpin Automation d.o.o.',     contact:'Nina Kranjc',  email:'nina.kranjc@alpinautomation.si',   status:'Izgubljena', sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'6.082,27 €',  date:'5. 7. 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
-    { num:'Q20260002', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Žagar',  email:'matej.zagar@euromotion.si',        status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'10.328,97 €', date:'5. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:2 },
-    { num:'Q20260001', cust:'Metalin d.o.o.',              contact:'Marko Kovač',  email:'marko.kovac@metalin.si',           status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'9.462,50 €',  date:'4. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
+    { num:'Q20260010', cust:'InoTech Solutions d.o.o.',    contact:'Andrej Zupan', email:'andrej.zupan@inotech.si',          status:'Poslana',    sc:'#215bcf', sbg:'#e5eeff', sbd:'#d6e5ff', val:'80,10 â‚¬',     date:'10. 7. 2026', aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
+    { num:'Q20260009', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Ĺ˝agar',  email:'matej.zagar@euromotion.si',        status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'12.231,60 â‚¬', date:'7. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
+    { num:'Q20260007', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Ĺ˝agar',  email:'matej.zagar@euromotion.si',        status:'Izgubljena', sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'799,84 â‚¬',    date:'5. 7. 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
+    { num:'Q20260006', cust:'ProMeh d.o.o.',               contact:'Tina Novak',   email:'tina.novak@promeh.si',             status:'Izgubljena', sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'560,77 â‚¬',    date:'5. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
+    { num:'Q20260004', cust:'NordSteel Engineering d.o.o.',contact:'Maja Horvat',  email:'maja.horvat@nordsteel.si',         status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'521,80 â‚¬',    date:'5. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:8 },
+    { num:'Q20260003', cust:'Alpin Automation d.o.o.',     contact:'Nina Kranjc',  email:'nina.kranjc@alpinautomation.si',   status:'Izgubljena', sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'6.082,27 â‚¬',  date:'5. 7. 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
+    { num:'Q20260002', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Ĺ˝agar',  email:'matej.zagar@euromotion.si',        status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'10.328,97 â‚¬', date:'5. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:2 },
+    { num:'Q20260001', cust:'Metalin d.o.o.',              contact:'Marko KovaÄŤ',  email:'marko.kovac@metalin.si',           status:'Dobljena',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'9.462,50 â‚¬',  date:'4. 7. 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
   ] : [
-    { num:'Q20260010', cust:'InoTech Solutions d.o.o.',    contact:'Andrej Zupan', email:'andrej.zupan@inotech.si',          status:'Sent',  sc:'#215bcf', sbg:'#e5eeff', sbd:'#d6e5ff', val:'80.10 €',     date:'10 Jul 2026', aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
-    { num:'Q20260009', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Žagar',  email:'matej.zagar@euromotion.si',        status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'12,231.60 €', date:'7 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
-    { num:'Q20260007', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Žagar',  email:'matej.zagar@euromotion.si',        status:'Lost',  sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'799.84 €',    date:'5 Jul 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
-    { num:'Q20260006', cust:'ProMeh d.o.o.',               contact:'Tina Novak',   email:'tina.novak@promeh.si',             status:'Lost',  sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'560.77 €',    date:'5 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
-    { num:'Q20260004', cust:'NordSteel Engineering d.o.o.',contact:'Maja Horvat',  email:'maja.horvat@nordsteel.si',         status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'521.80 €',    date:'5 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:8 },
-    { num:'Q20260003', cust:'Alpin Automation d.o.o.',     contact:'Nina Kranjc',  email:'nina.kranjc@alpinautomation.si',   status:'Lost',  sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'6,082.27 €',  date:'5 Jul 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
-    { num:'Q20260002', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Žagar',  email:'matej.zagar@euromotion.si',        status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'10,328.97 €', date:'5 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:2 },
-    { num:'Q20260001', cust:'Metalin d.o.o.',              contact:'Marko Kovač',  email:'marko.kovac@metalin.si',           status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'9,462.50 €',  date:'4 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
+    { num:'Q20260010', cust:'InoTech Solutions d.o.o.',    contact:'Andrej Zupan', email:'andrej.zupan@inotech.si',          status:'Sent',  sc:'#215bcf', sbg:'#e5eeff', sbd:'#d6e5ff', val:'80.10 â‚¬',     date:'10 Jul 2026', aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
+    { num:'Q20260009', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Ĺ˝agar',  email:'matej.zagar@euromotion.si',        status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'12,231.60 â‚¬', date:'7 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
+    { num:'Q20260007', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Ĺ˝agar',  email:'matej.zagar@euromotion.si',        status:'Lost',  sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'799.84 â‚¬',    date:'5 Jul 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
+    { num:'Q20260006', cust:'ProMeh d.o.o.',               contact:'Tina Novak',   email:'tina.novak@promeh.si',             status:'Lost',  sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'560.77 â‚¬',    date:'5 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
+    { num:'Q20260004', cust:'NordSteel Engineering d.o.o.',contact:'Maja Horvat',  email:'maja.horvat@nordsteel.si',         status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'521.80 â‚¬',    date:'5 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:8 },
+    { num:'Q20260003', cust:'Alpin Automation d.o.o.',     contact:'Nina Kranjc',  email:'nina.kranjc@alpinautomation.si',   status:'Lost',  sc:'#9e3f00', sbg:'#feeee1', sbd:'#fee0c8', val:'6,082.27 â‚¬',  date:'5 Jul 2026',  aC:'#059669', aI:'M',  aName:'Marko Novak',  pieces:1 },
+    { num:'Q20260002', cust:'EuroMotion Systems d.o.o.',   contact:'Matej Ĺ˝agar',  email:'matej.zagar@euromotion.si',        status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'10,328.97 â‚¬', date:'5 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:2 },
+    { num:'Q20260001', cust:'Metalin d.o.o.',              contact:'Marko KovaÄŤ',  email:'marko.kovac@metalin.si',           status:'Won',   sc:'#098259', sbg:'#e0fced', sbd:'#d4f8e6', val:'9,462.50 â‚¬',  date:'4 Jul 2026',  aC:'#2563eb', aI:'M',  aName:'Miha Sajovic', pieces:1 },
   ]
 
-  // ── Customers rows — 10 rows, matching actual app ──
+  // â”€â”€ Customers rows â€” 10 rows, matching actual app â”€â”€
   const custTableRows = [
     { name:'Adria Precision d.o.o.',    vat:'SI38294157', contact:'Luka Bizjak',   cC:'#16a34a', email:'luka.bizjak@adriaprecision.si',    phone:'+386 2 450 88 30', terms:sl?'30 dni':'30 days', quotes:0, updated:'4. 7. 2026' },
     { name:'Alpin Automation d.o.o.',   vat:'SI63719482', contact:'Nina Kranjc',   cC:'#7c3aed', email:'nina.kranjc@alpinautomation.si',   phone:'+386 4 517 81 90', terms:sl?'45 dni':'45 days', quotes:1, updated:'4. 7. 2026' },
-    { name:'EuroMotion Systems d.o.o.', vat:'SI27196548', contact:'Matej Žagar',   cC:'#2563eb', email:'matej.zagar@euromotion.si',        phone:'+386 5 330 71 20', terms:sl?'30 dni':'30 days', quotes:3, updated:'18. 7. 2026' },
+    { name:'EuroMotion Systems d.o.o.', vat:'SI27196548', contact:'Matej Ĺ˝agar',   cC:'#2563eb', email:'matej.zagar@euromotion.si',        phone:'+386 5 330 71 20', terms:sl?'30 dni':'30 days', quotes:3, updated:'18. 7. 2026' },
     { name:'InoTech Solutions d.o.o.',  vat:'SI42871365', contact:'Andrej Zupan',  cC:'#059669', email:'andrej.zupan@inotech.si',          phone:'+386 1 620 45 10', terms:sl?'30 dni':'30 days', quotes:1, updated:'4. 7. 2026' },
-    { name:'Metalin d.o.o.',            vat:'SI84561237', contact:'Marko Kovač',   cC:'#d97706', email:'marko.kovac@metalin.si',           phone:'+386 3 555 24 80', terms:sl?'30 dni':'30 days', quotes:1, updated:'4. 7. 2026' },
+    { name:'Metalin d.o.o.',            vat:'SI84561237', contact:'Marko KovaÄŤ',   cC:'#d97706', email:'marko.kovac@metalin.si',           phone:'+386 3 555 24 80', terms:sl?'30 dni':'30 days', quotes:1, updated:'4. 7. 2026' },
     { name:'NordSteel Engineering d.o.o.', vat:'SI75198426', contact:'Maja Horvat', cC:'#2563eb', email:'maja.horvat@nordsteel.si',        phone:'+386 7 392 11 60', terms:sl?'60 dni':'60 days', quotes:1, updated:'4. 7. 2026' },
-    { name:'PrimeMotion d.o.o.',        vat:'SI19472658', contact:'Blaž Vidmar',   cC:'#059669', email:'blaz.vidmar@primemotion.si',       phone:'+386 3 899 34 10', terms:sl?'30 dni':'30 days', quotes:0, updated:'4. 7. 2026' },
-    { name:'Proinox Engineering d.o.o.',vat:'SI72846135', contact:'Sara Potočnik', cC:'#059669', email:'sara.potocnik@proinox.si',         phone:'+386 2 748 26 50', terms:sl?'30 dni':'30 days', quotes:0, updated:'4. 7. 2026' },
+    { name:'PrimeMotion d.o.o.',        vat:'SI19472658', contact:'BlaĹľ Vidmar',   cC:'#059669', email:'blaz.vidmar@primemotion.si',       phone:'+386 3 899 34 10', terms:sl?'30 dni':'30 days', quotes:0, updated:'4. 7. 2026' },
+    { name:'Proinox Engineering d.o.o.',vat:'SI72846135', contact:'Sara PotoÄŤnik', cC:'#059669', email:'sara.potocnik@proinox.si',         phone:'+386 2 748 26 50', terms:sl?'30 dni':'30 days', quotes:0, updated:'4. 7. 2026' },
     { name:'ProMeh d.o.o.',             vat:'SI96352741', contact:'Tina Novak',    cC:'#059669', email:'tina.novak@promeh.si',             phone:'+386 4 511 67 20', terms:sl?'45 dni':'45 days', quotes:1, updated:'4. 7. 2026' },
     { name:'TechMec d.o.o.',            vat:'SI51684273', contact:'Gregor Mlakar', cC:'#059669', email:'gregor.mlakar@techmec.si',         phone:'+386 1 548 22 10', terms:sl?'30 dni':'30 days', quotes:0, updated:'4. 7. 2026' },
   ]
 
-  // ── Helpers ──
+  // â”€â”€ Helpers â”€â”€
   function Chip({ label, val, icon }: { label: string; val?: string; icon?: React.ReactNode }) {
     return (
       <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-2 py-1 bg-white">
@@ -294,13 +294,13 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
         </div>
       </div>
 
-      {/* App shell — sidebar + main */}
+      {/* App shell â€” sidebar + main */}
       <div className="bg-white flex" style={{ height: 620 }}>
 
-        {/* ── Sidebar (exact replica, scaled ~0.69×) ── */}
+        {/* â”€â”€ Sidebar (exact replica, scaled ~0.69Ă—) â”€â”€ */}
         <aside className="w-[172px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full">
 
-          {/* Logo row — h-[57px] → h-9 */}
+          {/* Logo row â€” h-[57px] â†’ h-9 */}
           <div className="h-9 px-3 border-b border-gray-200 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-1.5">
               <svg width="15" height="15" viewBox="0 0 40 40" fill="none">
@@ -322,13 +322,13 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
 
           {/* Nav links */}
           <nav className="flex-1 overflow-y-auto py-1.5 px-1.5">
-            <SideNavItem active={view==='dashboard'} label={sl ? 'Poročila' : 'Reports'}         icon={navIco.dashboard} />
+            <SideNavItem active={view==='dashboard'} label={sl ? 'PoroÄŤila' : 'Reports'}         icon={navIco.dashboard} />
             <SideNavItem active={view==='quotes'}    label={sl ? 'Ponudbe' : 'Quotes'}            icon={navIco.quotes} />
             <SideNavItem active={view==='customers'} label={sl ? 'Stranke' : 'Customers'}         icon={navIco.customers} />
             <SideNavItem label={sl ? 'Materiali' : 'Materials'}       icon={navIco.materials} />
             <SideNavItem label={sl ? 'Stroji' : 'Machines'}           icon={navIco.machines} />
             <SideNavItem label={sl ? 'Operaterji' : 'Operators'}      icon={navIco.labor} />
-            <SideNavItem label={sl ? 'Stroški režije' : 'Overhead costs'} icon={navIco.overheads} />
+            <SideNavItem label={sl ? 'StroĹˇki reĹľije' : 'Overhead costs'} icon={navIco.overheads} />
             <SideNavItem label={sl ? 'Uporabniki' : 'Users'}          icon={navIco.users} />
           </nav>
 
@@ -352,24 +352,24 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
           </div>
         </aside>
 
-        {/* ── Main content — switches per view ── */}
+        {/* â”€â”€ Main content â€” switches per view â”€â”€ */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-full">
 
-          {/* ── DASHBOARD VIEW ── */}
+          {/* â”€â”€ DASHBOARD VIEW â”€â”€ */}
           {view === 'dashboard' && (
             <div className="flex flex-col h-full" style={{ opacity: fading ? 0 : 1, transform: fading ? 'translateY(6px)' : 'translateY(0)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}>
               {/* PageHeader */}
               <div className="h-9 flex items-center justify-between px-3 border-b border-gray-200 bg-white shrink-0">
                 <div className="flex items-center gap-1.5">
                   {navIco.dashboard}
-                  <span className="text-[11px] font-medium text-gray-900">{sl ? 'Poročila' : 'Reports'}</span>
+                  <span className="text-[11px] font-medium text-gray-900">{sl ? 'PoroÄŤila' : 'Reports'}</span>
                 </div>
               </div>
               {/* Subtitle + filter bar */}
               <div className="px-3 py-2 border-b border-gray-200 bg-white flex items-center justify-between gap-2 shrink-0">
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-[12px] font-semibold text-gray-900">{sl ? 'Analitika' : 'Analytics'}</span>
-                  <span className="text-[9px] text-gray-400">{sl ? 'Pregled in analiza vaših ponudb' : 'Overview and analysis of your quotes'}</span>
+                  <span className="text-[9px] text-gray-400">{sl ? 'Pregled in analiza vaĹˇih ponudb' : 'Overview and analysis of your quotes'}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Chip label={sl ? '3 mesece' : '3 months'} icon={<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}/>
@@ -431,7 +431,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
             </div>
           )}
 
-          {/* ── QUOTES VIEW ── */}
+          {/* â”€â”€ QUOTES VIEW â”€â”€ */}
           {view === 'quotes' && (
             <div className="flex flex-col h-full" style={{ opacity: fading ? 0 : 1, transform: fading ? 'translateY(6px)' : 'translateY(0)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}>
               {/* PageHeader */}
@@ -445,7 +445,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
                   {plusIco}{sl ? 'Nova ponudba' : 'New quote'}
                 </button>
               </div>
-              {/* Filter bar — Search | Customer | Status: All | Assignee: All */}
+              {/* Filter bar â€” Search | Customer | Status: All | Assignee: All */}
               <div className="px-3 py-2 border-b border-gray-200 bg-white flex items-center gap-1.5 shrink-0">
                 <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-2 py-1 bg-white" style={{minWidth:100}}>
                   {searchIco}
@@ -463,7 +463,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
                     <tr>
-                      <th className={thCls}><span className="inline-flex items-center gap-0.5">{sl?'Številka':'Number'}{sortIco}</span></th>
+                      <th className={thCls}><span className="inline-flex items-center gap-0.5">{sl?'Ĺ tevilka':'Number'}{sortIco}</span></th>
                       <th className={thCls}><span className="inline-flex items-center gap-0.5">{sl?'Stranka':'Customer'}{sortIco}</span></th>
                       <th className={thCls}>{sl?'Kontaktna oseba':'Contact person'}</th>
                       <th className={thCls}>{sl?'Kosi':'Pieces'}</th>
@@ -520,7 +520,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
             </div>
           )}
 
-          {/* ── CUSTOMERS VIEW ── */}
+          {/* â”€â”€ CUSTOMERS VIEW â”€â”€ */}
           {view === 'customers' && (
             <div className="flex flex-col h-full" style={{ opacity: fading ? 0 : 1, transform: fading ? 'translateY(6px)' : 'translateY(0)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}>
               {/* PageHeader */}
@@ -534,7 +534,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
                   {plusIco}{sl ? 'Nova stranka' : 'New customer'}
                 </button>
               </div>
-              {/* Filter bar — just Search + Status: All */}
+              {/* Filter bar â€” just Search + Status: All */}
               <div className="px-3 py-2 border-b border-gray-200 bg-white flex items-center gap-1.5 shrink-0">
                 <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-2 py-1 bg-white flex-1 max-w-[200px]">
                   {searchIco}
@@ -551,7 +551,7 @@ function HeroMockup({ isSl, views = ['dashboard', 'quotes', 'customers'] }: { is
                       <th className={thCls}>{sl?'Kontakt':'Contact'}</th>
                       <th className={thCls}>Email</th>
                       <th className={thCls}>{sl?'Telefon':'Phone'}</th>
-                      <th className={thCls}>{sl?'Plačilni pogoji':'Payment terms'}</th>
+                      <th className={thCls}>{sl?'PlaÄŤilni pogoji':'Payment terms'}</th>
                       <th className={`${thCls} text-center`}><span className="inline-flex items-center gap-0.5">{sl?'Ponudbe':'Quotes'}{sortIco}</span></th>
                       <th className={`${thCls} text-center`}><span className="inline-flex items-center gap-0.5">{sl?'Status':'Status'}{sortIco}</span></th>
                       <th className={thCls}>{sl?'Posodobljeno':'Updated'}</th>
@@ -621,28 +621,28 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
 
   const sl = isSl
   const stepLabels: Record<RatesStep, string> = {
-    machines:      sl ? '1 · Stroji'        : '1 · Machines',
-    machine_detail:sl ? '2 · Fiksni stroški': '2 · Fixed costs',
-    variable:      sl ? '3 · Variabilni'    : '3 · Variable costs',
-    operators:     sl ? '4 · Operaterji'    : '4 · Operators',
+    machines:      sl ? '1 Â· Stroji'        : '1 Â· Machines',
+    machine_detail:sl ? '2 Â· Fiksni stroĹˇki': '2 Â· Fixed costs',
+    variable:      sl ? '3 Â· Variabilni'    : '3 Â· Variable costs',
+    operators:     sl ? '4 Â· Operaterji'    : '4 Â· Operators',
   }
 
   const machines = [
-    { name: '3-osni CNC obdelovalni center', model: 'Haas VF-2',             cat: 'CNC milling',    rate: '17,19 €/h' },
-    { name: '5-osni CNC obdelovalni center', model: 'DMG MORI DMU 65',       cat: 'CNC milling',    rate: '48,46 €/h' },
-    { name: 'CNC stružnica',                 model: 'Doosan Puma 2600SY',    cat: 'CNC turning',    rate: '35,90 €/h' },
-    { name: 'Ploskovni brusilni stroj',      model: 'Okamoto PSG-63DX',      cat: 'Grinding',       rate: '10,71 €/h' },
-    { name: 'Potopna erozija',               model: 'Sodick AG60L',          cat: 'EDM (erosion)',   rate: '21,17 €/h' },
-    { name: 'Žična erozija',                 model: 'Sodick AQ327L',         cat: 'EDM (erosion)',   rate: '22,41 €/h' },
+    { name: '3-osni CNC obdelovalni center', model: 'Haas VF-2',             cat: 'CNC milling',    rate: '17,19 â‚¬/h' },
+    { name: '5-osni CNC obdelovalni center', model: 'DMG MORI DMU 65',       cat: 'CNC milling',    rate: '48,46 â‚¬/h' },
+    { name: 'CNC struĹľnica',                 model: 'Doosan Puma 2600SY',    cat: 'CNC turning',    rate: '35,90 â‚¬/h' },
+    { name: 'Ploskovni brusilni stroj',      model: 'Okamoto PSG-63DX',      cat: 'Grinding',       rate: '10,71 â‚¬/h' },
+    { name: 'Potopna erozija',               model: 'Sodick AG60L',          cat: 'EDM (erosion)',   rate: '21,17 â‚¬/h' },
+    { name: 'Ĺ˝iÄŤna erozija',                 model: 'Sodick AQ327L',         cat: 'EDM (erosion)',   rate: '22,41 â‚¬/h' },
   ]
 
   const operators = [
-    { name: 'CAM programer',                      annual: '56.000 €', rate: '41,83 €/h' },
-    { name: 'Kontrolor kakovosti',                annual: '42.000 €', rate: '31,37 €/h' },
-    { name: 'Operater 3-osnega CNC centra',       annual: '38.000 €', rate: '28,38 €/h' },
-    { name: 'Operater 5-osnega CNC centra',       annual: '45.000 €', rate: '33,61 €/h' },
-    { name: 'Operater CNC stružnice',             annual: '40.000 €', rate: '29,88 €/h' },
-    { name: 'Tehnolog',                           annual: '58.000 €', rate: '43,32 €/h' },
+    { name: 'CAM programer',                      annual: '56.000 â‚¬', rate: '41,83 â‚¬/h' },
+    { name: 'Kontrolor kakovosti',                annual: '42.000 â‚¬', rate: '31,37 â‚¬/h' },
+    { name: 'Operater 3-osnega CNC centra',       annual: '38.000 â‚¬', rate: '28,38 â‚¬/h' },
+    { name: 'Operater 5-osnega CNC centra',       annual: '45.000 â‚¬', rate: '33,61 â‚¬/h' },
+    { name: 'Operater CNC struĹľnice',             annual: '40.000 â‚¬', rate: '29,88 â‚¬/h' },
+    { name: 'Tehnolog',                           annual: '58.000 â‚¬', rate: '43,32 â‚¬/h' },
   ]
 
   const machineActive = step === 'machines' || step === 'machine_detail' || step === 'variable'
@@ -687,7 +687,7 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
       {/* App shell */}
       <div className="bg-white flex" style={{ height: 460 }}>
 
-        {/* ── Sidebar — same structure as all other mockups ── */}
+        {/* â”€â”€ Sidebar â€” same structure as all other mockups â”€â”€ */}
         <aside className="w-[172px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full">
           <div className="h-9 px-3 border-b border-gray-200 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-1.5">
@@ -706,13 +706,13 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
             </div>
           </div>
           <nav className="flex-1 overflow-y-auto py-1.5 px-1.5">
-            <RNavItem icon={rNavIco.dashboard} label={sl ? 'Poročila' : 'Reports'} />
+            <RNavItem icon={rNavIco.dashboard} label={sl ? 'PoroÄŤila' : 'Reports'} />
             <RNavItem icon={rNavIco.quotes}    label={sl ? 'Ponudbe' : 'Quotes'} />
             <RNavItem icon={rNavIco.customers} label={sl ? 'Stranke' : 'Customers'} />
             <RNavItem icon={rNavIco.materials} label={sl ? 'Materiali' : 'Materials'} />
             <RNavItem icon={rNavIco.machines}  label={sl ? 'Stroji' : 'Machines'} active={machineActive} />
             <RNavItem icon={rNavIco.labor}     label={sl ? 'Operaterji' : 'Operators'} active={operatorActive} />
-            <RNavItem icon={rNavIco.overheads} label={sl ? 'Stroški režije' : 'Overhead costs'} />
+            <RNavItem icon={rNavIco.overheads} label={sl ? 'StroĹˇki reĹľije' : 'Overhead costs'} />
             <RNavItem icon={rNavIco.users}     label={sl ? 'Uporabniki' : 'Users'} />
           </nav>
           <div className="border-t border-gray-200 px-1.5 pt-1">
@@ -782,10 +782,10 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
               </div>
             )}
 
-            {/* MACHINE DETAIL — Fixed costs */}
+            {/* MACHINE DETAIL â€” Fixed costs */}
             {step === 'machine_detail' && (
               <div className="px-4 py-3 flex flex-col gap-2.5 overflow-hidden h-full">
-                <p className="text-[9.5px] text-gray-400">← {sl ? 'Stroji' : 'Machines'} · {sl ? 'Konfigurirajte stroškovno strukturo stroja.' : 'Configure machine cost structure to calculate the hourly rate.'}</p>
+                <p className="text-[9.5px] text-gray-400">â† {sl ? 'Stroji' : 'Machines'} Â· {sl ? 'Konfigurirajte stroĹˇkovno strukturo stroja.' : 'Configure machine cost structure to calculate the hourly rate.'}</p>
                 {/* Capacity card */}
                 <div className="border border-gray-200 rounded-xl p-3">
                   <div className="flex items-center gap-1.5 mb-2.5">
@@ -793,12 +793,12 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
                     <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Kapaciteta' : 'Capacity'}</span>
                   </div>
                   <div className="grid grid-cols-4 gap-2 mb-2">
-                    {[[sl?'Prod. dni':'Prod. days','240',sl?'dni/leto':'days/yr'],[sl?'Izmene':'Shifts','1',sl?'izm/dan':'shifts/day'],[sl?'Čas/izmena':'Runtime/shift','8',sl?'h/izmena':'h/shift'],[sl?'Izkoriščenost':'Utilization','85','%']].map(([l,v,u])=>(
+                    {[[sl?'Prod. dni':'Prod. days','240',sl?'dni/leto':'days/yr'],[sl?'Izmene':'Shifts','1',sl?'izm/dan':'shifts/day'],[sl?'ÄŚas/izmena':'Runtime/shift','8',sl?'h/izmena':'h/shift'],[sl?'IzkoriĹˇÄŤenost':'Utilization','85','%']].map(([l,v,u])=>(
                       <div key={l}><p className="text-[8px] text-gray-400 mb-1">{l}</p><div className="border border-gray-200 rounded px-1.5 py-1 flex items-center justify-between"><span className="text-[9.5px] text-gray-800">{v}</span><span className="text-[8px] text-gray-400">{u}</span></div></div>
                     ))}
                   </div>
                   <div className="flex gap-2">
-                    <div className="flex-1 bg-gray-50 rounded-lg px-2 py-1.5 flex justify-between"><span className="text-[9px] text-gray-500">{sl?'Razpoložljive ure/leto':'Available hours / yr'}</span><span className="text-[9px] font-semibold text-gray-800">1.920 h</span></div>
+                    <div className="flex-1 bg-gray-50 rounded-lg px-2 py-1.5 flex justify-between"><span className="text-[9px] text-gray-500">{sl?'RazpoloĹľljive ure/leto':'Available hours / yr'}</span><span className="text-[9px] font-semibold text-gray-800">1.920 h</span></div>
                     <div className="flex-1 bg-blue-50 rounded-lg px-2 py-1.5 flex justify-between"><span className="text-[9px] text-blue-600">{sl?'Neto op. ure/leto':'Net operating hours / yr'}</span><span className="text-[9px] font-bold text-blue-600">1.632 h</span></div>
                   </div>
                 </div>
@@ -806,13 +806,13 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
                 <div className="border border-gray-200 rounded-xl p-3">
                   <div className="flex items-center gap-1.5 mb-2.5">
                     <div className="w-4 h-4 rounded-full bg-blue-50 flex items-center justify-center"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-                    <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Fiksni stroški' : 'Fixed costs'}</span>
+                    <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Fiksni stroĹˇki' : 'Fixed costs'}</span>
                   </div>
                   <div className="grid grid-cols-3 text-[8.5px] text-gray-400 mb-1 px-1"><span>{sl?'Postavka':'Item'}</span><span className="text-right">{sl?'Na leto':'Per year'}</span><span className="text-right">{sl?'Na uro':'Per hour'}</span></div>
-                  {[['Depreciation','8.000,00 €','4,90 €'],['Interest','1.350,00 €','0,83 €'],['Insurance','1.275,00 €','0,78 €'],['Space','1.260,00 €','0,77 €']].map(([l,y,h])=>(
+                  {[['Depreciation','8.000,00 â‚¬','4,90 â‚¬'],['Interest','1.350,00 â‚¬','0,83 â‚¬'],['Insurance','1.275,00 â‚¬','0,78 â‚¬'],['Space','1.260,00 â‚¬','0,77 â‚¬']].map(([l,y,h])=>(
                     <div key={l} className="grid grid-cols-3 text-[9px] px-1 py-0.5 border-t border-gray-50"><span className="text-gray-500">{l}</span><span className="text-right text-gray-700">{y}</span><span className="text-right text-gray-700">{h}</span></div>
                   ))}
-                  <div className="grid grid-cols-3 text-[9px] px-1 py-1 border-t border-gray-200 mt-0.5"><span className="font-semibold text-gray-900">{sl?'Skupaj fiksni':'Fixed costs'}</span><span className="text-right font-semibold text-gray-900">11.885,00 €</span><span className="text-right font-semibold text-gray-900">7,28 €</span></div>
+                  <div className="grid grid-cols-3 text-[9px] px-1 py-1 border-t border-gray-200 mt-0.5"><span className="font-semibold text-gray-900">{sl?'Skupaj fiksni':'Fixed costs'}</span><span className="text-right font-semibold text-gray-900">11.885,00 â‚¬</span><span className="text-right font-semibold text-gray-900">7,28 â‚¬</span></div>
                 </div>
               </div>
             )}
@@ -823,18 +823,18 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
                 <div className="border border-gray-200 rounded-xl p-3">
                   <div className="flex items-center gap-1.5 mb-2.5">
                     <div className="w-4 h-4 rounded-full bg-blue-50 flex items-center justify-center"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="w-2.5 h-2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-                    <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Variabilni stroški' : 'Variable costs'}</span>
+                    <span className="text-[10px] font-semibold text-gray-800">{sl ? 'Variabilni stroĹˇki' : 'Variable costs'}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 mb-2">
-                    {[[sl?'Vzdrževanje':'Maintenance','4','%/leto'],[sl?'Moč (prod.)':'Power (prod.)','22','kW'],[sl?'Strošek energije':'Energy cost','0,16','€/kWh'],[sl?'Orodje':'Tooling','6.000','€/leto']].map(([l,v,u])=>(
+                    {[[sl?'VzdrĹľevanje':'Maintenance','4','%/leto'],[sl?'MoÄŤ (prod.)':'Power (prod.)','22','kW'],[sl?'StroĹˇek energije':'Energy cost','0,16','â‚¬/kWh'],[sl?'Orodje':'Tooling','6.000','â‚¬/leto']].map(([l,v,u])=>(
                       <div key={l}><p className="text-[8px] text-gray-400 mb-0.5">{l}</p><div className="border border-gray-200 rounded px-1.5 py-1 flex items-center justify-between"><span className="text-[9.5px] text-gray-800">{v}</span><span className="text-[8px] text-gray-400">{u}</span></div></div>
                     ))}
                   </div>
                   <div className="grid grid-cols-3 text-[8.5px] text-gray-400 mb-1 px-1"><span>{sl?'Postavka':'Item'}</span><span className="text-right">{sl?'Na leto':'Per year'}</span><span className="text-right">{sl?'Na uro':'Per hour'}</span></div>
-                  {[['Maintenance','3.400,00 €','2,08 €'],['Electricity','5.744,64 €','3,52 €'],['Tooling','6.000,00 €','3,68 €'],['Other','1.020,00 €','0,62 €']].map(([l,y,h])=>(
+                  {[['Maintenance','3.400,00 â‚¬','2,08 â‚¬'],['Electricity','5.744,64 â‚¬','3,52 â‚¬'],['Tooling','6.000,00 â‚¬','3,68 â‚¬'],['Other','1.020,00 â‚¬','0,62 â‚¬']].map(([l,y,h])=>(
                     <div key={l} className="grid grid-cols-3 text-[9px] px-1 py-0.5 border-t border-gray-50"><span className="text-gray-500">{l}</span><span className="text-right text-gray-700">{y}</span><span className="text-right text-gray-700">{h}</span></div>
                   ))}
-                  <div className="grid grid-cols-3 text-[9px] px-1 py-1 border-t border-gray-200 mt-0.5"><span className="font-semibold text-gray-900">{sl?'Skupaj variabilni':'Variable costs'}</span><span className="text-right font-semibold text-gray-900">16.164,64 €</span><span className="text-right font-semibold text-gray-900">9,90 €</span></div>
+                  <div className="grid grid-cols-3 text-[9px] px-1 py-1 border-t border-gray-200 mt-0.5"><span className="font-semibold text-gray-900">{sl?'Skupaj variabilni':'Variable costs'}</span><span className="text-right font-semibold text-gray-900">16.164,64 â‚¬</span><span className="text-right font-semibold text-gray-900">9,90 â‚¬</span></div>
                 </div>
                 {/* Summary */}
                 <div className="border border-gray-200 rounded-xl p-3">
@@ -844,7 +844,7 @@ function RatesMockup({ isSl }: { isSl: boolean }) {
                   </div>
                   <div className="bg-blue-50 rounded-lg px-3 py-2 flex items-center justify-between">
                     <span className="text-[10px] text-blue-700 font-medium">{sl ? 'Urna postavka' : 'Hourly rate'}</span>
-                    <span className="text-[16px] font-bold text-blue-600">17,19 €</span>
+                    <span className="text-[16px] font-bold text-blue-600">17,19 â‚¬</span>
                   </div>
                 </div>
               </div>
@@ -910,10 +910,10 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
   const sl = isSl
 
   const stepLabels: Record<CalcStep, string> = {
-    material:   sl ? '1 · Surovina'       : '1 · Raw material',
-    operation:  sl ? '2 · CNC operacija'  : '2 · CNC operation',
-    result:     sl ? '3 · Režija'          : '3 · Overheads',
-    quantities: sl ? '4 · Rezultati'       : '4 · Results',
+    material:   sl ? '1 Â· Surovina'       : '1 Â· Raw material',
+    operation:  sl ? '2 Â· CNC operacija'  : '2 Â· CNC operation',
+    result:     sl ? '3 Â· ReĹľija'          : '3 Â· Overheads',
+    quantities: sl ? '4 Â· Rezultati'       : '4 Â· Results',
   }
 
   // Reuse same nav icons style as HeroMockup
@@ -956,7 +956,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
       {/* App shell */}
       <div className="bg-white flex" style={{ height: 460 }}>
 
-        {/* ── Sidebar — identical to HeroMockup ── */}
+        {/* â”€â”€ Sidebar â€” identical to HeroMockup â”€â”€ */}
         <aside className="w-[172px] bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 h-full">
           {/* Logo row */}
           <div className="h-9 px-3 border-b border-gray-200 flex items-center justify-between shrink-0">
@@ -978,13 +978,13 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
           </div>
           {/* Nav links */}
           <nav className="flex-1 overflow-y-auto py-1.5 px-1.5">
-            <SideItem icon={navIco.dashboard} label={sl ? 'Poročila' : 'Reports'} />
+            <SideItem icon={navIco.dashboard} label={sl ? 'PoroÄŤila' : 'Reports'} />
             <SideItem icon={navIco.quotes}    label={sl ? 'Ponudbe' : 'Quotes'} active />
             <SideItem icon={navIco.customers} label={sl ? 'Stranke' : 'Customers'} />
             <SideItem icon={navIco.materials} label={sl ? 'Materiali' : 'Materials'} />
             <SideItem icon={navIco.machines}  label={sl ? 'Stroji' : 'Machines'} />
             <SideItem icon={navIco.labor}     label={sl ? 'Operaterji' : 'Operators'} />
-            <SideItem icon={navIco.overheads} label={sl ? 'Stroški režije' : 'Overhead costs'} />
+            <SideItem icon={navIco.overheads} label={sl ? 'StroĹˇki reĹľije' : 'Overhead costs'} />
             <SideItem icon={navIco.users}     label={sl ? 'Uporabniki' : 'Users'} />
           </nav>
           {/* Bottom */}
@@ -998,17 +998,17 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
           </div>
         </aside>
 
-        {/* ── Main content ── */}
+        {/* â”€â”€ Main content â”€â”€ */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Page header — breadcrumb + title */}
+          {/* Page header â€” breadcrumb + title */}
           <div className="h-9 border-b border-gray-200 bg-white px-4 flex items-center shrink-0">
-            <span className="text-[10px] text-gray-400 mr-1.5">←</span>
+            <span className="text-[10px] text-gray-400 mr-1.5">â†</span>
             <span className="text-[10px] text-gray-400">{sl ? 'Pregled ponudbe' : 'Review offer'}</span>
           </div>
           {/* Sub-header: quote name + step indicator */}
           <div className="border-b border-gray-200 px-4 py-2.5 flex items-center justify-between bg-white shrink-0">
             <div>
-              <p className="text-[13px] font-semibold text-gray-900">{sl ? 'Sklop ležajnega ohišja' : 'Bearing housing assembly'}</p>
+              <p className="text-[13px] font-semibold text-gray-900">{sl ? 'Sklop leĹľajnega ohiĹˇja' : 'Bearing housing assembly'}</p>
               <p className="text-[10px] text-gray-400 mt-0.5">{sl ? 'Ponudba Q20260009' : 'Quote Q20260009'}</p>
             </div>
             <div className="flex items-center gap-2">
@@ -1021,7 +1021,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
             </div>
           </div>
 
-          {/* Content — fades between steps */}
+          {/* Content â€” fades between steps */}
           <div className="flex-1 overflow-hidden px-4 py-3 transition-all duration-300"
             style={{ opacity: fading ? 0 : 1, transform: fading ? 'translateY(5px)' : 'translateY(0)' }}>
 
@@ -1033,9 +1033,9 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   <span className="text-[10px] text-blue-600 font-medium">+ {sl ? 'Dodaj material' : 'Add material'}</span>
                 </div>
 
-                {/* Material card — matches real app: relative + pr-10 + absolute controls */}
+                {/* Material card â€” matches real app: relative + pr-10 + absolute controls */}
                 <div className="relative border border-gray-200 rounded-xl p-3 pr-10 bg-white">
-                  {/* Chevron + trash — absolute top-right */}
+                  {/* Chevron + trash â€” absolute top-right */}
                   <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-3.5 h-3.5"><polyline points="6 9 12 15 18 9"/></svg>
                     <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
@@ -1061,7 +1061,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                       <label className="text-[9px] font-medium text-gray-500">{sl ? 'Cena / kg' : 'Price / kg'}</label>
                       <div className="border border-gray-200 rounded-md flex items-center bg-white">
                         <span className="text-[10px] text-gray-800 px-2 py-1.5 flex-1">5,20</span>
-                        <span className="text-[8.5px] text-gray-400 pr-2 shrink-0">€/kg</span>
+                        <span className="text-[8.5px] text-gray-400 pr-2 shrink-0">â‚¬/kg</span>
                       </div>
                     </div>
                   </div>
@@ -1069,9 +1069,9 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   {/* Row 2: W | T | L | Pcs/stock | Scrap% */}
                   <div className="grid grid-cols-5 gap-2 mb-3">
                     {([
-                      [sl ? 'Širina' : 'Width',     '65', 'mm'],
+                      [sl ? 'Ĺ irina' : 'Width',     '65', 'mm'],
                       [sl ? 'Deb.' : 'Thickness',   '60', 'mm'],
-                      [sl ? 'Dolžina' : 'Length',   '60', 'mm'],
+                      [sl ? 'DolĹľina' : 'Length',   '60', 'mm'],
                       [sl ? 'Kos/zal.' : 'Pcs/stk', '1',  ''],
                       [sl ? 'Odpad' : 'Scrap',       '0',  '%'],
                     ] as [string,string,string][]).map(([lbl, val, unit]) => (
@@ -1085,12 +1085,12 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     ))}
                   </div>
 
-                  {/* Footer: density · volume · weight · total */}
+                  {/* Footer: density Â· volume Â· weight Â· total */}
                   <div className="flex flex-wrap items-center gap-x-4 pt-2 border-t border-gray-200 text-[9px]">
-                    <span className="text-gray-500">{sl ? 'Gostota' : 'Density'}: <strong className="text-gray-800">2,7 g/cm³</strong></span>
-                    <span className="text-gray-500">{sl ? 'Volumen' : 'Volume'}: <strong className="text-gray-800">234 cm³</strong></span>
-                    <span className="text-gray-500">{sl ? 'Teža' : 'Weight'}: <strong className="text-gray-800">0,632 kg</strong></span>
-                    <span className="ml-auto text-gray-500">{sl ? 'Skupaj' : 'Total'}: <strong className="text-gray-900">3,29 €</strong></span>
+                    <span className="text-gray-500">{sl ? 'Gostota' : 'Density'}: <strong className="text-gray-800">2,7 g/cmÂł</strong></span>
+                    <span className="text-gray-500">{sl ? 'Volumen' : 'Volume'}: <strong className="text-gray-800">234 cmÂł</strong></span>
+                    <span className="text-gray-500">{sl ? 'TeĹľa' : 'Weight'}: <strong className="text-gray-800">0,632 kg</strong></span>
+                    <span className="ml-auto text-gray-500">{sl ? 'Skupaj' : 'Total'}: <strong className="text-gray-900">3,29 â‚¬</strong></span>
                   </div>
                 </div>
 
@@ -1111,13 +1111,13 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
 
                 {/* Operation card */}
                 <div className="relative border border-gray-200 rounded-xl p-3 pr-10 bg-white">
-                  {/* Chevron + trash — absolute top-right */}
+                  {/* Chevron + trash â€” absolute top-right */}
                   <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="w-3.5 h-3.5"><polyline points="6 9 12 15 18 9"/></svg>
                     <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.8" strokeLinecap="round" className="w-3 h-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                   </div>
 
-                  {/* Operation name — full width, large bold */}
+                  {/* Operation name â€” full width, large bold */}
                   <div className="flex flex-col gap-1 mb-3">
                     <label className="text-[9px] font-medium text-gray-500">{sl ? 'Ime operacije' : 'Operation name'}</label>
                     <div className="border border-gray-200 rounded-md px-2 py-[7px] flex items-center justify-between bg-white">
@@ -1126,7 +1126,7 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     </div>
                   </div>
 
-                  {/* Machine select + machine rate — side by side */}
+                  {/* Machine select + machine rate â€” side by side */}
                   <div className="flex items-end gap-2 mb-3">
                     <div className="flex flex-col gap-1 flex-1 min-w-0">
                       <label className="text-[9px] font-medium text-gray-500">{sl ? 'Stroj' : 'Machine'}</label>
@@ -1136,10 +1136,10 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                       </div>
                     </div>
                     <div className="w-[90px] shrink-0 flex flex-col gap-1">
-                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Stroj (€/h)' : 'Machine (€/h)'}</label>
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Stroj (â‚¬/h)' : 'Machine (â‚¬/h)'}</label>
                       <div className="border border-gray-200 rounded-md flex items-center bg-gray-50">
                         <span className="text-[10px] text-gray-500 px-2 py-1.5 flex-1">17,19</span>
-                        <span className="text-[8.5px] text-gray-400 pr-2">€/h</span>
+                        <span className="text-[8.5px] text-gray-400 pr-2">â‚¬/h</span>
                       </div>
                     </div>
                   </div>
@@ -1172,16 +1172,16 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                       </div>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Število' : 'Qty'}</label>
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Ĺ tevilo' : 'Qty'}</label>
                       <div className="border border-gray-200 rounded-md flex items-center bg-white">
                         <span className="text-[10px] text-gray-800 px-2 py-1.5">1</span>
                       </div>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Operater (€/h)' : 'Operator (€/h)'}</label>
+                      <label className="text-[9px] font-medium text-gray-500">{sl ? 'Operater (â‚¬/h)' : 'Operator (â‚¬/h)'}</label>
                       <div className="border border-gray-200 rounded-md flex items-center bg-gray-50">
                         <span className="text-[10px] text-gray-500 px-2 py-1.5 flex-1">28,38</span>
-                        <span className="text-[8.5px] text-gray-400 pr-2">€/h</span>
+                        <span className="text-[8.5px] text-gray-400 pr-2">â‚¬/h</span>
                       </div>
                     </div>
                   </div>
@@ -1189,10 +1189,10 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   {/* Footer */}
                   <div className="flex items-center justify-between pt-2 border-t border-gray-200 text-[9px]">
                     <span className="text-gray-500">
-                      {sl ? 'Tek' : 'Run'}: <strong className="text-gray-800">41,77 €/pc</strong>
-                      {' · '}{sl ? 'Priprava' : 'Setup'}: <strong className="text-gray-800">45,57 €/lot</strong>
+                      {sl ? 'Tek' : 'Run'}: <strong className="text-gray-800">41,77 â‚¬/pc</strong>
+                      {' Â· '}{sl ? 'Priprava' : 'Setup'}: <strong className="text-gray-800">45,57 â‚¬/lot</strong>
                     </span>
-                    <span className="font-semibold text-gray-900 text-[11px]">42,23 €/pc</span>
+                    <span className="font-semibold text-gray-900 text-[11px]">42,23 â‚¬/pc</span>
                   </div>
                 </div>
 
@@ -1205,17 +1205,17 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
 
             {step === 'result' && (
               <div className="flex flex-col gap-2.5">
-                <p className="text-[11px] font-semibold text-gray-800">{sl ? 'Režija' : 'Overheads'}</p>
+                <p className="text-[11px] font-semibold text-gray-800">{sl ? 'ReĹľija' : 'Overheads'}</p>
                 <div className="border border-gray-200 rounded-xl overflow-hidden text-[10px]">
                   {([
-                    [sl ? 'Neposredni stroški' : 'Direct costs', '54,54 €', true],
-                    [sl ? 'Materialna režija (10%)' : 'Material overhead (10%)', '0,55 €', false],
-                    [sl ? 'Proizvod. režija (35%)' : 'Manufacturing OH (35%)', '17,15 €', false],
-                    [sl ? 'Skupaj brez marže' : 'Subtotal', '72,25 €', true],
-                    ['SG&A (8,89%)', '6,42 €', false],
-                    [sl ? 'Logistika (3,06%)' : 'Logistics (3.06%)', '2,21 €', false],
-                    [sl ? 'Lastna cena' : 'Cost / piece', '82,28 €', true],
-                    [sl ? 'Marža (15%)' : 'Profit margin (15%)', '12,34 €', false],
+                    [sl ? 'Neposredni stroĹˇki' : 'Direct costs', '54,54 â‚¬', true],
+                    [sl ? 'Materialna reĹľija (10%)' : 'Material overhead (10%)', '0,55 â‚¬', false],
+                    [sl ? 'Proizvod. reĹľija (35%)' : 'Manufacturing OH (35%)', '17,15 â‚¬', false],
+                    [sl ? 'Skupaj brez marĹľe' : 'Subtotal', '72,25 â‚¬', true],
+                    ['SG&A (8,89%)', '6,42 â‚¬', false],
+                    [sl ? 'Logistika (3,06%)' : 'Logistics (3.06%)', '2,21 â‚¬', false],
+                    [sl ? 'Lastna cena' : 'Cost / piece', '82,28 â‚¬', true],
+                    [sl ? 'MarĹľa (15%)' : 'Profit margin (15%)', '12,34 â‚¬', false],
                   ] as [string, string, boolean][]).map(([label, val, bold]) => (
                     <div key={label} className={`flex items-center justify-between px-3 py-1.5 border-b border-gray-100 last:border-b-0 ${bold ? 'bg-gray-50' : ''}`}>
                       <span className={bold ? 'font-semibold text-gray-900' : 'text-gray-500'}>{label}</span>
@@ -1224,14 +1224,14 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                   ))}
                   <div className="flex items-center justify-between px-3 py-2 bg-gray-100">
                     <span className="text-gray-900 font-semibold text-[11px]">{sl ? 'Prodajna cena / kos' : 'Selling price / piece'}</span>
-                    <span className="text-gray-900 font-bold text-[13px]">94,63 €</span>
+                    <span className="text-gray-900 font-bold text-[13px]">94,63 â‚¬</span>
                   </div>
                 </div>
                 <div className="border border-gray-200 rounded-xl overflow-hidden text-[9px]">
                   <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-100 px-3 py-1.5 text-gray-500 font-medium">
                     <span>{sl ? 'Kosov' : 'Qty'}</span><span className="text-right">100 pc</span><span className="text-right">1.000 pc</span><span className="text-right">10.000 pc</span>
                   </div>
-                  {([[sl ? 'Cena/kos' : 'Cost/pc','82,28 €','80,78 €','80,63 €'],[sl ? 'Prodajno/kos' : 'Sell/pc','94,63 €','92,90 €','92,72 €']] as string[][]).map(([lbl,...vals]) => (
+                  {([[sl ? 'Cena/kos' : 'Cost/pc','82,28 â‚¬','80,78 â‚¬','80,63 â‚¬'],[sl ? 'Prodajno/kos' : 'Sell/pc','94,63 â‚¬','92,90 â‚¬','92,72 â‚¬']] as string[][]).map(([lbl,...vals]) => (
                     <div key={lbl} className="grid grid-cols-4 px-3 py-1.5 border-b border-gray-100 last:border-b-0">
                       <span className="text-gray-500">{lbl}</span>
                       {vals.map(v => <span key={v} className="text-right text-gray-800 font-medium">{v}</span>)}
@@ -1249,14 +1249,14 @@ function CalcMockup({ isSl }: { isSl: boolean }) {
                     <span></span><span className="text-right">10 pc</span><span className="text-right">15 pc</span><span className="text-right">20 pc</span>
                   </div>
                   {([
-                    [sl ? 'Strošek materiala' : 'Material cost',        '5,56 €',   '5,56 €',      '5,56 €',      false],
-                    [sl ? 'Strošek operacij'  : 'Operations cost',      '42,23 €',  '42,23 €',     '42,23 €',     false],
-                    [sl ? 'Pakiranje'         : 'Packaging',            '0,00 €',   '0,00 €',      '0,00 €',      false],
-                    [sl ? 'Režija'            : 'Overhead',             '17,74 €',  '17,74 €',     '17,74 €',     false],
-                    [sl ? 'Lastna cena'       : 'Cost / piece',         '82,28 €',  '80,78 €',     '80,63 €',     true],
-                    [sl ? 'Marža / kos'       : 'Margin / piece',       '12,34 €',  '12,12 €',     '12,09 €',     false],
-                    [sl ? 'Prodajna cena'     : 'Selling price / piece','94,63 €',  '92,90 €',     '92,72 €',     true],
-                    [sl ? 'Vrednost ponudbe'  : 'Quote value',          '946,30 €', '1.393,50 €',  '1.854,40 €',  false],
+                    [sl ? 'StroĹˇek materiala' : 'Material cost',        '5,56 â‚¬',   '5,56 â‚¬',      '5,56 â‚¬',      false],
+                    [sl ? 'StroĹˇek operacij'  : 'Operations cost',      '42,23 â‚¬',  '42,23 â‚¬',     '42,23 â‚¬',     false],
+                    [sl ? 'Pakiranje'         : 'Packaging',            '0,00 â‚¬',   '0,00 â‚¬',      '0,00 â‚¬',      false],
+                    [sl ? 'ReĹľija'            : 'Overhead',             '17,74 â‚¬',  '17,74 â‚¬',     '17,74 â‚¬',     false],
+                    [sl ? 'Lastna cena'       : 'Cost / piece',         '82,28 â‚¬',  '80,78 â‚¬',     '80,63 â‚¬',     true],
+                    [sl ? 'MarĹľa / kos'       : 'Margin / piece',       '12,34 â‚¬',  '12,12 â‚¬',     '12,09 â‚¬',     false],
+                    [sl ? 'Prodajna cena'     : 'Selling price / piece','94,63 â‚¬',  '92,90 â‚¬',     '92,72 â‚¬',     true],
+                    [sl ? 'Vrednost ponudbe'  : 'Quote value',          '946,30 â‚¬', '1.393,50 â‚¬',  '1.854,40 â‚¬',  false],
                   ] as [string,string,string,string,boolean][]).map(([lbl,v1,v2,v3,bold]) => (
                     <div key={lbl} className={`grid px-3 py-1.5 border-b border-gray-100 last:border-b-0 ${bold ? 'bg-gray-50' : ''}`} style={{gridTemplateColumns:'1fr 80px 80px 80px'}}>
                       <span className={bold ? 'font-semibold text-gray-900' : 'text-gray-500'}>{lbl}</span>
@@ -1345,9 +1345,9 @@ function TestiCard({ quote, name, role }: { quote: string; name: string; role: s
   )
 }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function LandingPage() {
   const { session, loading } = useAuth()
   const { lang, setLang, t } = useLanguage()
@@ -1370,15 +1370,15 @@ export default function LandingPage() {
   const FAQ_KEYS = ['faq1', 'faq2', 'faq3', 'faq4', 'faq5'] as const
 
   const forWhom = isSl ? [
-    { Icon: Settings,   label: 'Orodjarne',                       desc: 'Natančen izračun strojnih ur, materiala in dela za orodja, forme in priprave.' },
-    { Icon: Calculator, label: 'CNC obdelava',                    desc: 'Vsaka operacija — rezkanje, struženje, EDM — ima svojo urno postavko in čas.' },
-    { Icon: Zap,        label: 'Varjenje in jeklene konstrukcije', desc: 'Kalkulacija materiala, časa varjenja in površinske obdelave za varjene sestave.' },
-    { Icon: FileText,   label: 'Lasersko rezanje',                desc: 'Stroški rezanja, upogibanja in obdelave pločevine po materialu in debelini.' },
+    { Icon: Settings,   label: 'Orodjarne',                       desc: 'NatanÄŤen izraÄŤun strojnih ur, materiala in dela za orodja, forme in priprave.' },
+    { Icon: Calculator, label: 'CNC obdelava',                    desc: 'Vsaka operacija â€” rezkanje, struĹľenje, EDM â€” ima svojo urno postavko in ÄŤas.' },
+    { Icon: Zap,        label: 'Varjenje in jeklene konstrukcije', desc: 'Kalkulacija materiala, ÄŤasa varjenja in povrĹˇinske obdelave za varjene sestave.' },
+    { Icon: FileText,   label: 'Lasersko rezanje',                desc: 'StroĹˇki rezanja, upogibanja in obdelave ploÄŤevine po materialu in debelini.' },
     { Icon: BarChart2,  label: 'Maloserijska proizvodnja',        desc: 'Vsak kos zahteva svojo kalkulacijo. Toolingdesk zagotavlja enoten proces za ekipo.' },
-    { Icon: TrendingUp, label: 'Kooperacija',                     desc: 'Stroški zunanjih storitev so vključeni skupaj z lastnimi stroški v eno ponudbo.' },
+    { Icon: TrendingUp, label: 'Kooperacija',                     desc: 'StroĹˇki zunanjih storitev so vkljuÄŤeni skupaj z lastnimi stroĹˇki v eno ponudbo.' },
   ] : [
-    { Icon: Settings,   label: 'Tool & Die Shops',           desc: 'Precise calculation of machine hours, materials and labour for tools, moulds and fixtures.' },
-    { Icon: Calculator, label: 'CNC Machining',              desc: 'Every operation — milling, turning, EDM — has its own hourly rate and cycle time.' },
+    { Icon: Settings,   label: 'Tool & Die Shops',           desc: 'Precise calculation of machine hours, materials and labor for tools, moulds and fixtures.' },
+    { Icon: Calculator, label: 'CNC Machining',              desc: 'Every operation â€” milling, turning, EDM â€” has its own hourly rate and cycle time.' },
     { Icon: Zap,        label: 'Welding & Steel Structures', desc: 'Material, welding time and surface treatment costs calculated together for every assembly.' },
     { Icon: FileText,   label: 'Laser Cutting & Sheet Metal',desc: 'Cutting and forming costs based on material type, thickness and machine time.' },
     { Icon: BarChart2,  label: 'Custom Manufacturing',       desc: 'Every part needs its own calculation. Toolingdesk gives your team a consistent process.' },
@@ -1388,7 +1388,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans antialiased overflow-x-hidden">
 
-      {/* ══ NAV ══ */}
+      {/* â•â• NAV â•â• */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
         <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
@@ -1418,7 +1418,7 @@ export default function LandingPage() {
               className="hidden sm:block bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap">
               {l.navCta}
             </Link>
-            {/* Hamburger — mobile only */}
+            {/* Hamburger â€” mobile only */}
             <button
               className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors"
               onClick={() => setMobileOpen(o => !o)}
@@ -1462,14 +1462,14 @@ export default function LandingPage() {
         )}
       </nav>
 
-      {/* ══ HERO ══ */}
+      {/* â•â• HERO â•â• */}
       <section className="pt-10 md:pt-20 pb-16 text-center px-6 relative">
         {/* Blobs clipped to section bounds */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
-          {/* Blue gradient blob — top-right */}
+          {/* Blue gradient blob â€” top-right */}
           <div className="absolute -top-32 -right-64 w-[280px] h-[280px] md:w-[600px] md:h-[600px] rounded-full"
             style={{ background: 'radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.18) 0%, rgba(99,102,241,0.09) 45%, transparent 72%)', transform: 'rotate(-20deg)', filter: 'blur(40px)' }}/>
-          {/* Secondary blob — left */}
+          {/* Secondary blob â€” left */}
           <div className="absolute top-56 -left-24 w-[240px] h-[240px] md:w-[500px] md:h-[500px] rounded-full"
             style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.17) 0%, transparent 65%)', filter: 'blur(36px)' }}/>
         </div>
@@ -1480,7 +1480,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 rounded-full px-[1px] py-[1px] transition-colors"
             style={{ background: 'linear-gradient(135deg, #bfdbfe, #a5c8fd)' }}>
             <span className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 hover:bg-gray-50 transition-colors">
-            {isSl ? 'Za CNC, rezkanje in struženje' : 'Built for CNC, milling & turning shops'}
+            {isSl ? 'Za CNC, rezkanje in struĹľenje' : 'Purpose-built for machine shops'}
             <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
             </span>
           </a>
@@ -1494,7 +1494,7 @@ export default function LandingPage() {
         </div>
 
         {/* Subtitle */}
-        <p className="animate-fade-up text-lg font-medium max-w-xl mx-auto mb-10 leading-relaxed" style={{ animationDelay: '0.2s', color: '#7f7f7f' }}>
+        <p className="animate-fade-up text-lg font-normal max-w-xl mx-auto mb-10 leading-relaxed text-gray-500" style={{ animationDelay: '0.2s' }}>
           {l.heroSubtitle}
         </p>
 
@@ -1510,7 +1510,7 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        {/* Product mockup — Attio style, centered, wide */}
+        {/* Product mockup â€” Attio style, centered, wide */}
         <div className="animate-fade-up max-w-[1340px] mx-auto" style={{ animationDelay: '0.38s' }}>
           <div className="min-w-[700px]">
             <HeroMockup isSl={isSl} />
@@ -1519,7 +1519,7 @@ export default function LandingPage() {
         </div>{/* end relative z-1 */}
       </section>
 
-      {/* ══ STATS ══ */}
+      {/* â•â• STATS â•â• */}
       <section className="max-w-[1440px] mx-auto px-6 py-16">
         <div className="border border-gray-100 rounded-2xl overflow-hidden grid grid-cols-1 sm:grid-cols-3">
           {([
@@ -1536,7 +1536,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ FEATURES ══ */}
+      {/* â•â• FEATURES â•â• */}
       <section id="features" className="border-t border-gray-100">
         <div className="max-w-[1440px] mx-auto px-6 pt-20 pb-0">
           <FadeUp className="mb-14">
@@ -1549,7 +1549,7 @@ export default function LandingPage() {
             </div>
           </FadeUp>
         </div>
-        {/* Feature grid — border style like Attio */}
+        {/* Feature grid â€” border style like Attio */}
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="border border-gray-100 rounded-2xl overflow-hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <FeatureCard Icon={Calculator} title={l.feature1Title} desc={l.feature1Desc} delay={0}   />
@@ -1563,7 +1563,7 @@ export default function LandingPage() {
         <div className="h-20" />
       </section>
 
-      {/* ══ DASHBOARD — alternating ══ */}
+      {/* â•â• DASHBOARD â€” alternating â•â• */}
       <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -1576,12 +1576,12 @@ export default function LandingPage() {
               </h2>
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
-                  ? 'Nadzorna plošča prikazuje vrednost poslanih, dobljenih in izgubljenih ponudb. Vedno veste, kje stojite.'
+                  ? 'Nadzorna ploĹˇÄŤa prikazuje vrednost poslanih, dobljenih in izgubljenih ponudb. Vedno veste, kje stojite.'
                   : 'The dashboard shows the value of sent, won and lost quotes. You always know where you stand.'}
               </p>
               <div className="flex flex-col gap-3">
                 {(isSl
-                  ? ['Skupna vrednost ponudb v teku', 'Stopnja dobljenih poslov', 'Mesečni trend ponudb']
+                  ? ['Skupna vrednost ponudb v teku', 'Stopnja dobljenih poslov', 'MeseÄŤni trend ponudb']
                   : ['Total value of open quotes', 'Win rate tracking', 'Monthly quote trend']
                 ).map(item => (
                   <div key={item} className="flex items-center gap-3">
@@ -1602,7 +1602,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ CALCULATION ══ */}
+      {/* â•â• CALCULATION â•â• */}
       <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -1614,16 +1614,16 @@ export default function LandingPage() {
                 {isSl ? 'Kalkulacija' : 'Cost calculation'}
               </p>
               <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
-                {isSl ? 'Natančna kalkulacija za vsak kos.' : 'Accurate cost breakdown for every part.'}
+                {isSl ? 'NatanÄŤna kalkulacija za vsak kos.' : 'Accurate cost breakdown for every part.'}
               </h2>
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
-                  ? 'Dodajte material, operacije, nakupljene dele in stroške. Toolingdesk samodejno izračuna lastno ceno in prodajno ceno za vsako količino.'
+                  ? 'Dodajte material, operacije, nakupljene dele in stroĹˇke. Toolingdesk samodejno izraÄŤuna lastno ceno in prodajno ceno za vsako koliÄŤino.'
                   : 'Add raw materials, CNC operations, purchased parts and overhead. Toolingdesk automatically calculates cost price and selling price for every quantity.'}
               </p>
               <div className="flex flex-col gap-3">
                 {(isSl
-                  ? ['Material, oblika in teža iz vgrajenega materiala', 'Strojne operacije z nastavitvenim in delovnim časom', 'Lastna cena + režija + marža = prodajna cena']
+                  ? ['Material, oblika in teĹľa iz vgrajenega materiala', 'Strojne operacije z nastavitvenim in delovnim ÄŤasom', 'Lastna cena + reĹľija + marĹľa = prodajna cena']
                   : ['Material cost from built-in material library', 'Machine operations with setup and cycle time', 'Cost price + overhead + margin = selling price']
                 ).map(item => (
                   <div key={item} className="flex items-center gap-3">
@@ -1637,7 +1637,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ RATES ══ */}
+      {/* â•â• RATES â•â• */}
       <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -1646,17 +1646,17 @@ export default function LandingPage() {
                 {isSl ? 'Urne postavke' : 'Hourly rates'}
               </p>
               <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
-                {isSl ? 'Točne urne postavke za vsak stroj in operaterja.' : 'Accurate hourly rates for every machine and operator.'}
+                {isSl ? 'ToÄŤne urne postavke za vsak stroj in operaterja.' : 'Accurate hourly rates for every machine and operator.'}
               </h2>
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
-                  ? 'Vnesite investicijo, kapaciteto, fiksne in variabilne stroške — Toolingdesk samodejno izračuna urno postavko. Enako velja za vsakega operaterja.'
-                  : 'Enter investment, capacity, fixed and variable costs — Toolingdesk automatically calculates the hourly rate. The same applies to every operator.'}
+                  ? 'Vnesite investicijo, kapaciteto, fiksne in variabilne stroĹˇke â€” Toolingdesk samodejno izraÄŤuna urno postavko. Enako velja za vsakega operaterja.'
+                  : 'Enter investment, capacity, fixed and variable costs â€” Toolingdesk automatically calculates the hourly rate. The same applies to every operator.'}
               </p>
               <div className="flex flex-col gap-3">
                 {(isSl
-                  ? ['Amortizacija, obresti, zavarovanje in prostor', 'Energija, vzdrževanje, orodje in potrošni material', 'Letni stroški operaterja → urna postavka']
-                  : ['Depreciation, interest, insurance and space costs', 'Energy, maintenance, tooling and consumables', 'Annual operator cost → hourly rate']
+                  ? ['Amortizacija, obresti, zavarovanje in prostor', 'Energija, vzdrĹľevanje, orodje in potroĹˇni material', 'Letni stroĹˇki operaterja â†’ urna postavka']
+                  : ['Depreciation, interest, insurance and space costs', 'Energy, maintenance, tooling and consumables', 'Annual operator cost â†’ hourly rate']
                 ).map(item => (
                   <div key={item} className="flex items-center gap-3">
                     <Check className="w-4 h-4 text-gray-400 shrink-0" />
@@ -1672,7 +1672,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ FOR WHOM ══ */}
+      {/* â•â• FOR WHOM â•â• */}
       <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
           <FadeUp className="mb-14">
@@ -1691,7 +1691,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ HOW IT WORKS ══ */}
+      {/* â•â• HOW IT WORKS â•â• */}
       <section id="how-it-works" className="border-t border-gray-100 py-24 bg-[#fafafa]">
         <div className="max-w-[1440px] mx-auto px-6">
           <FadeUp className="mb-16">
@@ -1707,7 +1707,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ TESTIMONIALS ══ */}
+      {/* â•â• TESTIMONIALS â•â• */}
       {false && <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
           <FadeUp className="mb-14">
@@ -1722,7 +1722,7 @@ export default function LandingPage() {
         </div>
       </section>}
 
-      {/* ══ FAQ ══ */}
+      {/* â•â• FAQ â•â• */}
       <section id="faq" className="border-t border-gray-100 py-24 bg-[#fafafa]">
         <div className="max-w-2xl mx-auto px-6">
           <FadeUp className="mb-12">
@@ -1746,7 +1746,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ CTA ══ */}
+      {/* â•â• CTA â•â• */}
       <section className="py-24 bg-gray-900">
         <FadeUp className="max-w-2xl mx-auto px-6 text-center">
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-5 tracking-tight leading-[1.1]">{l.ctaHeading}</h2>
@@ -1762,7 +1762,7 @@ export default function LandingPage() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-gray-400 text-sm font-medium">
             {(isSl
-              ? ['Brezplačna registracija', 'Brez kreditne kartice', 'Takojšen dostop']
+              ? ['BrezplaÄŤna registracija', 'Brez kreditne kartice', 'TakojĹˇen dostop']
               : ['Free to register', 'No credit card required', 'Instant access']
             ).map(item => (
               <div key={item} className="flex items-center gap-2">
@@ -1773,7 +1773,7 @@ export default function LandingPage() {
         </FadeUp>
       </section>
 
-      {/* ══ FOOTER ══ */}
+      {/* â•â• FOOTER â•â• */}
       <footer className="bg-gray-900 border-t border-white/[0.07]">
         <div className="max-w-[1440px] mx-auto px-6 py-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-0 justify-between">
           <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
@@ -1796,3 +1796,4 @@ export default function LandingPage() {
     </div>
   )
 }
+
