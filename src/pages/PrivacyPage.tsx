@@ -1,160 +1,160 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../hooks/useLanguage'
 import AppLogo from '../components/ui/AppLogo'
 
 const sl = {
   title: 'Izjava o zasebnosti',
   updated: 'Posodobljeno: julij 2026',
-  intro: `VaĹˇe osebne podatke varujemo v skladu z Uredbo (EU) 2016/679 (GDPR), Zakonom o varstvu osebnih podatkov (ZVOP-2) in drugo veljavno zakonodajo o varstvu podatkov. Ta izjava se nanaĹˇa na fiziÄŤne osebe, ki pri Toolingdesk nastopajo kot poslovni uporabniki â€” lastnike, direktorje, kalkulatorje, prodajnike in ostale zaposlene v proizvodnih podjetjih, ki uporabljajo platformo za pripravo ponudb in upravljanje stroĹˇkovnih kalkulacij.
+  intro: `Vaše osebne podatke varujemo v skladu z Uredbo (EU) 2016/679 (GDPR), Zakonom o varstvu osebnih podatkov (ZVOP-2) in drugo veljavno zakonodajo o varstvu podatkov. Ta izjava se nanaša na fizične osebe, ki pri Toolingdesk nastopajo kot poslovni uporabniki — lastnike, direktorje, kalkulatorje, prodajnike in ostale zaposlene v proizvodnih podjetjih, ki uporabljajo platformo za pripravo ponudb in upravljanje stroškovnih kalkulacij.
 
-Toolingdesk v razmerju do vas nastopa v dveh jasno loÄŤenih vlogah. Kot upravljavec obdeluje vaĹˇe osebne podatke za namen zagotavljanja in upravljanja storitev â€” to razmerje ureja ta izjava. Kot obdelovalec pa obdeluje kontaktne in komercialne podatke vaĹˇih strank in poslovnih partnerjev, ki jih vnesete v platformo, po vaĹˇih navodilih in v vaĹˇem imenu â€” za to razmerje ste vi odgovorni kot upravljavec.`,
+Toolingdesk v razmerju do vas nastopa v dveh jasno ločenih vlogah. Kot upravljavec obdeluje vaše osebne podatke za namen zagotavljanja in upravljanja storitev — to razmerje ureja ta izjava. Kot obdelovalec pa obdeluje kontaktne in komercialne podatke vaših strank in poslovnih partnerjev, ki jih vnesete v platformo, po vaših navodilih in v vašem imenu — za to razmerje ste vi odgovorni kot upravljavec.`,
 
   s1title: '1. Podatki o upravljavcu',
-  s1: `Upravljavec osebnih podatkov je TCE, d.o.o. Za vsa vpraĹˇanja v zvezi z obdelavo vaĹˇih osebnih podatkov nas kontaktirajte na info@tce.si. Na zahteve odgovorimo v roku 30 dni.`,
+  s1: `Upravljavec osebnih podatkov je TCE, d.o.o. Za vsa vprašanja v zvezi z obdelavo vaših osebnih podatkov nas kontaktirajte na info@tce.si. Na zahteve odgovorimo v roku 30 dni.`,
 
   s2title: '2. Katere podatke obdelujemo',
   s2cats: [
     {
-      title: 'Podatki o uporabniĹˇkem raÄŤunu',
-      text: 'Ime in priimek, e-poĹˇtni naslov, geslo (hranjeno izkljuÄŤno v zgoĹˇÄŤeni obliki), naziv podjetja, naslov, ID za DDV ter banÄŤni podatki za izstavitev raÄŤunov.',
+      title: 'Podatki o uporabniškem računu',
+      text: 'Ime in priimek, e-poštni naslov, geslo (hranjeno izključno v zgoščeni obliki), naziv podjetja, naslov, ID za DDV ter bančni podatki za izstavitev računov.',
     },
     {
       title: 'Podatki o strankah (obdelovalska vloga)',
-      text: 'Naziv stranke, kontaktna oseba, e-poĹˇtni naslov, telefonska Ĺˇtevilka, naslov in drugi komercialni podatki, ki jih vnesete ob ustvarjanju strank v platformi. Za te podatke nastopate vi kot upravljavec â€” odgovorni ste za zakonitost njihove obdelave in ustrezno obvestitev strank.',
+      text: 'Naziv stranke, kontaktna oseba, e-poštni naslov, telefonska številka, naslov in drugi komercialni podatki, ki jih vnesete ob ustvarjanju strank v platformi. Za te podatke nastopate vi kot upravljavec — odgovorni ste za zakonitost njihove obdelave in ustrezno obvestitev strank.',
     },
     {
-      title: 'Kalkulacije in stroĹˇkovni modeli',
-      text: 'Vse stroĹˇkovne kalkulacije, ki jih ustvarite v platformi: postavke stroĹˇkov, koliÄŤine, kosi, odpadek, serijska velikost, ÄŤasi obdelave ter izraÄŤunane prodajne cene. Ti podatki so vaĹˇa izkljuÄŤna last in se obdelujejo izkljuÄŤno za zagotavljanje storitve.',
+      title: 'Kalkulacije in stroškovni modeli',
+      text: 'Vse stroškovne kalkulacije, ki jih ustvarite v platformi: postavke stroškov, količine, kosi, odpadek, serijska velikost, časi obdelave ter izračunane prodajne cene. Ti podatki so vaša izključna last in se obdelujejo izključno za zagotavljanje storitve.',
     },
     {
       title: 'Podatki o strojih in delovnih mestih',
-      text: 'TehniÄŤni in stroĹˇkovni parametri vaĹˇih strojev in delovnih mest: urna postavka, stroĹˇki energije, vode, zraka, vzdrĹľevanja, amortizacije, orodij ter razpoloĹľljivi fondi ur. VkljuÄŤno z modelom, letom nabave in vrednostjo stroja.',
+      text: 'Tehnični in stroškovni parametri vaših strojev in delovnih mest: urna postavka, stroški energije, vode, zraka, vzdrževanja, amortizacije, orodij ter razpoložljivi fondi ur. Vključno z modelom, letom nabave in vrednostjo stroja.',
     },
     {
       title: 'Urne postavke dela',
-      text: 'Kategorije delavnih ur z bruto plaÄŤo, socialnimi prispevki, dodatki in regresom â€” iz katerih platforma izraÄŤuna efektivno urno postavko za kalkulacije.',
+      text: 'Kategorije delavnih ur z bruto plačo, socialnimi prispevki, dodatki in regresom — iz katerih platforma izračuna efektivno urno postavko za kalkulacije.',
     },
     {
       title: 'Podatki o materialih',
-      text: 'Naziv, enota, cena na enoto in dobaviteljski podatki za materiale, ki jih vnaĹˇate v kalkulacije.',
+      text: 'Naziv, enota, cena na enoto in dobaviteljski podatki za materiale, ki jih vnašate v kalkulacije.',
     },
     {
-      title: 'ReĹľijski stroĹˇki',
-      text: 'Letni stroĹˇki po stroĹˇkovnih mestih (upravljanje, trĹľenje, razvoj, administracija ipd.), iz katerih platforma izraÄŤuna reĹľijsko stopnjo za vsako kalkulacijo.',
+      title: 'Režijski stroški',
+      text: 'Letni stroški po stroškovnih mestih (upravljanje, trženje, razvoj, administracija ipd.), iz katerih platforma izračuna režijsko stopnjo za vsako kalkulacijo.',
     },
     {
       title: 'Ponudbe in priponke',
-      text: 'Ustvarjene ponudbe z vsemi postavkami, cenami, pogoji, kontaktnimi podatki in statusom (osnutek, izdano, poslano, pridobljeno, izgubljeno). PriloĹľene datoteke: tehniÄŤne risbe, specifikacije, modeli (PDF, DWG, SLDPRT, PNG in drugi formati).',
+      text: 'Ustvarjene ponudbe z vsemi postavkami, cenami, pogoji, kontaktnimi podatki in statusom (osnutek, izdano, poslano, pridobljeno, izgubljeno). Priložene datoteke: tehnične risbe, specifikacije, modeli (PDF, DWG, SLDPRT, PNG in drugi formati).',
     },
     {
-      title: 'TehniÄŤni podatki o uporabi',
-      text: 'ÄŚas dostopa, IP naslov (za varnostne namene, psevdonimiziran po 30 dneh), operacijski sistem in brskalnik. Revizijska sled sprememb znotraj platforme.',
+      title: 'Tehnični podatki o uporabi',
+      text: 'Čas dostopa, IP naslov (za varnostne namene, psevdonimiziran po 30 dneh), operacijski sistem in brskalnik. Revizijska sled sprememb znotraj platforme.',
     },
   ],
 
-  s3title: '3. Zakaj obdelujemo vaĹˇe podatke',
+  s3title: '3. Zakaj obdelujemo vaše podatke',
   s3items: [
     {
-      title: 'Upravljanje raÄŤuna in zagotavljanje storitev',
+      title: 'Upravljanje računa in zagotavljanje storitev',
       text: 'Upravljanje dostopov, zagotavljanje delovanja platforme in vseh njenih funkcionalnosti (kalkulacije, ponudbe, stranke, priponke, analitika).',
-      basis: 'Izpolnitev pogodbe (ÄŤl. 6(1)(b) GDPR)',
+      basis: 'Izpolnitev pogodbe (čl. 6(1)(b) GDPR)',
       retention: 'Celotno obdobje trajanja pogodbe; izbris v 30 dneh po prenehanju.',
     },
     {
-      title: 'ObraÄŤunavanje, izdajanje raÄŤunov in davÄŤne obveznosti',
-      text: 'Obdelava podatkov o plaÄŤilih, izdanih raÄŤunih in transakcijah za namene obraÄŤunavanja naroÄŤnine ter izpolnjevanja davÄŤnih in raÄŤunovodskih obveznosti.',
-      basis: 'Izpolnitev pogodbe + zakonska obveznost (ÄŤl. 6(1)(b) in (c) GDPR)',
+      title: 'Obračunavanje, izdajanje računov in davčne obveznosti',
+      text: 'Obdelava podatkov o plačilih, izdanih računih in transakcijah za namene obračunavanja naročnine ter izpolnjevanja davčnih in računovodskih obveznosti.',
+      basis: 'Izpolnitev pogodbe + zakonska obveznost (čl. 6(1)(b) in (c) GDPR)',
       retention: '10 let v skladu z ZDavP-2.',
     },
     {
       title: 'Podpora strankam',
-      text: 'Komunikacijske podatke iz stikov s podporo hranimo za zagotavljanje kontinuirane podpore in reĹˇevanja tehniÄŤnih teĹľav.',
-      basis: 'Zakoniti interes (ÄŤl. 6(1)(f) GDPR)',
-      retention: '3 leta po zakljuÄŤku posamezne zadeve.',
+      text: 'Komunikacijske podatke iz stikov s podporo hranimo za zagotavljanje kontinuirane podpore in reševanja tehničnih težav.',
+      basis: 'Zakoniti interes (čl. 6(1)(f) GDPR)',
+      retention: '3 leta po zaključku posamezne zadeve.',
     },
     {
-      title: 'Varnost platforme in prepreÄŤevanje zlorab',
-      text: 'TehniÄŤne podatke o dostopu obdelujemo za zaznavanje nepooblaĹˇÄŤenih dostopov, prepreÄŤevanje zlorab in zagotavljanje varnega delovanja platforme.',
-      basis: 'Zakoniti interes (ÄŤl. 6(1)(f) GDPR)',
+      title: 'Varnost platforme in preprečevanje zlorab',
+      text: 'Tehnične podatke o dostopu obdelujemo za zaznavanje nepooblaščenih dostopov, preprečevanje zlorab in zagotavljanje varnega delovanja platforme.',
+      basis: 'Zakoniti interes (čl. 6(1)(f) GDPR)',
       retention: 'IP naslovi psevdonimiziranimi po 30 dneh; varnostni zapisi izbrisani po 12 mesecih.',
     },
     {
       title: 'Analitika in razvoj storitev',
-      text: 'Agregirane in anonimizirane podatke o uporabi obdelujemo za razvoj novih funkcionalnosti in izboljĹˇanje uporabniĹˇke izkuĹˇnje.',
-      basis: 'Zakoniti interes (ÄŤl. 6(1)(f) GDPR)',
-      retention: 'Anonimizirani podatki se hranijo trajno; osebni podatki za analitiÄŤne namene do 24 mesecev.',
+      text: 'Agregirane in anonimizirane podatke o uporabi obdelujemo za razvoj novih funkcionalnosti in izboljšanje uporabniške izkušnje.',
+      basis: 'Zakoniti interes (čl. 6(1)(f) GDPR)',
+      retention: 'Anonimizirani podatki se hranijo trajno; osebni podatki za analitične namene do 24 mesecev.',
     },
     {
-      title: 'ObveĹˇÄŤanje o storitvah',
-      text: 'ObstojeÄŤe stranke obÄŤasno obveĹˇÄŤamo o posodobitvah platforme in novih funkcionalnostih. Pravico do ugovora po ÄŤl. 21 GDPR upoĹˇtevamo takoj in brezpogojno.',
-      basis: 'Zakoniti interes (ÄŤl. 6(1)(f) GDPR)',
+      title: 'Obveščanje o storitvah',
+      text: 'Obstoječe stranke občasno obveščamo o posodobitvah platforme in novih funkcionalnostih. Pravico do ugovora po čl. 21 GDPR upoštevamo takoj in brezpogojno.',
+      basis: 'Zakoniti interes (čl. 6(1)(f) GDPR)',
       retention: 'Do odjave.',
     },
     {
       title: 'Uveljavljanje pravnih zahtevkov',
       text: 'V primeru pravnih sporov ali regulatornih postopkov hranimo relevantne podatke za namene uveljavljanja ali obrambe pravnih zahtevkov.',
-      basis: 'Zakoniti interes (ÄŤl. 6(1)(f) GDPR)',
-      retention: 'Do zakljuÄŤka postopka in 5 let po njem.',
+      basis: 'Zakoniti interes (čl. 6(1)(f) GDPR)',
+      retention: 'Do zaključka postopka in 5 let po njem.',
     },
   ],
 
-  s4title: '4. Kdo obdeluje vaĹˇe podatke',
-  s4: `VaĹˇi podatki so dostopni le omejenemu krogu oseb pri Toolingdesk â€” izkljuÄŤno tistim, ki podatke potrebujejo za opravljanje svojih nalog. Vsi so zavezani k zaupnosti.
+  s4title: '4. Kdo obdeluje vaše podatke',
+  s4: `Vaši podatki so dostopni le omejenemu krogu oseb pri Toolingdesk — izključno tistim, ki podatke potrebujejo za opravljanje svojih nalog. Vsi so zavezani k zaupnosti.
 
-Za doloÄŤene storitve uporabljamo zunanje obdelovalce, s katerimi imamo sklenjene pogodbe o obdelavi podatkov po ÄŤl. 28 GDPR:`,
+Za določene storitve uporabljamo zunanje obdelovalce, s katerimi imamo sklenjene pogodbe o obdelavi podatkov po čl. 28 GDPR:`,
   s4processors: [
-    ['Supabase Inc.', 'Gostovanje podatkov in avtentikacija', 'EU (Frankfurt, NemÄŤija)'],
+    ['Supabase Inc.', 'Gostovanje podatkov in avtentikacija', 'EU (Frankfurt, Nemčija)'],
     ['Vercel Inc.', 'Gostovanje aplikacije', 'EU / globalna CDN'],
   ],
-  s4end: `VaĹˇe podatke razkrijemo drĹľavnim organom le, kadar je to zahtevano na podlagi zakona. V primeru pravnih sporov jih lahko razkrijemo odvetnikom in sodiĹˇÄŤem v obsegu, ki je nujen za zaĹˇÄŤito pravnih interesov.`,
+  s4end: `Vaše podatke razkrijemo državnim organom le, kadar je to zahtevano na podlagi zakona. V primeru pravnih sporov jih lahko razkrijemo odvetnikom in sodiščem v obsegu, ki je nujen za zaščito pravnih interesov.`,
 
-  s5title: '5. Prenos podatkov v tretje drĹľave',
-  s5: `Toolingdesk hrani in obdeluje podatke primarno v Evropski uniji (Supabase Frankfurt, Vercel EU). V kolikor bi pri prihodnji nadgradnji infrastrukture priĹˇlo do prenosa osebnih podatkov izven EGP, bo Toolingdesk to zagotovil izkljuÄŤno z ustreznimi zaĹˇÄŤitnimi mehanizmi (Standardne pogodbene klavzule Evropske komisije po Izvedbeni odloÄŤbi 2021/914 ali odloÄŤba o ustreznosti).
+  s5title: '5. Prenos podatkov v tretje države',
+  s5: `Toolingdesk hrani in obdeluje podatke primarno v Evropski uniji (Supabase Frankfurt, Vercel EU). V kolikor bi pri prihodnji nadgradnji infrastrukture prišlo do prenosa osebnih podatkov izven EGP, bo Toolingdesk to zagotovil izključno z ustreznimi zaščitnimi mehanizmi (Standardne pogodbene klavzule Evropske komisije po Izvedbeni odločbi 2021/914 ali odločba o ustreznosti).
 
-Imate pravico zahtevati informacije o drĹľavah, v katere se vaĹˇi podatki prenaĹˇajo. Zahtevo naslovite na info@tce.si.`,
+Imate pravico zahtevati informacije o državah, v katere se vaši podatki prenašajo. Zahtevo naslovite na info@tce.si.`,
 
   s6title: '6. Varnost podatkov',
-  s6: 'VaĹˇe podatke varujemo s tehniÄŤnimi in organizacijskimi ukrepi, ki vkljuÄŤujejo:',
+  s6: 'Vaše podatke varujemo s tehničnimi in organizacijskimi ukrepi, ki vključujejo:',
   s6items: [
-    'Ĺ ifriranje podatkov med prenosom (TLS 1.2+) in v stanju mirovanja (AES-256)',
-    'Nadzor dostopa na podlagi naÄŤela najmanjĹˇega potrebnega dostopa (RBAC)',
-    'VeÄŤfaktorska avtentikacija za dostop do infrastrukture',
-    'LoÄŤena razvojna in produkcijska okolja brez prenosa produkcijskih podatkov v testna okolja',
+    'Šifriranje podatkov med prenosom (TLS 1.2+) in v stanju mirovanja (AES-256)',
+    'Nadzor dostopa na podlagi načela najmanjšega potrebnega dostopa (RBAC)',
+    'Večfaktorska avtentikacija za dostop do infrastrukture',
+    'Ločena razvojna in produkcijska okolja brez prenosa produkcijskih podatkov v testna okolja',
     'Redne varnostne kopije in preizkusi obnove',
     'Centralizirane revizijske dnevnike in alarmiranje ob sumljivih dejanjih',
   ],
-  s6end: 'V primeru varnostnega incidenta, ki bi verjetno povzroÄŤil visoko tveganje za vaĹˇe pravice in svoboĹˇÄŤine, vas bomo nemudoma obvestili v skladu s ÄŤl. 34 GDPR.',
+  s6end: 'V primeru varnostnega incidenta, ki bi verjetno povzročil visoko tveganje za vaše pravice in svoboščine, vas bomo nemudoma obvestili v skladu s čl. 34 GDPR.',
 
-  s7title: '7. VaĹˇe pravice',
-  s7intro: 'Na vse zahteve odgovorimo v roku 30 dni; pri kompleksnih zahtevah si pridrĹľujemo pravico do podaljĹˇanja za najveÄŤ 2 meseca, o ÄŤemer vas predhodno obvestimo.',
+  s7title: '7. Vaše pravice',
+  s7intro: 'Na vse zahteve odgovorimo v roku 30 dni; pri kompleksnih zahtevah si pridržujemo pravico do podaljšanja za največ 2 meseca, o čemer vas predhodno obvestimo.',
   s7items: [
-    ['Pravica do dostopa (ÄŤl. 15)', 'Zahtevate kopijo osebnih podatkov, ki jih obdelujemo v zvezi z vami, in informacije o naravi, namenu ter obsegu obdelave.'],
-    ['Pravica do popravka (ÄŤl. 16)', 'Zahtevate popravek netoÄŤnih ali dopolnitev nepopolnih osebnih podatkov.'],
-    ['Pravica do izbrisa (ÄŤl. 17)', 'Zahtevate izbris svojih osebnih podatkov, kadar ni veÄŤ podlage za njihovo obdelavo. Pravica je omejena z zakonskimi obveznostmi hrambe (npr. davÄŤna dokumentacija).'],
-    ['Pravica do omejitve obdelave (ÄŤl. 18)', 'Zahtevate zaÄŤasno omejitev obdelave vaĹˇih podatkov, dokler ne razreĹˇimo morebitnih nesoglasij.'],
-    ['Pravica do ugovora (ÄŤl. 21)', 'Ugovarjate obdelavi na podlagi zakonitega interesa. Ugovor za namene direktnega marketinga je absoluten in brezpogojen â€” upoĹˇtevamo ga takoj.'],
-    ['Pravica do prenosljivosti (ÄŤl. 20)', 'Zahtevate vaĹˇe osebne podatke v strukturirani, strojno berljivi obliki ali njihov neposredni prenos k drugemu upravljavcu.'],
-    ['Pravica do preklica privolitve (ÄŤl. 7)', 'Kadar koli in brez posledic prekliÄŤete privolitev za katero koli obdelavo, ki na njej temelji. Preklic ne vpliva na zakonitost obdelave pred preklicem.'],
+    ['Pravica do dostopa (čl. 15)', 'Zahtevate kopijo osebnih podatkov, ki jih obdelujemo v zvezi z vami, in informacije o naravi, namenu ter obsegu obdelave.'],
+    ['Pravica do popravka (čl. 16)', 'Zahtevate popravek netočnih ali dopolnitev nepopolnih osebnih podatkov.'],
+    ['Pravica do izbrisa (čl. 17)', 'Zahtevate izbris svojih osebnih podatkov, kadar ni več podlage za njihovo obdelavo. Pravica je omejena z zakonskimi obveznostmi hrambe (npr. davčna dokumentacija).'],
+    ['Pravica do omejitve obdelave (čl. 18)', 'Zahtevate začasno omejitev obdelave vaših podatkov, dokler ne razrešimo morebitnih nesoglasij.'],
+    ['Pravica do ugovora (čl. 21)', 'Ugovarjate obdelavi na podlagi zakonitega interesa. Ugovor za namene direktnega marketinga je absoluten in brezpogojen — upoštevamo ga takoj.'],
+    ['Pravica do prenosljivosti (čl. 20)', 'Zahtevate vaše osebne podatke v strukturirani, strojno berljivi obliki ali njihov neposredni prenos k drugemu upravljavcu.'],
+    ['Pravica do preklica privolitve (čl. 7)', 'Kadar koli in brez posledic prekličete privolitev za katero koli obdelavo, ki na njej temelji. Preklic ne vpliva na zakonitost obdelave pred preklicem.'],
   ],
-  s7end: 'Zahteve naslovite na info@tce.si. Imate tudi pravico do pritoĹľbe pri Informacijskemu pooblaĹˇÄŤencu RS, Dunajska cesta 22, 1000 Ljubljana, gp.ip@ip-rs.si, ip-rs.si.',
+  s7end: 'Zahteve naslovite na info@tce.si. Imate tudi pravico do pritožbe pri Informacijskemu pooblaščencu RS, Dunajska cesta 22, 1000 Ljubljana, gp.ip@ip-rs.si, ip-rs.si.',
 
-  s8title: '8. PiĹˇkotki',
-  s8: 'Toolingdesk uporablja izkljuÄŤno tehniÄŤno nujne piĹˇkotke za upravljanje seje in avtentikacijo. Ne nastavljamo analitiÄŤnih, sledilnih ali oglaĹˇevalskih piĹˇkotkov, zato privolitev za piĹˇkotke ni potrebna.',
+  s8title: '8. Piškotki',
+  s8: 'Toolingdesk uporablja izključno tehnično nujne piškotke za upravljanje seje in avtentikacijo. Ne nastavljamo analitičnih, sledilnih ali oglaševalskih piškotkov, zato privolitev za piškotke ni potrebna.',
 
   s9title: '9. Spremembe te izjave',
-  s9: 'To izjavo redno pregledujemo in posodabljamo. O bistvenih spremembah vas obvestimo vsaj 30 dni pred njihovo uveljavitvijo prek e-poĹˇte ali obvestila v aplikaciji. Arhiv prejĹˇnjih verzij je dostopen na zahtevo pri info@tce.si.',
+  s9: 'To izjavo redno pregledujemo in posodabljamo. O bistvenih spremembah vas obvestimo vsaj 30 dni pred njihovo uveljavitvijo prek e-pošte ali obvestila v aplikaciji. Arhiv prejšnjih verzij je dostopen na zahtevo pri info@tce.si.',
 
   s10title: '10. Kontakt',
-  s10: 'Za vsa vpraĹˇanja v zvezi z zasebnostjo nas kontaktirajte na',
-  back: 'â† Nazaj na domaÄŤo stran',
+  s10: 'Za vsa vprašanja v zvezi z zasebnostjo nas kontaktirajte na',
+  back: '← Nazaj na domačo stran',
 }
 
 const en = {
   title: 'Privacy Policy',
   updated: 'Last updated: July 2026',
-  intro: `We protect your personal data in accordance with Regulation (EU) 2016/679 (GDPR), the Personal Data Protection Act (ZVOP-2) and other applicable data protection legislation. This policy applies to natural persons acting as business users of Toolingdesk â€” owners, directors, estimators, sales staff and other employees of manufacturing companies using the platform to prepare quotations and manage cost calculations.
+  intro: `We protect your personal data in accordance with Regulation (EU) 2016/679 (GDPR), the Personal Data Protection Act (ZVOP-2) and other applicable data protection legislation. This policy applies to natural persons acting as business users of Toolingdesk — owners, directors, estimators, sales staff and other employees of manufacturing companies using the platform to prepare quotations and manage cost calculations.
 
-Toolingdesk acts in two clearly distinct roles. As a controller, it processes your personal data for the purpose of providing and managing the services â€” this relationship is governed by this policy. As a processor, it processes contact and commercial data of your customers and business partners that you enter into the platform, on your instructions and on your behalf â€” you are responsible for that relationship as the data controller.`,
+Toolingdesk acts in two clearly distinct roles. As a controller, it processes your personal data for the purpose of providing and managing the services — this relationship is governed by this policy. As a processor, it processes contact and commercial data of your customers and business partners that you enter into the platform, on your instructions and on your behalf — you are responsible for that relationship as the data controller.`,
 
   s1title: '1. Data Controller',
   s1: `The data controller is TCE, d.o.o. For all questions regarding the processing of your personal data, contact us at info@tce.si. We respond to requests within 30 days.`,
@@ -167,7 +167,7 @@ Toolingdesk acts in two clearly distinct roles. As a controller, it processes yo
     },
     {
       title: 'Customer data (processor role)',
-      text: 'Customer name, contact person, email address, phone number, address and other commercial data you enter when creating customers in the platform. For this data you act as the controller â€” you are responsible for the lawfulness of its processing and for properly informing your customers.',
+      text: 'Customer name, contact person, email address, phone number, address and other commercial data you enter when creating customers in the platform. For this data you act as the controller — you are responsible for the lawfulness of its processing and for properly informing your customers.',
     },
     {
       title: 'Calculations and cost models',
@@ -178,8 +178,8 @@ Toolingdesk acts in two clearly distinct roles. As a controller, it processes yo
       text: 'Technical and cost parameters of your machines and workstations: hourly rate, energy costs, water, compressed air, maintenance, depreciation, tooling costs and available operating hours. Including machine model, year of purchase and value.',
     },
     {
-      title: 'labor rates',
-      text: 'labor categories with gross salary, social contributions, allowances and holiday pay â€” from which the platform calculates the effective hourly rate for use in calculations.',
+      title: 'Labour rates',
+      text: 'Labour categories with gross salary, social contributions, allowances and holiday pay — from which the platform calculates the effective hourly rate for use in calculations.',
     },
     {
       title: 'Material data',
@@ -246,7 +246,7 @@ Toolingdesk acts in two clearly distinct roles. As a controller, it processes yo
   ],
 
   s4title: '4. Who Processes Your Data',
-  s4: `Your data is accessible only to a limited circle of persons at Toolingdesk â€” exclusively those who need the data to perform their duties. All are bound by confidentiality.
+  s4: `Your data is accessible only to a limited circle of persons at Toolingdesk — exclusively those who need the data to perform their duties. All are bound by confidentiality.
 
 For certain services we use external processors with whom we have data processing agreements under Art. 28 GDPR:`,
   s4processors: [
@@ -268,7 +268,7 @@ You have the right to request information about the countries to which your data
     'Multi-factor authentication for infrastructure access',
     'Separate development and production environments, no production data in test environments',
     'Regular backups and restoration tests',
-    'Centralized audit logs and alerting on suspicious activity',
+    'Centralised audit logs and alerting on suspicious activity',
   ],
   s6end: 'In the event of a security incident likely to result in a high risk to your rights and freedoms, we will notify you without undue delay in accordance with Art. 34 GDPR.',
 
@@ -279,7 +279,7 @@ You have the right to request information about the countries to which your data
     ['Right to rectification (Art. 16)', 'Request correction of inaccurate or completion of incomplete personal data.'],
     ['Right to erasure (Art. 17)', 'Request deletion of your personal data where there is no longer a legal basis for processing. The right is subject to legal retention obligations (e.g. tax records).'],
     ['Right to restriction (Art. 18)', 'Request a temporary restriction on the processing of your data while any substantive disputes are resolved.'],
-    ['Right to object (Art. 21)', 'Object to processing based on legitimate interest. Objection to processing for direct marketing purposes is absolute and unconditional â€” we honour it immediately.'],
+    ['Right to object (Art. 21)', 'Object to processing based on legitimate interest. Objection to processing for direct marketing purposes is absolute and unconditional — we honour it immediately.'],
     ['Right to portability (Art. 20)', 'Request your personal data in a structured, machine-readable format or their direct transfer to another controller.'],
     ['Right to withdraw consent (Art. 7)', 'Withdraw consent at any time and without consequences for any processing based on it. Withdrawal does not affect the lawfulness of processing before withdrawal.'],
   ],
@@ -293,7 +293,7 @@ You have the right to request information about the countries to which your data
 
   s10title: '10. Contact',
   s10: 'For all privacy-related questions, contact us at',
-  back: 'â† Back to home',
+  back: '← Back to home',
 }
 
 export default function PrivacyPage() {
@@ -367,7 +367,7 @@ export default function PrivacyPage() {
             {t.s4.split('\n\n').map((p, i) => <p key={i} className={i > 0 ? 'mt-3' : ''}>{p}</p>)}
             <ul className="list-disc pl-6 space-y-1 mt-3">
               {t.s4processors.map(([p, purp, loc], i) => (
-                <li key={i}><strong>{p}</strong> â€” {purp} ({loc})</li>
+                <li key={i}><strong>{p}</strong> — {purp} ({loc})</li>
               ))}
             </ul>
             <p className="mt-3">{t.s4end}</p>
@@ -396,7 +396,7 @@ export default function PrivacyPage() {
             <div className="space-y-3">
               {t.s7items.map(([right, desc], i) => (
                 <div key={i} className="flex gap-2">
-                  <span className="font-medium text-gray-800 shrink-0">{right} â€”</span>
+                  <span className="font-medium text-gray-800 shrink-0">{right} —</span>
                   <span>{desc}</span>
                 </div>
               ))}
@@ -431,4 +431,3 @@ export default function PrivacyPage() {
     </div>
   )
 }
-
