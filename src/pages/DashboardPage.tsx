@@ -160,7 +160,7 @@ export default function DashboardPage() {
             <FilterSelect
               label={sl ? 'Odgovorna oseba' : 'Assignee'}
               value={assigneeFilter}
-              allLabel={sl ? 'Vsi' : 'All'}
+              allLabel={sl ? 'Vse' : 'All'}
               options={companyUsers.map(u => ({ value: u.id, label: `${u.first_name} ${u.last_name}` }))}
               onChange={v => { setAssigneeFilter(v); setCurrentPage(1) }}
             />
