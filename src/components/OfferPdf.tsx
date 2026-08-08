@@ -12,11 +12,11 @@ Font.register({
 })
 
 const c = {
-  primary: '#2563eb',
+  primary: '#111827',
   text: '#111827',
   muted: '#6b7280',
-  border: '#e5e7eb',
-  bg: '#f9fafb',
+  border: '#d1d5db',
+  bg: '#f3f4f6',
   white: '#ffffff',
 }
 
@@ -40,11 +40,11 @@ const s = StyleSheet.create({
   customerDetail: { fontSize: 8.5, color: c.muted, lineHeight: 1.5 },
 
   // ── Terms strip ────────────────────────────────────────────────
-  termsRow: { flexDirection: 'row', backgroundColor: c.primary, borderRadius: 4, paddingVertical: 8, paddingHorizontal: 10, marginBottom: 20 },
+  termsRow: { flexDirection: 'row', backgroundColor: c.bg, borderRadius: 4, paddingVertical: 8, paddingHorizontal: 10, marginBottom: 20, borderWidth: 1, borderColor: c.border },
   termItem: { flex: 1, alignItems: 'center' },
-  termLabel: { fontSize: 7, color: 'rgba(255,255,255,0.7)', marginBottom: 2 },
-  termValue: { fontSize: 9, color: c.white, fontWeight: 700 },
-  termDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: 2 },
+  termLabel: { fontSize: 7, color: c.muted, marginBottom: 2 },
+  termValue: { fontSize: 9, color: c.text, fontWeight: 700 },
+  termDivider: { width: 1, backgroundColor: c.border, marginVertical: 2 },
 
   // ── Table ──────────────────────────────────────────────────────
   tableHeader: { flexDirection: 'row', backgroundColor: c.bg, paddingVertical: 6, paddingHorizontal: 8, borderBottomWidth: 2, borderBottomColor: c.primary },
@@ -70,9 +70,9 @@ const s = StyleSheet.create({
 
   // ── Total ──────────────────────────────────────────────────────
   totalSection: { marginTop: 12, alignItems: 'flex-end' },
-  grandTotalBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.primary, borderRadius: 4, paddingVertical: 10, paddingHorizontal: 16, width: 260 },
-  grandTotalLabel: { fontSize: 10, fontWeight: 700, color: c.white },
-  grandTotalValue: { fontSize: 13, fontWeight: 700, color: c.white },
+  grandTotalBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.bg, borderRadius: 4, paddingVertical: 10, paddingHorizontal: 16, width: 260, borderWidth: 1, borderColor: c.border },
+  grandTotalLabel: { fontSize: 10, fontWeight: 700, color: c.text },
+  grandTotalValue: { fontSize: 13, fontWeight: 700, color: c.text },
 
   // ── Notes ─────────────────────────────────────────────────────
   notesBox: { marginTop: 20, backgroundColor: c.bg, borderRadius: 4, padding: 10 },
