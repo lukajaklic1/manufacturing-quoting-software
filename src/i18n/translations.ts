@@ -1383,7 +1383,7 @@ export const translations = {
       clearFilters: 'Počisti',
       active: 'Aktiven',
       inactive: 'Neaktiven',
-      all: 'Vse',
+      all: 'Vsi',
       allM: 'Vsi',
       activeM: 'Aktivni',
       inactiveM: 'Neaktivni',
