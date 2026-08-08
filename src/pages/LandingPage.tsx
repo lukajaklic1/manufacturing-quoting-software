@@ -1489,7 +1489,7 @@ export default function LandingPage() {
         {/* Giant headline */}
         <div className="animate-fade-up max-w-[1100px] mx-auto mb-6" style={{ animationDelay: '0.12s' }}>
           <h1 className="font-semibold text-gray-900 tracking-tight" style={{ fontSize: 'clamp(2.4rem, 5.5vw, 4.2rem)', lineHeight: 1.08 }}>
-            {l.heroTitle1}<br />{l.heroTitle2}
+            {l.heroTitle1}
           </h1>
         </div>
 
