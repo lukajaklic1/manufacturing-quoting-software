@@ -132,13 +132,16 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
       for (const p of pieces) {
         if (!p.id) continue
         const atts = attachments.filter(a => a.quote_item_id === p.id)
+        // Fallback: quote-level attachments (no quote_item_id) when item has none
+        const quoteLevelAtts = atts.length === 0 ? attachments.filter(a => !a.quote_item_id) : []
 
-        // Pick best source: 3D CAD first, then image, then PDF
-        const src =
-          atts.find(a => isCad3D(a.file_name)) ??
-          atts.find(a => isImg(a.file_name)) ??
-          atts.find(a => fext(a.file_name) === 'pdf') ??
+        // Pick best source: item-level first (CAD > image > PDF), then same priority at quote level
+        const pickBest = (pool: typeof atts) =>
+          pool.find(a => isCad3D(a.file_name)) ??
+          pool.find(a => isImg(a.file_name)) ??
+          pool.find(a => fext(a.file_name) === 'pdf') ??
           null
+        const src = pickBest(atts) ?? pickBest(quoteLevelAtts)
 
         if (!src) {
           if (pieceThumbs[p.id]) setPieceThumbs(prev => { const n = { ...prev }; delete n[p.id!]; return n })
