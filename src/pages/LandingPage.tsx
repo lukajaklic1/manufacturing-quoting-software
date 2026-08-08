@@ -1572,7 +1572,7 @@ export default function LandingPage() {
                 {isSl ? 'Pregled' : 'Analytics'}
               </p>
               <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
-                {isSl ? 'Vse ponudbe na enem mestu.' : 'All your quotes in one place.'}
+                {isSl ? 'Vse ponudbe na enem mestu' : 'All your quotes in one place'}
               </h2>
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
@@ -1614,7 +1614,7 @@ export default function LandingPage() {
                 {isSl ? 'Kalkulacija' : 'Cost calculation'}
               </p>
               <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
-                {isSl ? 'Natančna kalkulacija za vsak kos.' : 'Accurate cost breakdown for every part.'}
+                {isSl ? 'Natančna kalkulacija za vsak kos' : 'Accurate cost breakdown for every part'}
               </h2>
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
@@ -1646,7 +1646,7 @@ export default function LandingPage() {
                 {isSl ? 'Urne postavke' : 'Hourly rates'}
               </p>
               <h2 className="text-4xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5">
-                {isSl ? 'Točne urne postavke za vsak stroj in operaterja.' : 'Detailed hourly rates for every machine and operator.'}
+                {isSl ? 'Točne urne postavke za vsak stroj in operaterja' : 'Detailed hourly rates for every machine and operator'}
               </h2>
               <p className="text-gray-500 leading-relaxed mb-8">
                 {isSl
@@ -1680,7 +1680,7 @@ export default function LandingPage() {
               {isSl ? 'Za koga' : 'For whom'}
             </p>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight leading-[1.1] max-w-2xl">
-              {isSl ? 'Namenjen vsakemu tipu proizvodnje.' : 'Built for every type of manufacturing.'}
+              {isSl ? 'Namenjen vsakemu tipu proizvodnje' : 'Built for every type of manufacturing'}
             </h2>
           </FadeUp>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
