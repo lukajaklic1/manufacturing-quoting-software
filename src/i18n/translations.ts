@@ -969,7 +969,7 @@ export const translations = {
       feature4Title: 'Centralized materials and machine database',
       feature4Desc: 'Build a central database of materials, machines, hourly rates, and labor costs. Use the same data across all future quotes without re-entering it.',
       feature5Title: 'Professional PDF quotes',
-      feature5Desc: 'Generate a clear, professional quote with your company details, general terms, and all relevant data — with one click from the calculation.',
+      feature5Desc: 'Generate a clear, professional quote with your company details, general terms, and all relevant data, with one click from the calculation.',
       feature6Title: 'Quote overview and tracking',
       feature6Desc: 'Track open, sent, won, and lost quotes and their total value on a single dashboard.',
       howTitle: 'How it works',
