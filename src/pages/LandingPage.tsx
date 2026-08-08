@@ -1377,7 +1377,7 @@ export default function LandingPage() {
     { Icon: BarChart2,  label: 'Maloserijska proizvodnja',        desc: 'Vsak kos zahteva svojo kalkulacijo. Toolingdesk zagotavlja enoten proces za ekipo.' },
     { Icon: TrendingUp, label: 'Kooperacija',                     desc: 'Stroški zunanjih storitev so vključeni skupaj z lastnimi stroški v eno ponudbo.' },
   ] : [
-    { Icon: Settings,   label: 'Tool & Die Shops',           desc: 'Precise calculation of machine hours, materials and labour for tools, moulds and fixtures.' },
+    { Icon: Settings,   label: 'Tool & Die Shops',           desc: 'Precise calculation of machine hours, materials and labor for tools, moulds and fixtures.' },
     { Icon: Calculator, label: 'CNC Machining',              desc: 'Every operation — milling, turning, EDM — has its own hourly rate and cycle time.' },
     { Icon: Zap,        label: 'Welding & Steel Structures', desc: 'Material, welding time and surface treatment costs calculated together for every assembly.' },
     { Icon: FileText,   label: 'Laser Cutting & Sheet Metal',desc: 'Cutting and forming costs based on material type, thickness and machine time.' },
