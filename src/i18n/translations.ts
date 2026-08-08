@@ -1061,7 +1061,7 @@ export const translations = {
       deleteCustomerConfirm: 'Ali želite izbrisati to stranko? Tega ni mogoče razveljaviti.',
       deleteQuoteConfirm: 'Ali želite izbrisati to ponudbo? Tega ni mogoče razveljaviti.',
       cannotDeleteLinked: 'Tega materiala ni več mogoče izbrisati, ker je uporabljen v eni ali več ponudbah. Material je možno deaktivirati.',
-      cannotDeleteLinkedCustomer: 'Tega kupca ni mogoče izbrisati, ker je uporabljen v eni ali več ponudbah.',
+      cannotDeleteLinkedCustomer: 'Te stranke ni več mogoče izbrisati, ker je uporabljena v eni ali več ponudbah. Stranko je možno deaktivirati.',
       cannotDeleteLinkedMachine: 'Tega stroja ni mogoče izbrisati, ker je uporabljen v eni ali več ponudbah. Stroj je možno deaktivirati.',
       cannotDeleteLinkedLabor: 'Tega operaterja ni mogoče izbrisati, ker je uporabljen v eni ali več ponudbah. Operaterja je možno deaktivirati.',
       // Ponudbe

@@ -100,7 +100,7 @@ export default function CustomersPage() {
   async function doDelete() {
     if (!toDelete) return
     setDeleting(true)
-    if ((counts[toDelete.id] ?? 0) > 0) { setDeleting(false); toast.error(s.cannotDeleteLinked); setToDelete(null); return }
+    if ((counts[toDelete.id] ?? 0) > 0) { setDeleting(false); toast.error(s.cannotDeleteLinkedCustomer); setToDelete(null); return }
     const { error } = await supabase.from('customers').delete().eq('id', toDelete.id)
     setDeleting(false)
     if (error) { toast.error(error.message); return }
@@ -214,7 +214,7 @@ export default function CustomersPage() {
           <input type="checkbox" checked={form.status === 'active'} onChange={e => setForm(f => ({ ...f, status: e.target.checked ? 'active' : 'inactive' }))}
             className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" />{t.common.activeF}
         </label>
-        {editing && (counts[editing.id] ?? 0) > 0 && <p className="text-sm text-gray-400 mt-5">{s.cannotDeleteLinked}</p>}
+        {editing && (counts[editing.id] ?? 0) > 0 && <p className="text-sm text-gray-400 mt-5">{s.cannotDeleteLinkedCustomer}</p>}
         <div className="flex items-center justify-between mt-4 pt-4 -mx-6 px-6 border-t border-gray-200">
           <div>
             {editing && (counts[editing.id] ?? 0) === 0 && (
