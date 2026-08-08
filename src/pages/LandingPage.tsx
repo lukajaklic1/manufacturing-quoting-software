@@ -1606,8 +1606,10 @@ export default function LandingPage() {
       <section className="border-t border-gray-100 py-24">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <FadeUp delay={100} className="order-2 lg:order-1">
-              <CalcMockup isSl={isSl} />
+            <FadeUp delay={100} className="order-2 lg:order-1 overflow-hidden">
+              <div style={{ minWidth: 640 }}>
+                <CalcMockup isSl={isSl} />
+              </div>
             </FadeUp>
             <FadeUp className="order-1 lg:order-2">
               <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4">
@@ -1665,8 +1667,10 @@ export default function LandingPage() {
                 ))}
               </div>
             </FadeUp>
-            <FadeUp delay={100}>
-              <RatesMockup isSl={isSl} />
+            <FadeUp delay={100} className="overflow-hidden">
+              <div style={{ minWidth: 640 }}>
+                <RatesMockup isSl={isSl} />
+              </div>
             </FadeUp>
           </div>
         </div>
