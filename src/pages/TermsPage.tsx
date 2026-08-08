@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom'
-import { useLanguage } from '../i18n/LanguageContext'
+import { Link } from 'react-router-dom'
+import { useLanguage } from '../hooks/useLanguage'
 import AppLogo from '../components/ui/AppLogo'
 
 function H1({ children }: { children: React.ReactNode }) {
@@ -41,22 +41,34 @@ function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
 
 export default function TermsPage() {
   const { lang, setLang } = useLanguage()
-  const navigate = useNavigate()
   const sl = lang === 'sl'
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
-      {/* Sticky nav */}
-      <div className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-6 py-3 flex items-center justify-between">
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <AppLogo size={28} />
-          <span className="font-semibold text-gray-900 dark:text-white text-sm">Toolingdesk</span>
-        </button>
-        <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-          <button onClick={() => setLang('sl')} className={`px-3 py-1 rounded text-xs font-medium transition-colors ${sl ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'}`}>SL</button>
-          <button onClick={() => setLang('en')} className={`px-3 py-1 rounded text-xs font-medium transition-colors ${!sl ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'}`}>EN</button>
+    <div className="min-h-screen bg-white text-gray-900 font-sans antialiased">
+      {/* Nav — same as landing page */}
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
+        <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+          <Link to="/"><AppLogo size="sm" mono /></Link>
+          <div className="flex items-center gap-2">
+            <div className="flex gap-0.5 mr-1">
+              {(['en', 'sl'] as const).map(lng => (
+                <button key={lng} onClick={() => setLang(lng)}
+                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${lang === lng ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-700'}`}>
+                  {lng.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <Link to="/login"
+              className="hidden md:block text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-50 border border-gray-200">
+              {sl ? 'Prijava' : 'Sign in'}
+            </Link>
+            <Link to="/register"
+              className="hidden sm:block bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap">
+              {sl ? 'Začnite brezplačno' : 'Get started free'}
+            </Link>
+          </div>
         </div>
-      </div>
+      </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         {/* Header */}
