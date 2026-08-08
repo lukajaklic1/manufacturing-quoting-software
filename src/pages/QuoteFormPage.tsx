@@ -14,7 +14,7 @@ import QuoteAttachments from '../components/QuoteAttachments'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { buildSnapshot } from '../lib/offerSnapshot'
 import { computeTotals } from '../hooks/useCalculator'
-import { getThumbByPath } from '../lib/thumbs'
+import { getThumbByPath, ensureThumb } from '../lib/thumbs'
 import type { Customer, Quote, QuoteItem, Calculation, QuoteAttachment, QuoteStatus, OfferSnapshot } from '../types/database'
 import { QuoteStatusBadge } from '../components/ui/QuoteStatusBadge'
 import Pagination from '../components/ui/Pagination'
@@ -23,8 +23,27 @@ interface PieceRow { key: string; id?: string; part_name: string; part_number: s
 
 // Pick a thumbnail source for a piece: first CAD, else first drawing/image/pdf.
 const CAD3D = ['step', 'stp', 'iges', 'igs', 'stl', 'obj', 'ply', '3ds', '3dm', '3mf', 'fbx', 'dae', 'wrl', 'off', 'brep', 'glb', 'gltf', 'fcstd']
+const IMG_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'tiff', 'tif', 'svg']
 function fext(n: string) { return n.toLowerCase().split('.').pop() ?? '' }
 function isCad3D(n: string) { return CAD3D.includes(fext(n)) }
+function isImg(n: string) { return IMG_EXTS.includes(fext(n)) }
+
+// Fetch a signed URL for an attachment and convert to data-url (for embedding in PDF).
+async function attToDataUrl(storagePath: string): Promise<string | null> {
+  try {
+    const { data } = await supabase.storage.from('quotations').createSignedUrl(storagePath, 3600)
+    if (!data?.signedUrl) return null
+    const res = await fetch(data.signedUrl)
+    if (!res.ok) return null
+    const blob = await res.blob()
+    return new Promise(resolve => {
+      const fr = new FileReader()
+      fr.onload = () => resolve(fr.result as string)
+      fr.onerror = () => resolve(null)
+      fr.readAsDataURL(blob)
+    })
+  } catch { return null }
+}
 
 
 let keyc = 0
@@ -104,38 +123,56 @@ export default function QuoteFormPage({ readOnly = false }: { readOnly?: boolean
     })
   }, [readOnly, snapshot, pieces])
 
-  // Thumbnail per piece = first CAD attachment for that piece.
+  // Thumbnail per piece: priority = CAD (3D viewer baked) > image > PDF.
   // Always re-evaluates when attachments change; uses pieceThumbSourceRef to detect
-  // when the source CAD changed (e.g. deleted) and clears stale state.
+  // when the source attachment changed (e.g. deleted) and clears stale state.
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       for (const p of pieces) {
         if (!p.id) continue
         const atts = attachments.filter(a => a.quote_item_id === p.id)
-        const cad = atts.find(a => isCad3D(a.file_name))
 
-        if (!cad) {
+        // Pick best source: 3D CAD first, then image, then PDF
+        const src =
+          atts.find(a => isCad3D(a.file_name)) ??
+          atts.find(a => isImg(a.file_name)) ??
+          atts.find(a => fext(a.file_name) === 'pdf') ??
+          null
+
+        if (!src) {
           if (pieceThumbs[p.id]) setPieceThumbs(prev => { const n = { ...prev }; delete n[p.id!]; return n })
           delete pieceThumbSourceRef.current[p.id]
           if (p.thumb_path) clearPieceThumb(p.id)
           continue
         }
 
-        // Source CAD unchanged â€" skip
-        if (pieceThumbs[p.id] && pieceThumbSourceRef.current[p.id] === cad.id) continue
+        // Source unchanged â€" skip
+        if (pieceThumbs[p.id] && pieceThumbSourceRef.current[p.id] === src.id) continue
 
-        // Source CAD changed â€" clear stale piece thumb_path so we don't reload old image
-        if (pieceThumbSourceRef.current[p.id] && pieceThumbSourceRef.current[p.id] !== cad.id) {
+        // Source changed â€" clear stale thumb
+        if (pieceThumbSourceRef.current[p.id] && pieceThumbSourceRef.current[p.id] !== src.id) {
           if (!cancelled) setPieceThumbs(prev => { const n = { ...prev }; delete n[p.id!]; return n })
           if (p.thumb_path) { clearPieceThumb(p.id); p.thumb_path = null }
         }
 
-        // Load from current first CAD's thumbnail only (never fall back to stale p.thumb_path)
-        const cached = await getThumbByPath(cad.id, cad.thumb_path)
-        if (cached && !cancelled) {
-          setPieceThumbs(prev => ({ ...prev, [p.id!]: cached }))
-          pieceThumbSourceRef.current[p.id] = cad.id
+        let dataUrl: string | null = null
+
+        if (isCad3D(src.file_name)) {
+          // CAD: use persisted thumbnail baked by 3D viewer in CalculationPage
+          dataUrl = await getThumbByPath(src.id, src.thumb_path)
+        } else if (isImg(src.file_name)) {
+          // Image: check cache first, then fetch from storage as data-url
+          dataUrl = await getThumbByPath(src.id, null)
+          if (!dataUrl) dataUrl = await attToDataUrl(src.storage_path)
+        } else {
+          // PDF: auto-render first page via pdf.js
+          dataUrl = await ensureThumb(src)
+        }
+
+        if (dataUrl && !cancelled) {
+          setPieceThumbs(prev => ({ ...prev, [p.id!]: dataUrl! }))
+          pieceThumbSourceRef.current[p.id] = src.id
         }
       }
     })()
