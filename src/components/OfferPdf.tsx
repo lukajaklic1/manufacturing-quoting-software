@@ -12,11 +12,13 @@ Font.register({
 })
 
 const c = {
-  primary: '#111827',
-  text: '#111827',
-  muted: '#6b7280',
-  border: '#d1d5db',
-  bg: '#f3f4f6',
+  primary: '#111827',   // gray-900 — headings, bold labels
+  text: '#111827',      // gray-900 — body text
+  muted: '#6b7280',     // gray-500 — secondary labels
+  border: '#e5e7eb',    // gray-200 — dividers, table lines
+  bg: '#f9fafb',        // gray-50  — page/sidebar bg
+  strip: '#f1f1f1',     // active sidebar item — terms strip + total box
+  rowAlt: '#f6f6f6',    // hover bg — alternating table rows
   white: '#ffffff',
 }
 
@@ -40,14 +42,14 @@ const s = StyleSheet.create({
   customerDetail: { fontSize: 8.5, color: c.muted, lineHeight: 1.5 },
 
   // ── Terms strip ────────────────────────────────────────────────
-  termsRow: { flexDirection: 'row', backgroundColor: c.bg, borderRadius: 4, paddingVertical: 8, paddingHorizontal: 10, marginBottom: 20, borderWidth: 1, borderColor: c.border },
+  termsRow: { flexDirection: 'row', backgroundColor: c.strip, borderRadius: 4, paddingVertical: 8, paddingHorizontal: 10, marginBottom: 20, borderWidth: 1, borderColor: c.border },
   termItem: { flex: 1, alignItems: 'center' },
   termLabel: { fontSize: 7, color: c.muted, marginBottom: 2 },
   termValue: { fontSize: 9, color: c.text, fontWeight: 700 },
   termDivider: { width: 1, backgroundColor: c.border, marginVertical: 2 },
 
   // ── Table ──────────────────────────────────────────────────────
-  tableHeader: { flexDirection: 'row', backgroundColor: c.bg, paddingVertical: 6, paddingHorizontal: 8, borderBottomWidth: 2, borderBottomColor: c.primary },
+  tableHeader: { flexDirection: 'row', backgroundColor: c.strip, paddingVertical: 6, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: c.border },
   thText: { fontSize: 7.5, fontWeight: 700, color: c.muted },
   colPos: { width: 24 },
   colThumb: { width: 52 },
@@ -58,24 +60,24 @@ const s = StyleSheet.create({
   colTotal: { width: 68 },
 
   itemRow: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: c.border, paddingVertical: 8, paddingHorizontal: 8 },
-  tableRowAlt: { backgroundColor: '#fafafa' },
+  tableRowAlt: { backgroundColor: c.rowAlt },
   posText: { fontSize: 9, fontWeight: 700, color: c.primary },
   itemName: { fontSize: 9, fontWeight: 700, marginBottom: 2 },
   itemNumber: { fontSize: 7.5, color: c.muted },
   thumbImg: { width: 44, height: 36, objectFit: 'contain', borderRadius: 3 },
-  thumbPlaceholder: { width: 44, height: 36, backgroundColor: c.bg, borderRadius: 3 },
+  thumbPlaceholder: { width: 44, height: 36, backgroundColor: c.strip, borderRadius: 3 },
   qtyTable: { width: 40 + 28 + 64 + 68 },
   qtyLine: { flexDirection: 'row', paddingVertical: 2 },
   qtyLineBorder: { borderTopWidth: 1, borderTopColor: '#eef0f2' },
 
   // ── Total ──────────────────────────────────────────────────────
   totalSection: { marginTop: 12, alignItems: 'flex-end' },
-  grandTotalBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.bg, borderRadius: 4, paddingVertical: 10, paddingHorizontal: 16, width: 260, borderWidth: 1, borderColor: c.border },
+  grandTotalBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.strip, borderRadius: 4, paddingVertical: 10, paddingHorizontal: 16, width: 260, borderWidth: 1, borderColor: c.border },
   grandTotalLabel: { fontSize: 10, fontWeight: 700, color: c.text },
   grandTotalValue: { fontSize: 13, fontWeight: 700, color: c.text },
 
   // ── Notes ─────────────────────────────────────────────────────
-  notesBox: { marginTop: 20, backgroundColor: c.bg, borderRadius: 4, padding: 10 },
+  notesBox: { marginTop: 20, backgroundColor: c.strip, borderRadius: 4, padding: 10, borderWidth: 1, borderColor: c.border },
   notesLabel: { fontSize: 7, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
   notesText: { fontSize: 8.5, lineHeight: 1.6 },
 
