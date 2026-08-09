@@ -45,30 +45,52 @@ export default function SuperAdminDashboardPage() {
   }, [])
 
   return (
-    <div className="px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Nadzorna plošča</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Pregled platforme</p>
+    <div>
+      {/* Header — same style as PageHeader */}
+      <div className="px-4 lg:px-6 py-4 border-b border-gray-200 bg-white flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+          <TrendingUp className="w-4 h-4 text-blue-500" />
+        </div>
+        <div>
+          <h1 className="text-base font-semibold text-gray-900 leading-tight">Nadzorna plošča</h1>
+          <p className="text-xs text-gray-500">Pregled platforme</p>
+        </div>
       </div>
 
+      <div className="p-4 space-y-6">
       {loading ? (
-        <div className="text-center py-20 text-gray-400">Nalagam...</div>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        </div>
       ) : stats ? (
-        <div className="space-y-6">
+        <>
+          {/* KPI cards */}
           {(() => {
             const currentMonth = new Date().toISOString().slice(0, 7)
             const newUsersThisMonth = stats.user_growth.find(d => d.month === currentMonth)?.count ?? 0
+            const cards = [
+              { icon: Building2, label: 'Skupaj podjetij', value: pluralCompanies(stats.total_companies), bg: 'bg-blue-50', ic: 'text-blue-500' },
+              { icon: Users, label: 'Aktivni uporabniki', value: pluralUsers(stats.total_users), bg: 'bg-emerald-50', ic: 'text-emerald-600' },
+              { icon: TrendingUp, label: 'Nova podjetja ta mesec', value: pluralCompanies(stats.new_this_month), bg: 'bg-violet-50', ic: 'text-violet-500' },
+              { icon: Users, label: 'Novi uporabniki ta mesec', value: pluralUsers(newUsersThisMonth), bg: 'bg-orange-50', ic: 'text-orange-500' },
+            ]
             return (
-              <div className="grid grid-cols-4 gap-4">
-                <StatCard icon={<Building2 size={20} />} label="Skupaj podjetij" value={pluralCompanies(stats.total_companies)} color="blue" />
-                <StatCard icon={<Users size={20} />} label="Aktivni uporabniki" value={pluralUsers(stats.total_users)} color="green" />
-                <StatCard icon={<TrendingUp size={20} />} label="Nova podjetja ta mesec" value={pluralCompanies(stats.new_this_month)} color="purple" />
-                <StatCard icon={<Users size={20} />} label="Novi uporabniki ta mesec" value={pluralUsers(newUsersThisMonth)} color="orange" />
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {cards.map(k => (
+                  <div key={k.label} className="bg-white rounded-xl border border-gray-200 p-5">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 ${k.bg}`}>
+                      <k.icon className={`w-4 h-4 ${k.ic}`} />
+                    </div>
+                    <p className="text-xs font-medium text-gray-500">{k.label}</p>
+                    <p className="text-2xl font-semibold text-gray-900 mt-0.5 tracking-tight">{k.value}</p>
+                  </div>
+                ))}
               </div>
             )
           })()}
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <AreaChart
               data={toCumulative(stats.growth)}
               label="Rast podjetij"
@@ -82,10 +104,11 @@ export default function SuperAdminDashboardPage() {
               fillColor="#dcfce7"
             />
           </div>
-        </div>
+        </>
       ) : (
-        <div className="text-center py-20 text-gray-400">Ni podatkov</div>
+        <div className="flex items-center justify-center h-64 text-sm text-gray-400">Ni podatkov</div>
       )}
+      </div>
     </div>
   )
 }
