@@ -35,6 +35,7 @@ export interface Company {
   quote_terms: string | null
   quote_terms_en: string | null
   oh_updated_by: string | null
+  is_active: boolean
   created_at: string
   updated_at: string
 }
