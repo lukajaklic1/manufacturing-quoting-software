@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Power, PowerOff, Search } from 'lucide-react'
+import { Power, PowerOff, Search, Building2, CalendarDays, Users } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from '../components/ui/Toast'
 import Pagination from '../components/ui/Pagination'
+import { PageHeader } from '../components/ui/PageHeader'
+import { FilterSelect } from '../components/ui/FilterSelect'
 
 interface Company {
   id: string
@@ -21,20 +23,12 @@ function pluralUsers(n: number) {
   return `${n} uporabnikov`
 }
 
-function pluralCompanies(n: number) {
-  if (n === 1) return '1 podjetje'
-  if (n === 2) return '2 podjetji'
-  if (n === 3 || n === 4) return `${n} podjetja`
-  return `${n} podjetij`
-}
-
 export default function SuperAdminCompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
   const [toggling, setToggling] = useState<string | null>(null)
-
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('')
   const [page, setPage] = useState(1)
 
   useEffect(() => { load() }, [])
@@ -67,87 +61,98 @@ export default function SuperAdminCompaniesPage() {
   const q = search.toLowerCase()
   const filtered = companies.filter(c => {
     const nameMatch = !search || c.name.toLowerCase().includes(q)
-    const statusMatch = statusFilter === 'all' ||
+    const statusMatch = !statusFilter ||
       (statusFilter === 'active' && c.is_active) ||
       (statusFilter === 'inactive' && !c.is_active)
     return nameMatch && statusMatch
   })
-
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   const fmt = (s: string) => new Date(s).toLocaleDateString('sl-SI')
 
   return (
-    <div className="px-8 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Podjetja</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{pluralCompanies(companies.length)} na platformi</p>
-      </div>
+    <div>
+      <PageHeader title="Podjetja" icon={Building2} count={companies.length} />
+      <div className="p-4">
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        <div className="relative">
-          <Search className="w-4 h-4 text-gray-900 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Išči podjetje..."
-            value={search}
-            onChange={e => { setSearch(e.target.value); setPage(1) }}
-            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
-          />
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <div className="relative max-w-xs w-full">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} placeholder="Iskanje"
+              className="w-full pl-9 pr-3 py-1 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <FilterSelect label="Status" value={statusFilter} allLabel="Vsi"
+            options={[{ value: 'active', label: 'Aktivna' }, { value: 'inactive', label: 'Deaktivirana' }]}
+            onChange={v => { setStatusFilter(v); setPage(1) }} />
         </div>
 
-        <select
-          value={statusFilter}
-          onChange={e => { setStatusFilter(e.target.value); setPage(1) }}
-          className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-        >
-          <option value="all">Vsi statusi</option>
-          <option value="active">Aktivna</option>
-          <option value="inactive">Deaktivirana</option>
-        </select>
-      </div>
-
-      <div className="-mx-4 lg:-mx-6 border-t border-b border-gray-200">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="text-left px-5 py-3 font-medium text-gray-500">Podjetje</th>
-              <th className="text-left px-5 py-3 font-medium text-gray-500">Registrirano</th>
-              <th className="text-center px-5 py-3 font-medium text-gray-500">Uporabniki</th>
-              <th className="text-center px-5 py-3 font-medium text-gray-500">Status</th>
-              <th className="px-5 py-3 w-12" />
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={5} className="px-5 py-12 text-center text-gray-400">Nalagam...</td></tr>
-            ) : paged.length === 0 ? (
-              <tr><td colSpan={5} className="px-5 py-12 text-center text-gray-400">Ni rezultatov</td></tr>
-            ) : paged.map(c => (
-              <tr key={c.id} className="border-t border-gray-200 hover:bg-[#fbfbfb]">
-                <td className="px-5 py-3.5 font-medium text-gray-900">{c.name}</td>
-                <td className="px-5 py-3.5 text-gray-500">{fmt(c.created_at)}</td>
-                <td className="px-5 py-3.5 text-center text-gray-600">{pluralUsers(c.user_count ?? 0)}</td>
-                <td className="px-5 py-3.5 text-center">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
-                    c.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                  }`}>
-                    {c.is_active ? 'Aktivno' : 'Deaktivirano'}
-                  </span>
-                </td>
-                <td className="px-5 py-3.5 text-right">
-                  <button
-                    onClick={() => toggle(c)}
-                    disabled={toggling === c.id}
-                    title={c.is_active ? 'Deaktiviraj' : 'Aktiviraj'}
-                    className="text-gray-400 hover:text-gray-700 disabled:opacity-40 transition-colors"
-                  >
-                    {c.is_active ? <PowerOff size={15} /> : <Power size={15} />}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {/* Table */}
+        <div className="-mx-4 border-t border-b border-gray-200">
+          {loading ? (
+            <div className="flex items-center justify-center h-48">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-48 text-center">
+              <Building2 className="w-10 h-10 text-gray-200 mb-3" />
+              <p className="text-sm text-gray-400">Ni rezultatov</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[640px]">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Podjetje</th>
+                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Registrirano</th>
+                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Uporabniki</th>
+                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Status</th>
+                    <th className="px-4 py-3 w-12" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {paged.map(c => (
+                    <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#e5eeff', border: '1px solid #d6e5ff' }}>
+                            <Building2 className="w-3.5 h-3.5" style={{ color: '#215bcf' }} />
+                          </div>
+                          <span className="font-medium text-gray-900">{c.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-200 text-xs text-gray-900 whitespace-nowrap" style={{ backgroundColor: '#fbfbfb' }}>
+                          <CalendarDays className="w-3 h-3 text-gray-500 shrink-0" />{fmt(c.created_at)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1.5 text-gray-600">
+                          <Users className="w-3.5 h-3.5 text-gray-400" />
+                          {pluralUsers(c.user_count ?? 0)}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="px-2 py-0.5 rounded-md text-xs font-medium"
+                          style={c.is_active
+                            ? { backgroundColor: '#e0fced', border: '1px solid #d4f8e6', color: '#098259' }
+                            : { backgroundColor: '#feeee1', border: '1px solid #fee0c8', color: '#9e3f00' }}>
+                          {c.is_active ? 'Aktivno' : 'Deaktivirano'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <button onClick={() => toggle(c)} disabled={toggling === c.id}
+                          title={c.is_active ? 'Deaktiviraj' : 'Aktiviraj'}
+                          className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg disabled:opacity-40 transition-colors">
+                          {c.is_active ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
         <Pagination total={filtered.length} page={page} pageSize={PAGE_SIZE} onChange={setPage} />
       </div>
     </div>
