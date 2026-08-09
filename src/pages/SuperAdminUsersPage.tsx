@@ -23,13 +23,6 @@ interface UserRow {
 
 const PAGE_SIZE = 20
 
-function pluralUsers(n: number) {
-  if (n === 1) return '1 uporabnik'
-  if (n === 2) return '2 uporabnika'
-  if (n === 3 || n === 4) return `${n} uporabniki`
-  return `${n} uporabnikov`
-}
-
 export default function SuperAdminUsersPage() {
   const [users, setUsers] = useState<UserRow[]>([])
   const [loading, setLoading] = useState(true)
