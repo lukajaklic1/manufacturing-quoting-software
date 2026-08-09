@@ -610,7 +610,7 @@ export default function CalculationPage() {
           <div>
             <h4 className="text-[15px] font-bold text-gray-800 flex items-center gap-2 mb-3 px-0.5 pb-2 border-b border-gray-200">{s.calcResults}</h4>
             <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm min-w-[400px]">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-4 py-2.5"></th>
