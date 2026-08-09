@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase'
 import AppLogo from '../ui/AppLogo'
 
 const NAV = [
-  { to: '/super-admin', icon: LayoutDashboard, label: 'Nadzorna ploĹˇÄŤa', end: true },
+  { to: '/super-admin', icon: LayoutDashboard, label: 'Nadzorna plošča', end: true },
   { to: '/super-admin/companies', icon: Building2, label: 'Podjetja' },
   { to: '/super-admin/users', icon: Users, label: 'Uporabniki' },
 ]
