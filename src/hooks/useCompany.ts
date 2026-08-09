@@ -45,7 +45,13 @@ export function useCompany(): CompanyState {
             supabase.from('companies').select('*').eq('id', prof.company_id).single(),
             supabase.from('user_permissions').select('*').eq('user_id', prof.id),
           ])
-          setCompany(compData as Company | null)
+          const comp = compData as Company | null
+          if (comp && !comp.is_active) {
+            await supabase.auth.signOut()
+            setLoading(false)
+            return
+          }
+          setCompany(comp)
           setPermissions((permData as UserPermission[]) ?? [])
         }
         setLoading(false)
